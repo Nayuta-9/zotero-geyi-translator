@@ -1,16 +1,13 @@
 import { config } from "../utils/config"
 import { getString } from "../utils/locale"
 import { clearPref, getPref, setPref } from "../utils/prefs"
-import {
-  getServerPort,
-  registerPendingAuth,
-  unregisterPendingAuth,
-} from "./server"
 
-// 授权流 + 凭证存储(GEYI-328)。凭证 = api_key(Bearer)+ api_base_url(/v1 基址,来自
-// confirm)。授权走浏览器同意页 → loopback 回写(见 server.ts);失败可手动粘贴 Key。
+// 授权流 + 凭证存储(GEYI-328)。凭证 = api_key(Bearer)+ api_base_url(/v1 基址)。
+// 登录走 Device Flow:开浏览器同意页 → 插件轮询后端取 Key(避开被 Chrome CORS/PNA 拦
+// 的 loopback);失败可手动粘贴 Key。
 
 const AUTH_TIMEOUT_MS = 5 * 60 * 1000
+const POLL_INTERVAL_MS = 2000
 
 export function getCredentials(): { key: string; base: string } | null {
   const enc = getPref<string>("apiKeyEnc")
@@ -52,13 +49,11 @@ function randomNonce(): string {
   return Array.from(a, (b) => b.toString(16).padStart(2, "0")).join("")
 }
 
-/** 浏览器授权:注册一次性回调 → 开系统浏览器 → 等 loopback 回写。resolve=已登录。 */
+/** 浏览器授权(Device Flow):开系统浏览器同意页 → 轮询后端取 Key。resolve=已登录。 */
 export async function startLogin(): Promise<void> {
   const nonce = randomNonce()
-  const port = getServerPort()
   const startUrl =
-    `${config.authApiBase}/plugin/authorize/start` +
-    `?nonce=${encodeURIComponent(nonce)}&port=${port}`
+    `${config.authApiBase}/plugin/authorize/start?nonce=${encodeURIComponent(nonce)}`
 
   let xhr: XMLHttpRequest
   try {
@@ -69,24 +64,33 @@ export async function startLogin(): Promise<void> {
   const res = JSON.parse(xhr.responseText || "{}")
   if (!res.authorize_url) throw new Error(getString("auth-failed"))
 
-  const done = new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => {
-      unregisterPendingAuth(nonce)
-      reject(new Error(getString("auth-failed")))
-    }, AUTH_TIMEOUT_MS)
-    registerPendingAuth(nonce, (payload) => {
-      clearTimeout(timer)
-      if (payload?.api_key && payload?.api_base_url) {
-        setCredentials(payload.api_key, payload.api_base_url)
-        resolve()
-      } else {
-        reject(new Error(getString("auth-failed")))
-      }
-    })
-  })
-
   Zotero.launchURL(res.authorize_url)
-  await done
+
+  // 轮询后端取 Key(每 2s,最多 5 分钟)。Zotero 的 XHR 不受浏览器 CORS/PNA 约束,
+  // 用户在浏览器批准后,poll 返回 status=ready 即拿到现签发的 Key。
+  const pollUrl =
+    `${config.authApiBase}/plugin/authorize/poll?nonce=${encodeURIComponent(nonce)}`
+  const started = Date.now()
+  while (Date.now() - started < AUTH_TIMEOUT_MS) {
+    await Zotero.Promise.delay(POLL_INTERVAL_MS)
+    let pr: XMLHttpRequest
+    try {
+      pr = await Zotero.HTTP.request("GET", pollUrl, { responseType: "text" })
+    } catch {
+      continue // 瞬时错误继续轮询
+    }
+    let data: any
+    try {
+      data = JSON.parse(pr.responseText || "{}")
+    } catch {
+      continue
+    }
+    if (data.status === "ready" && data.api_key && data.api_base_url) {
+      setCredentials(data.api_key, data.api_base_url)
+      return
+    }
+  }
+  throw new Error(getString("auth-failed"))
 }
 
 /** 手动兜底:loopback 不通时,用户从网页复制 Key 粘贴进来(base 默认生产 /v1)。 */

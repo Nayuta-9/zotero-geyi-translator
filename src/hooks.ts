@@ -1,5 +1,4 @@
 import { config } from "./utils/config"
-import { registerAuthEndpoint } from "./modules/server"
 import { onPrefsPaneLoad, registerPrefsPane } from "./modules/prefsPane"
 import { registerMenus, unregisterMenus } from "./modules/translate"
 
@@ -11,7 +10,6 @@ async function onStartup() {
     (Zotero as any).uiReadyPromise,
   ])
 
-  registerAuthEndpoint()
   await registerPrefsPane()
 
   for (const win of Zotero.getMainWindows()) {
