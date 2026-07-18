@@ -1,13 +1,7 @@
 import { config } from "../utils/config"
 import { getString } from "../utils/locale"
 import { getPref } from "../utils/prefs"
-import {
-  api,
-  ApiError,
-  LARGE_FILE_THRESHOLD,
-  type Job,
-  type TranslateOptions,
-} from "../utils/api"
+import { api, ApiError, type Job, type TranslateOptions } from "../utils/api"
 import { isLoggedIn, startLogin } from "./auth"
 
 // 单文件翻译主路径(GEYI-328 · F3):右键 → 配置 → 预估 → 提交 → 轮询 → 回填子附件。
@@ -205,25 +199,14 @@ async function runTranslation(
 
   const file = { name: `${origName}.pdf`, bytes, contentType: "application/pdf" }
 
-  // 预估 + 余额预检(场景 D)。小文件走精确预估;大文件不为估价重复上传整份,退而查
-  // 余额。预检失败不阻断(后端结算兜底)。
+  // 余额预检(场景 D)。用 /v1/me 查可用积分;精确预估待后续(避免为估价重复上传整份)。
+  // 预检失败不阻断(后端结算兜底)。
   try {
-    let available: number
-    let need: number | string
-    if (file.bytes.length < LARGE_FILE_THRESHOLD) {
-      const est = await api.estimate(file, opts)
-      available = est.available_credits
-      need = est.estimated_credits
-      if (est.sufficient_balance) available = Number.POSITIVE_INFINITY
-    } else {
-      const acct = await api.me()
-      available = acct.available > 0 ? Number.POSITIVE_INFINITY : 0
-      need = "?"
-    }
-    if (available !== Number.POSITIVE_INFINITY) {
+    const acct = await api.me()
+    if (acct.available <= 0) {
       pw.close()
       const topup = win.confirm(
-        `${getString("dialog-insufficient", { b: available, n: need })}\n\n${getString("dialog-topup")}?`,
+        `${getString("dialog-insufficient", { b: acct.available, n: "?" })}\n\n${getString("dialog-topup")}?`,
       )
       if (topup) Zotero.launchURL(`${config.webBase}/billing`)
       return
