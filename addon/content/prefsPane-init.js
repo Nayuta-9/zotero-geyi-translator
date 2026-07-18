@@ -5,6 +5,11 @@
 // 插入设置窗口 → getElementById 全为 null、文案填不上。故轮询等关键元素出现后再桥接
 // (最多 ~3s),而不是只判 readyState/load(那时元素仍可能未就位)。
 /* global Zotero, window, document */
+try {
+  Zotero.debug("[geyi] prefsPane-init.js loaded; readyState=" + document.readyState);
+} catch (_e) {
+  /* Zotero 未定义时也不炸 */
+}
 (function () {
   var tries = 0;
   function attempt() {

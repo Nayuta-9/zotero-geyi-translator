@@ -16,12 +16,14 @@ export async function registerPrefsPane(): Promise<void> {
   const addon = (Zotero as any)[config.addonInstance]
   // 去重:同一进程内已注册就不再注册(避免覆盖安装/重复 startup 叠加多个面板)。
   if (addon?.data?.prefsPaneID) return
+  // src/image/scripts 用相对插件 root 的路径(Zotero 官方文档口径),而非 chrome:// —
+  // 实测 chrome:// 的 scripts 不被面板加载器执行(桥接脚本从不运行,面板文案全空)。
   const paneID = await (Zotero as any).PreferencePanes.register({
     pluginID: config.addonID,
-    src: `chrome://${config.addonRef}/content/preferences.xhtml`,
+    src: "content/preferences.xhtml",
     label: config.addonName,
-    image: `chrome://${config.addonRef}/content/icons/icon.svg`,
-    scripts: [`chrome://${config.addonRef}/content/prefsPane-init.js`],
+    image: "content/icons/icon.svg",
+    scripts: ["content/prefsPane-init.js"],
   })
   if (addon?.data) addon.data.prefsPaneID = paneID
 }
@@ -36,6 +38,13 @@ function setLabel(doc: Document, id: string, s: string): void {
 
 export function onPrefsPaneLoad(win: Window): void {
   const doc = win.document
+  try {
+    Zotero.debug(
+      `[geyi] onPrefsPaneLoad; probe=${!!doc.getElementById("geyi-account-status")}`,
+    )
+  } catch {
+    /* ignore */
+  }
 
   setText(doc, "geyi-pref-account-title", getString("pref-account-title"))
   setText(doc, "geyi-pref-defaults-title", getString("pref-defaults-title"))
