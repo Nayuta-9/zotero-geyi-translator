@@ -95,5 +95,5 @@ export function manualLogin(key: string, base?: string): void {
   if (!/^sk_(live|test)_/.test(trimmed)) {
     throw new Error(getString("auth-failed"))
   }
-  setCredentials(trimmed, (base || `${config.webBase}/v1`).trim())
+  setCredentials(trimmed, (base || config.defaultApiBase).trim())
 }
