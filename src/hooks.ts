@@ -12,7 +12,7 @@ async function onStartup() {
   ])
 
   registerAuthEndpoint()
-  registerPrefsPane()
+  await registerPrefsPane()
 
   for (const win of Zotero.getMainWindows()) {
     onMainWindowLoad(win as unknown as Window)
@@ -32,6 +32,13 @@ function onShutdown() {
   try {
     addon?.data.activePolls.forEach((stop: () => void) => stop())
     addon?.data.activePolls.clear()
+  } catch {
+    /* ignore */
+  }
+  // 注销设置面板,避免覆盖安装后残留旧面板(截图里的重复「Geyi Translator」)。
+  try {
+    const paneID = addon?.data?.prefsPaneID
+    if (paneID) (Zotero as any).PreferencePanes.unregister(paneID)
   } catch {
     /* ignore */
   }
