@@ -1,0 +1,37 @@
+{
+  "name": "zotero-geyi-translator",
+  "version": "0.9.0",
+  "description": "格译 Geyi — 在 Zotero 里一键翻译文献，译文自动挂回原条目（GEYI-328）",
+  "config": {
+    "addonName": "Geyi Translator",
+    "addonID": "geyi-zotero-translator@geyi.net",
+    "addonRef": "geyi",
+    "addonInstance": "GeyiTranslator",
+    "prefsPrefix": "extensions.zotero.geyi"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "zotero-plugin serve",
+    "build": "tsc --noEmit && zotero-plugin build",
+    "typecheck": "tsc --noEmit",
+    "release": "zotero-plugin release"
+  },
+  "dependencies": {
+    "zotero-plugin-toolkit": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.7.0",
+    "zotero-plugin-scaffold": "^0.5.0",
+    "zotero-types": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nayuta-9/zotero-geyi-translator.git"
+  }
+}

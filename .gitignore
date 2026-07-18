@@ -1,0 +1,13 @@
+node_modules/
+build/
+.scaffold/
+*.xpi
+.env
+.env.local
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# scaffold 生成的 pref 类型(build 时重生成)
+typings/prefs.d.ts
