@@ -44,6 +44,7 @@ export function onPrefsPaneLoad(win: Window): void {
   setLabel(doc, "geyi-precision-standard", getString("pref-precision-standard"))
   setLabel(doc, "geyi-notify", getString("pref-notify"))
   setLabel(doc, "geyi-login-btn", getString("pref-login"))
+  setLabel(doc, "geyi-manual-btn", getString("pref-manual"))
   setLabel(doc, "geyi-logout-btn", getString("pref-logout"))
   setLabel(doc, "geyi-open-web", getString("pref-open-web"))
   setLabel(doc, "geyi-help", getString("pref-help"))
@@ -56,10 +57,16 @@ export function onPrefsPaneLoad(win: Window): void {
 function refreshAccount(doc: Document): void {
   const status = doc.getElementById("geyi-account-status")
   const loginBtn = doc.getElementById("geyi-login-btn")
+  const manualBtn = doc.getElementById("geyi-manual-btn")
   const logoutBtn = doc.getElementById("geyi-logout-btn")
-  if (isLoggedIn()) {
+  const loggedIn = isLoggedIn()
+  // 未登录:显示「登录」+「手动输入密钥」;登录:仅显示「登出」。
+  for (const b of [loginBtn, manualBtn]) {
+    if (loggedIn) b?.setAttribute("hidden", "true")
+    else b?.removeAttribute("hidden")
+  }
+  if (loggedIn) {
     if (status) status.textContent = getString("pref-logged-in", { email: "…" })
-    loginBtn?.setAttribute("hidden", "true")
     logoutBtn?.removeAttribute("hidden")
     // 异步补上邮箱(best-effort)。
     api
@@ -72,7 +79,6 @@ function refreshAccount(doc: Document): void {
       })
   } else {
     if (status) status.textContent = getString("pref-not-logged-in")
-    loginBtn?.removeAttribute("hidden")
     logoutBtn?.setAttribute("hidden", "true")
   }
 }
@@ -102,6 +108,9 @@ function bindButtons(win: Window, doc: Document): void {
   doc.getElementById("geyi-login-btn")?.addEventListener("command", () => {
     void doLogin(win, doc)
   })
+  doc.getElementById("geyi-manual-btn")?.addEventListener("command", () => {
+    doManualLogin(win, doc)
+  })
   doc.getElementById("geyi-logout-btn")?.addEventListener("command", () => {
     clearCredentials()
     refreshAccount(doc)
@@ -118,11 +127,14 @@ async function doLogin(win: Window, doc: Document): Promise<void> {
   try {
     await startLogin()
     refreshAccount(doc)
-    return
   } catch {
-    /* 自动授权失败(loopback 不通等)→ 手动兜底 */
+    // 自动授权失败(loopback 被浏览器 CORS/PNA 拦等)→ 引导改用「手动输入密钥」。
+    win.alert(getString("auth-failed"))
   }
-  // 手动粘贴 Key。
+}
+
+// 手动兜底:用户从网页授权页复制 API 密钥,直接粘贴(不走浏览器 loopback)。
+function doManualLogin(win: Window, doc: Document): void {
   const input = { value: "" }
   const ok = (Services as any).prompt.prompt(
     win,
