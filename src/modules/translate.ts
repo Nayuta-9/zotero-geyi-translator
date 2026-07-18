@@ -99,80 +99,58 @@ async function onTranslateCommand(win: Window): Promise<void> {
   const att = await resolvePdfAttachment(win)
   if (!att) return
 
-  const opts = await openConfigDialog(win)
+  const opts = openConfigDialog(win)
   if (!opts) return
 
   await runTranslation(win, att, opts)
 }
 
-// ── 配置对话框(toolkit Dialog;字段:目标语言 / 管线 / 精度)────────────────
-
-function selectRow(
-  labelKey: string,
-  dataKey: string,
-  options: [string, string][],
-): any {
-  return {
-    tag: "div",
-    styles: { display: "flex", alignItems: "center", gap: "8px", margin: "6px 0" },
-    children: [
-      { tag: "label", styles: { flex: "1" }, properties: { innerHTML: getString(labelKey) } },
-      {
-        tag: "select",
-        attributes: { "data-bind": dataKey, "data-prop": "value" },
-        children: options.map(([value, label]) => ({
-          tag: "option",
-          properties: { value, innerHTML: label },
-        })),
-      },
-    ],
-  }
+// ── 配置(原生确认框)──────────────────────────────────────────────────────────
+// 刻意不用 toolkit 的 DialogHelper —— 它依赖的 loadLock API 在 Zotero 9 已变,
+// 「等待对话框关闭」的 Promise 永不 resolve,导致翻译流程卡死、请求发不出去
+// (真机 Zotero 9.0.6 实测)。改读设置默认 + 原生 confirm 展示确认,跨版本都稳。
+// 目标语言/管线/精度在「设置 → Geyi Translator」里改默认。
+function openConfigDialog(win: Window): TranslateOptions | null {
+  const targetLanguage = getPref<string>("targetLanguage") || "zh-CN"
+  const layoutMode = getPref<string>("layoutMode") || "reflow"
+  const precisionMode = getPref<string>("precisionMode") || "high"
+  const pipeline =
+    layoutMode === "preserve"
+      ? getString("dialog-pipeline-preserve")
+      : getString("dialog-pipeline-reflow")
+  const precision =
+    precisionMode === "standard"
+      ? getString("dialog-precision-standard")
+      : getString("dialog-precision-high")
+  const summary =
+    `${getString("dialog-title")}\n\n` +
+    `${getString("dialog-target")}: ${targetLanguage}\n` +
+    `${getString("dialog-pipeline")}: ${pipeline}\n` +
+    `${getString("dialog-precision")}: ${precision}\n\n` +
+    getString("dialog-config-hint")
+  if (!win.confirm(summary)) return null
+  return { targetLanguage, layoutMode, precisionMode, bilingual: false, speed: "fast" }
 }
 
-async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
-  const zt = ztk()
-  if (!zt) return null
-
-  const data: Record<string, any> = {
-    targetLanguage: getPref<string>("targetLanguage") || "zh-CN",
-    layoutMode: getPref<string>("layoutMode") || "reflow",
-    precisionMode: getPref<string>("precisionMode") || "high",
-  }
-
-  const dialog = new zt.Dialog(5, 1)
-    .addCell(0, 0, {
-      tag: "h2",
-      properties: { innerHTML: getString("dialog-title") },
-    })
-    .addCell(1, 0, selectRow("dialog-target", "targetLanguage", [
-      ["zh-CN", "简体中文"],
-      ["zh-TW", "繁體中文"],
-      ["en", "English"],
-      ["ja", "日本語"],
-      ["ko", "한국어"],
-    ]))
-    .addCell(2, 0, selectRow("dialog-pipeline", "layoutMode", [
-      ["reflow", getString("dialog-pipeline-reflow")],
-      ["preserve", getString("dialog-pipeline-preserve")],
-    ]))
-    .addCell(3, 0, selectRow("dialog-precision", "precisionMode", [
-      ["high", getString("dialog-precision-high")],
-      ["standard", getString("dialog-precision-standard")],
-    ]))
-    .addButton(getString("dialog-submit"), "submit")
-    .addButton(getString("dialog-cancel"), "cancel")
-    .setDialogData(data)
-
-  dialog.open(getString("dialog-title"), { centerscreen: true, resizable: true })
-  await data.unloadLock?.promise
-
-  if (data._lastButtonId !== "submit") return null
-  return {
-    targetLanguage: data.targetLanguage,
-    layoutMode: data.layoutMode,
-    precisionMode: data.precisionMode,
-    bilingual: false,
-    speed: "fast",
+// 进度提示:优先 toolkit ProgressWindow;若在当前 Zotero 版本构造失败,降级为 no-op,
+// 绝不因进度 UI 拖垮翻译流程。
+function makeProgress(): any {
+  try {
+    return new (ztk().ProgressWindow)(config.addonName, { closeOnClick: false })
+  } catch {
+    return {
+      createLine() {
+        return this
+      },
+      changeLine() {
+        return this
+      },
+      show() {
+        return this
+      },
+      startCloseTimer() {},
+      close() {},
+    }
   }
 }
 
@@ -183,9 +161,8 @@ async function runTranslation(
   att: Zotero.Item,
   opts: TranslateOptions,
 ): Promise<void> {
-  const zt = ztk()
   const origName = (att.attachmentFilename || "document.pdf").replace(/\.pdf$/i, "")
-  const pw = new zt.ProgressWindow(config.addonName, { closeOnClick: false })
+  const pw = makeProgress()
   pw.createLine({ text: getString("progress-uploading"), type: "default", progress: 5 }).show()
 
   let bytes: Uint8Array
