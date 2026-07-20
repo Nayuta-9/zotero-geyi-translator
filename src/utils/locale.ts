@@ -16,6 +16,11 @@ const EN: Dict = {
   "dialog-precision": "Precision",
   "dialog-precision-high": "High",
   "dialog-precision-standard": "Standard",
+  "dialog-speed": "Large-document processing",
+  "dialog-speed-auto-slow":
+    "Slow mode automatically at {n}+ pages (smaller files stay real-time)",
+  "dialog-speed-realtime":
+    "Real-time (slow mode is unavailable for this pipeline)",
   "dialog-config-hint": "Change these defaults in Settings → Geyi Translator. Click OK to start translating.",
   "dialog-formats": "Output formats",
   "dialog-glossary": "Glossary",
@@ -120,6 +125,9 @@ const ZH: Dict = {
   "dialog-precision": "精度",
   "dialog-precision-high": "高精度",
   "dialog-precision-standard": "标准",
+  "dialog-speed": "大文件处理",
+  "dialog-speed-auto-slow": "满 {n} 页自动使用慢速翻译（小文件仍为实时）",
+  "dialog-speed-realtime": "实时翻译（当前管线不适用慢速档）",
   "dialog-config-hint": "可在「设置 → Geyi Translator」里改这些默认。点「确定」开始翻译。",
   "dialog-formats": "输出格式",
   "dialog-glossary": "术语表",

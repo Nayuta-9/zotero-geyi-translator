@@ -9,6 +9,10 @@ import { getGlossaries } from "./glossary"
 import { refreshTaskPane } from "./taskPane"
 import { emitTelemetry } from "./telemetry"
 import {
+  automaticSpeedMode,
+  LARGE_DOCUMENT_MIN_PAGES,
+} from "./translationPolicy"
+import {
   addVersionSuffix,
   getTrackedTask,
   isActiveStatus,
@@ -205,6 +209,11 @@ async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
     precisionMode === "standard"
       ? getString("dialog-precision-standard")
       : getString("dialog-precision-high")
+  const speed = automaticSpeedMode(layoutMode, precisionMode)
+  const speedSummary =
+    speed === "slow"
+      ? getString("dialog-speed-auto-slow", { n: LARGE_DOCUMENT_MIN_PAGES })
+      : getString("dialog-speed-realtime")
   let glossary = getString("dialog-glossary-unavailable")
   try {
     const list = await getGlossaries()
@@ -216,7 +225,8 @@ async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
     `${getString("dialog-title")}\n\n` +
     `${getString("dialog-target")}: ${targetLanguage}\n` +
     `${getString("dialog-pipeline")}: ${pipeline}\n` +
-    `${getString("dialog-precision")}: ${precision}\n\n` +
+    `${getString("dialog-precision")}: ${precision}\n` +
+    `${getString("dialog-speed")}: ${speedSummary}\n\n` +
     `${getString("dialog-glossary")}: ${glossary}\n\n` +
     getString("dialog-config-hint")
   if (!win.confirm(summary)) return null
@@ -226,7 +236,7 @@ async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
     precisionMode,
     bilingual: outputFormats.includes("pdf_bilingual"),
     outputFormats,
-    speed: "fast",
+    speed,
   }
 }
 
@@ -646,9 +656,12 @@ export async function retryTrackedTask(jobId: string): Promise<void> {
     win?.alert(getString("source-attachment-missing"))
     return
   }
+  const nextLayoutMode =
+    task.options.layoutMode === "preserve" ? "reflow" : "preserve"
   const nextOptions: TranslateOptions = {
     ...task.options,
-    layoutMode: task.options.layoutMode === "preserve" ? "reflow" : "preserve",
+    layoutMode: nextLayoutMode,
+    speed: automaticSpeedMode(nextLayoutMode, task.options.precisionMode),
   }
   await runTranslation(win, source, nextOptions)
 }

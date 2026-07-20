@@ -75,7 +75,7 @@ export interface TranslateOptions {
   precisionMode: string
   bilingual?: boolean
   outputFormats?: string[]
-  speed?: string
+  speed?: "fast" | "slow"
 }
 
 function requireCreds(): { key: string; base: string } {
