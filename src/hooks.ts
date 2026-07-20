@@ -1,6 +1,15 @@
 import { config } from "./utils/config"
 import { onPrefsPaneLoad, registerPrefsPane } from "./modules/prefsPane"
-import { registerMenus, unregisterMenus } from "./modules/translate"
+import { registerTaskPane, unregisterTaskPane } from "./modules/taskPane"
+import {
+  refreshTrackedTasks,
+  registerMenus,
+  reportTrackedTask,
+  resumeTrackedTasks,
+  retryTrackedTask,
+  unregisterMenus,
+} from "./modules/translate"
+import { emitInstallOnce } from "./modules/telemetry"
 
 // 生命周期(GEYI-328)。bootstrap.js 直接调用这些。
 
@@ -15,9 +24,22 @@ async function onStartup() {
   for (const win of Zotero.getMainWindows()) {
     onMainWindowLoad(win as unknown as Window)
   }
+  registerTaskPane({
+    refresh: refreshTrackedTasks,
+    retry: retryTrackedTask,
+    report: reportTrackedTask,
+  })
+  void emitInstallOnce()
+  await resumeTrackedTasks()
 }
 
 function onMainWindowLoad(win: Window) {
+  try {
+    // scaffold 会给 Fluent 文件名加插件命名空间:geyi.ftl → geyi-geyi.ftl。
+    ;(win as any).MozXULElement?.insertFTLIfNeeded?.("geyi-geyi.ftl")
+  } catch {
+    /* 本地化资源加载失败时仍保留功能 */
+  }
   registerMenus(win)
 }
 
@@ -32,6 +54,20 @@ function onShutdown() {
     addon?.data.activePolls.clear()
   } catch {
     /* ignore */
+  }
+  try {
+    unregisterTaskPane()
+  } catch {
+    /* ignore */
+  }
+  for (const win of Zotero.getMainWindows()) {
+    try {
+      ;(win as unknown as Window).document
+        .querySelector('link[href="geyi-geyi.ftl"]')
+        ?.remove()
+    } catch {
+      /* ignore */
+    }
   }
   // 注销设置面板,避免覆盖安装后残留旧面板(截图里的重复「Geyi Translator」)。
   try {

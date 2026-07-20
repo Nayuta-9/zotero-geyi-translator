@@ -2,12 +2,16 @@ import { config } from "../utils/config"
 import { getString } from "../utils/locale"
 import { getPref, setPref } from "../utils/prefs"
 import { api } from "../utils/api"
+import { logDebug } from "../utils/log"
 import {
   clearCredentials,
   isLoggedIn,
   manualLogin,
   startLogin,
 } from "./auth"
+import { clearGlossaryCache, getGlossaries } from "./glossary"
+import { loadTrackedTasks } from "./taskState"
+import { emitTelemetry } from "./telemetry"
 
 // 设置面板(GEYI-328 · F7 精简版:账户 + 默认偏好)。注册后由 content/prefsPane-init.js
 // 在面板 load 时桥接到 onPrefsPaneLoad(bundle 内逻辑无法被 XHTML 直接引用)。
@@ -39,28 +43,43 @@ function setLabel(doc: Document, id: string, s: string): void {
 export function onPrefsPaneLoad(win: Window): void {
   const doc = win.document
   try {
-    Zotero.debug(
-      `[geyi] onPrefsPaneLoad; probe=${!!doc.getElementById("geyi-account-status")}`,
-    )
+    logDebug(`onPrefsPaneLoad; probe=${!!doc.getElementById("geyi-account-status")}`)
   } catch {
     /* ignore */
   }
 
   setText(doc, "geyi-pref-account-title", getString("pref-account-title"))
   setText(doc, "geyi-pref-defaults-title", getString("pref-defaults-title"))
+  setText(doc, "geyi-pref-advanced-title", getString("pref-advanced-title"))
+  setText(doc, "geyi-pref-about-title", getString("pref-about-title"))
   setText(doc, "geyi-lbl-target", getString("pref-target"))
   setText(doc, "geyi-lbl-layout", getString("pref-layout"))
   setText(doc, "geyi-lbl-precision", getString("pref-precision"))
+  setText(doc, "geyi-lbl-output", getString("pref-output"))
+  setText(doc, "geyi-lbl-concurrency", getString("pref-concurrency"))
+  setText(doc, "geyi-lbl-log-level", getString("pref-log-level"))
+  setText(doc, "geyi-upload-strategy", getString("pref-upload-strategy"))
+  setText(doc, "geyi-version", getString("pref-version", { version: config.version }))
   setLabel(doc, "geyi-layout-reflow", getString("pref-layout-reflow"))
   setLabel(doc, "geyi-layout-preserve", getString("pref-layout-preserve"))
   setLabel(doc, "geyi-precision-high", getString("pref-precision-high"))
   setLabel(doc, "geyi-precision-standard", getString("pref-precision-standard"))
+  setLabel(doc, "geyi-output-pdf", getString("pref-output-pdf"))
+  setLabel(doc, "geyi-output-bilingual", getString("pref-output-bilingual"))
+  setLabel(doc, "geyi-output-docx", getString("pref-output-docx"))
+  setLabel(doc, "geyi-auto-note", getString("pref-auto-note"))
   setLabel(doc, "geyi-notify", getString("pref-notify"))
+  setLabel(doc, "geyi-log-error", getString("pref-log-error"))
+  setLabel(doc, "geyi-log-info", getString("pref-log-info"))
+  setLabel(doc, "geyi-log-debug", getString("pref-log-debug"))
   setLabel(doc, "geyi-login-btn", getString("pref-login"))
   setLabel(doc, "geyi-manual-btn", getString("pref-manual"))
   setLabel(doc, "geyi-logout-btn", getString("pref-logout"))
   setLabel(doc, "geyi-open-web", getString("pref-open-web"))
+  setLabel(doc, "geyi-manage-glossary", getString("pref-manage-glossary"))
   setLabel(doc, "geyi-help", getString("pref-help"))
+  setLabel(doc, "geyi-feedback", getString("pref-feedback"))
+  setLabel(doc, "geyi-privacy", getString("pref-privacy"))
 
   refreshAccount(doc)
   bindDefaults(doc)
@@ -69,6 +88,7 @@ export function onPrefsPaneLoad(win: Window): void {
 
 function refreshAccount(doc: Document): void {
   const status = doc.getElementById("geyi-account-status")
+  const detail = doc.getElementById("geyi-account-detail")
   const loginBtn = doc.getElementById("geyi-login-btn")
   const manualBtn = doc.getElementById("geyi-manual-btn")
   const logoutBtn = doc.getElementById("geyi-logout-btn")
@@ -84,14 +104,31 @@ function refreshAccount(doc: Document): void {
     // 异步补上邮箱(best-effort)。
     api
       .me()
-      .then((me) => {
+      .then(async (me) => {
         if (status) status.textContent = getString("pref-logged-in", { email: me.email })
+        let glossaryCount: string | number = "—"
+        try {
+          glossaryCount = (await getGlossaries()).count
+        } catch {
+          /* 账户信息仍可展示 */
+        }
+        if (detail) {
+          detail.textContent = getString("pref-account-detail", {
+            available: me.available,
+            held: me.held,
+            tier: me.membership_active
+              ? me.membership_tier || getString("pref-membership-active")
+              : getString("pref-membership-inactive"),
+            glossary: glossaryCount,
+          })
+        }
       })
       .catch(() => {
         /* 网络失败保持通用文案 */
       })
   } else {
     if (status) status.textContent = getString("pref-not-logged-in")
+    if (detail) detail.textContent = ""
     logoutBtn?.setAttribute("hidden", "true")
   }
 }
@@ -107,6 +144,24 @@ function bindDefaults(doc: Document): void {
   bindMenu("geyi-target-language", "targetLanguage")
   bindMenu("geyi-layout-mode", "layoutMode")
   bindMenu("geyi-precision-mode", "precisionMode")
+  bindMenu("geyi-output-format", "outputFormats")
+  bindMenu("geyi-log-level", "logLevel")
+
+  const concurrency = doc.getElementById("geyi-concurrency") as HTMLInputElement | null
+  if (concurrency) {
+    concurrency.value = String(getPref<number>("maxConcurrentTasks") || 3)
+    concurrency.addEventListener("input", () => {
+      const value = Math.max(1, Math.min(3, Number.parseInt(concurrency.value, 10) || 3))
+      concurrency.value = String(value)
+      setPref("maxConcurrentTasks", value)
+    })
+  }
+
+  const autoNote = doc.getElementById("geyi-auto-note") as any
+  if (autoNote) {
+    autoNote.checked = getPref<boolean>("autoNote") !== false
+    autoNote.addEventListener("command", () => setPref("autoNote", !!autoNote.checked))
+  }
 
   const notify = doc.getElementById("geyi-notify") as any
   if (notify) {
@@ -126,6 +181,7 @@ function bindButtons(win: Window, doc: Document): void {
   })
   doc.getElementById("geyi-logout-btn")?.addEventListener("command", () => {
     clearCredentials()
+    clearGlossaryCache()
     refreshAccount(doc)
   })
   doc.getElementById("geyi-open-web")?.addEventListener("command", () => {
@@ -134,6 +190,27 @@ function bindButtons(win: Window, doc: Document): void {
   doc.getElementById("geyi-help")?.addEventListener("command", () => {
     Zotero.launchURL(`${config.webBase}/download`)
   })
+  doc.getElementById("geyi-manage-glossary")?.addEventListener("command", () => {
+    Zotero.launchURL(`${config.webBase}/glossary`)
+  })
+  doc.getElementById("geyi-feedback")?.addEventListener("command", () => {
+    void emitTelemetry("click_ticket", loadTrackedTasks()[0]?.jobId)
+    Zotero.launchURL(feedbackUrl())
+  })
+  doc.getElementById("geyi-privacy")?.addEventListener("command", () => {
+    Zotero.launchURL(`${config.webBase}/privacy`)
+  })
+}
+
+function feedbackUrl(): string {
+  const recent = loadTrackedTasks()[0]
+  const params = new URLSearchParams({
+    source: `Zotero Plugin ${config.version}`,
+    os: String((Services as any).appinfo?.OS || "unknown"),
+    zotero_version: String((Zotero as any).version || "unknown"),
+  })
+  if (recent) params.set("task_id", recent.jobId)
+  return `${config.webBase}/tickets?${params.toString()}`
 }
 
 async function doLogin(win: Window, doc: Document): Promise<void> {

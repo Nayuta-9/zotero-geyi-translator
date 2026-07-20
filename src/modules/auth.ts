@@ -1,6 +1,8 @@
 import { config } from "../utils/config"
 import { getString } from "../utils/locale"
 import { clearPref, getPref, setPref } from "../utils/prefs"
+import { withPluginIdentity } from "../utils/http"
+import { emitTelemetry } from "./telemetry"
 
 // 授权流 + 凭证存储(GEYI-328)。凭证 = api_key(Bearer)+ api_base_url(/v1 基址)。
 // 登录走 Device Flow:开浏览器同意页 → 插件轮询后端取 Key(避开被 Chrome CORS/PNA 拦
@@ -57,7 +59,11 @@ export async function startLogin(): Promise<void> {
 
   let xhr: XMLHttpRequest
   try {
-    xhr = await Zotero.HTTP.request("GET", startUrl, { responseType: "text" })
+    xhr = await Zotero.HTTP.request(
+      "GET",
+      startUrl,
+      withPluginIdentity(startUrl, { responseType: "text" }),
+    )
   } catch {
     throw new Error(getString("auth-failed"))
   }
@@ -75,7 +81,11 @@ export async function startLogin(): Promise<void> {
     await Zotero.Promise.delay(POLL_INTERVAL_MS)
     let pr: XMLHttpRequest
     try {
-      pr = await Zotero.HTTP.request("GET", pollUrl, { responseType: "text" })
+      pr = await Zotero.HTTP.request(
+        "GET",
+        pollUrl,
+        withPluginIdentity(pollUrl, { responseType: "text" }),
+      )
     } catch {
       continue // 瞬时错误继续轮询
     }
@@ -87,6 +97,7 @@ export async function startLogin(): Promise<void> {
     }
     if (data.status === "ready" && data.api_key && data.api_base_url) {
       setCredentials(data.api_key, data.api_base_url)
+      void emitTelemetry("login_success")
       return
     }
   }
@@ -100,4 +111,5 @@ export function manualLogin(key: string, base?: string): void {
     throw new Error(getString("auth-failed"))
   }
   setCredentials(trimmed, (base || config.defaultApiBase).trim())
+  void emitTelemetry("login_success")
 }

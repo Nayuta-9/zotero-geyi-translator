@@ -5,6 +5,8 @@ export const config = {
   addonRef: "geyi",
   addonInstance: "GeyiTranslator",
   addonName: "Geyi Translator",
+  version: "0.9.0",
+  userAgent: "GeyiZoteroPlugin/0.9.0",
   prefsPrefix: "extensions.zotero.geyi",
 
   // 网页端根域(下载页/控制台/授权同意页)。www.geyi.net 只有前端 nginx(SPA),

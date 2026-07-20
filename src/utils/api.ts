@@ -1,4 +1,5 @@
-import { getCredentials } from "../modules/auth"
+import { clearCredentials, getCredentials } from "../modules/auth"
+import { withPluginIdentity } from "./http"
 
 // 格译开放 API(/v1)客户端(GEYI-328)。凭证(api_key + api_base_url)来自授权流后落库
 // 的加密偏好(见 modules/auth)。走 Zotero.HTTP.request —— Zotero 的 XHR 不受网页 CORS
@@ -32,7 +33,34 @@ export interface Job {
   progress: number | null
   page_count: number | null
   filename: string | null
+  source_language?: string | null
+  target_language?: string | null
+  layout_mode?: string | null
+  precision_mode?: string | null
   error: string | null
+  created_at?: string | null
+  completed_at?: string | null
+}
+
+export interface JobList {
+  data: Job[]
+  count: number
+  skip: number
+  limit: number
+}
+
+export interface GlossaryEntry {
+  id: string
+  src: string
+  dst: string
+  info: string
+  case_sensitive: boolean
+}
+
+export interface GlossaryList {
+  data: GlossaryEntry[]
+  count: number
+  note?: string | null
 }
 
 export interface OutputItem {
@@ -46,6 +74,7 @@ export interface TranslateOptions {
   layoutMode: string
   precisionMode: string
   bilingual?: boolean
+  outputFormats?: string[]
   speed?: string
 }
 
@@ -79,15 +108,16 @@ async function requestJSON(
 ): Promise<any> {
   let xhr: XMLHttpRequest
   try {
-    xhr = await Zotero.HTTP.request(method, url, {
+    xhr = await Zotero.HTTP.request(method, url, withPluginIdentity(url, {
       headers: opts.headers,
       body: opts.body,
       responseType: "text",
-    })
+    }))
   } catch (e: any) {
     const exhr: XMLHttpRequest | undefined = e?.xhr
     if (exhr) {
       const detail = parseDetail(exhr.responseText) || `HTTP ${exhr.status}`
+      if (exhr.status === 401) clearCredentials()
       throw new ApiError(exhr.status, detail)
     }
     throw new ApiError(0, e?.message || "Network error")
@@ -111,6 +141,15 @@ export const api = {
     return requestJSON("GET", `${base}/me`, { headers: authHeaders(key) })
   },
 
+  async listGlossaries(skip = 0, limit = 100): Promise<GlossaryList> {
+    const { key, base } = requireCreds()
+    return requestJSON(
+      "GET",
+      `${base}/glossaries?skip=${encodeURIComponent(skip)}&limit=${encodeURIComponent(limit)}`,
+      { headers: authHeaders(key) },
+    )
+  },
+
   /** 建作业:签名 URL 二段上传(避开 multipart)。返回 job。 */
   async createTranslation(
     file: { name: string; bytes: Uint8Array; contentType: string },
@@ -129,10 +168,10 @@ export const api = {
     })
 
     // 2. 原始字节直传 GCS(签名 URL 自鉴权,不带 Bearer)。
-    await Zotero.HTTP.request("PUT", target.upload_url, {
+    await Zotero.HTTP.request("PUT", target.upload_url, withPluginIdentity(target.upload_url, {
       headers: { "Content-Type": file.contentType },
       body: file.bytes,
-    })
+    }))
 
     // 3. 用 upload_id 建作业(form-urlencoded)。
     return requestJSON("POST", `${base}/translations`, {
@@ -162,6 +201,15 @@ export const api = {
     })
   },
 
+  async listJobs(skip = 0, limit = 50): Promise<JobList> {
+    const { key, base } = requireCreds()
+    return requestJSON(
+      "GET",
+      `${base}/translations?skip=${encodeURIComponent(skip)}&limit=${encodeURIComponent(limit)}`,
+      { headers: authHeaders(key) },
+    )
+  },
+
   async listOutputs(jobId: string): Promise<{ outputs: OutputItem[] }> {
     const { key, base } = requireCreds()
     return requestJSON("GET", `${base}/translations/${jobId}/outputs`, {
@@ -172,7 +220,7 @@ export const api = {
   async getDownloadUrl(
     jobId: string,
     fmt: string,
-  ): Promise<{ url: string; filename: string }> {
+  ): Promise<{ url: string; filename: string; proxy_url?: string | null }> {
     const { key, base } = requireCreds()
     return requestJSON("GET", `${base}/translations/${jobId}/outputs/${fmt}`, {
       headers: authHeaders(key),
