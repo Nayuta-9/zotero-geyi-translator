@@ -32,9 +32,9 @@ npm run build  # tsc 类型检查 + 打包 build/*.xpi + 生成 update.json
 
 ## 发布
 
-1. `npm run build` → 产出 `build/geyi-translator.xpi` 与 `build/update.json`。
-2. 把 xpi 复制为 **`zotero-geyi.xpi`**、连同 `update.json` 放到网页端仓库 `immersive_translator_frontend/public/plugin/`（`update.json` 的 `update_link` 已指向 `https://www.geyi.net/plugin/zotero-geyi.xpi`），推 main 部署。
-3. 官网 `/download` 的下载按钮即生效。首个版本先自建 `update.json` 分发；官方插件目录提审推迟到 GA（GEYI-330 Q2）。
+1. `npm run publish:web -- --dry-run`：运行测试与构建，校验版本、下载地址及 XPI SHA-512，并在隔离 worktree 预览官网发布文件，不提交或推送。
+2. `npm run publish:web`：重复上述校验，把 XPI 复制为 **`zotero-geyi.xpi`**、连同 `update.json` 提交到官网仓库 `immersive_translator_frontend/public/plugin/`，fetch + rebase 后推送 `main` 部署。即使官网主工作树有其他改动也不会触碰。
+3. 官网 `/download` 的下载按钮随部署生效。脚本只发布自建下载与升级清单，不创建 GitHub Release；官方插件目录提审推迟到 GA（GEYI-330 Q2）。可用 `GEYI_FRONTEND_REPO=/path/to/repo` 覆盖默认同级官网仓路径。
 
 ## 已知限制与待验证
 

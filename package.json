@@ -15,6 +15,7 @@
     "build": "tsc --noEmit && zotero-plugin build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "publish:web": "bash scripts/publish-web.sh",
     "release": "zotero-plugin release"
   },
   "dependencies": {
