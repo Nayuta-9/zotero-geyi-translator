@@ -4,11 +4,11 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 plugin_repo="$(cd "${script_dir}/.." && pwd)"
-frontend_repo="${GEYI_FRONTEND_REPO:-${plugin_repo}/../immersive_translator_frontend}"
+plugin_bucket="${GEYI_PLUGIN_BUCKET:-immersive-translator-plugin-releases}"
 dry_run=false
 
 usage() {
-  echo "Usage: npm run publish:web -- [--dry-run] [--frontend PATH]"
+  echo "Usage: npm run publish:web -- [--dry-run] [--bucket NAME]"
 }
 
 while [[ $# -gt 0 ]]; do
@@ -17,9 +17,9 @@ while [[ $# -gt 0 ]]; do
       dry_run=true
       shift
       ;;
-    --frontend)
+    --bucket)
       [[ $# -ge 2 ]] || { usage; exit 2; }
-      frontend_repo="$2"
+      plugin_bucket="$2"
       shift 2
       ;;
     -h|--help)
@@ -33,17 +33,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-for command_name in git npm node; do
+for command_name in git npm node gcloud; do
   command -v "${command_name}" >/dev/null || {
     echo "Missing required command: ${command_name}" >&2
     exit 1
   }
 done
-
-[[ -d "${frontend_repo}/.git" ]] || {
-  echo "Frontend repository not found: ${frontend_repo}" >&2
-  exit 1
-}
 
 [[ "$(git -C "${plugin_repo}" branch --show-current)" == "main" ]] || {
   echo "Plugin repository must be on main." >&2
@@ -60,6 +55,8 @@ git -C "${plugin_repo}" fetch origin
   echo "Plugin main is not synchronized with origin/main." >&2
   exit 1
 }
+
+gcloud storage buckets describe "gs://${plugin_bucket}" >/dev/null
 
 cd "${plugin_repo}"
 npm test
@@ -86,7 +83,7 @@ if (!update || update.version !== expectedVersion) {
   throw new Error(`update.json version does not match package version ${expectedVersion}`)
 }
 if (update.update_link !== "https://www.geyi.net/plugin/zotero-geyi.xpi") {
-  throw new Error("update.json points at an unexpected download URL")
+  throw new Error("update.json points at an unexpected stable download URL")
 }
 const digest = crypto.createHash("sha512").update(fs.readFileSync(xpiPath)).digest("hex")
 if (update.update_hash !== `sha512:${digest}`) {
@@ -94,53 +91,50 @@ if (update.update_hash !== `sha512:${digest}`) {
 }
 NODE
 
-git -C "${frontend_repo}" fetch origin
-
-temp_root="$(mktemp -d "${TMPDIR:-/tmp}/geyi-zotero-publish.XXXXXX")"
-frontend_worktree="${temp_root}/frontend"
-worktree_added=false
-
-cleanup() {
-  if [[ "${worktree_added}" == true ]]; then
-    git -C "${frontend_repo}" worktree remove --force "${frontend_worktree}" >/dev/null 2>&1 || true
-  fi
-  rmdir "${temp_root}" >/dev/null 2>&1 || true
-}
-trap cleanup EXIT
-
-git -C "${frontend_repo}" worktree add --detach "${frontend_worktree}" origin/main
-worktree_added=true
-
-mkdir -p "${frontend_worktree}/public/plugin"
-cp "${xpi_path}" "${frontend_worktree}/public/plugin/zotero-geyi.xpi"
-cp "${update_path}" "${frontend_worktree}/public/plugin/update.json"
-
-git -C "${frontend_worktree}" diff --check
-
-if [[ -z "$(git -C "${frontend_worktree}" status --porcelain -- \
-  public/plugin/update.json public/plugin/zotero-geyi.xpi)" ]]; then
-  echo "Version ${version} is already published; nothing to do."
-  exit 0
-fi
-
-git -C "${frontend_worktree}" status --short -- public/plugin/update.json public/plugin/zotero-geyi.xpi
+versioned_xpi="gs://${plugin_bucket}/plugin/v${version}/zotero-geyi.xpi"
+stable_xpi="gs://${plugin_bucket}/plugin/zotero-geyi.xpi"
+stable_manifest="gs://${plugin_bucket}/plugin/update.json"
+public_base="https://storage.googleapis.com/${plugin_bucket}/plugin"
 
 if [[ "${dry_run}" == true ]]; then
-  echo "Dry run complete; no commit or push was performed."
+  echo "Dry run: would upload v${version} to gs://${plugin_bucket}/plugin/."
   exit 0
 fi
 
-git -C "${frontend_worktree}" add public/plugin/update.json public/plugin/zotero-geyi.xpi
-git -C "${frontend_worktree}" commit -m "GEYI-330 publish Zotero plugin v${version}"
-git -C "${frontend_worktree}" fetch origin
-git -C "${frontend_worktree}" rebase origin/main
-git -C "${frontend_worktree}" push origin HEAD:main
+# 先上传不可变版本与稳定 XPI，最后替换更新清单，避免客户端先读到悬空版本。
+gcloud storage cp \
+  --content-type="application/x-xpinstall" \
+  --content-disposition='attachment; filename="zotero-geyi.xpi"' \
+  --cache-control="public,max-age=31536000,immutable" \
+  "${xpi_path}" "${versioned_xpi}"
+gcloud storage cp \
+  --content-type="application/x-xpinstall" \
+  --content-disposition='attachment; filename="zotero-geyi.xpi"' \
+  --cache-control="public,max-age=300" \
+  "${xpi_path}" "${stable_xpi}"
+gcloud storage cp \
+  --content-type="application/json" \
+  --cache-control="no-cache,max-age=0" \
+  "${update_path}" "${stable_manifest}"
 
-published_commit="$(git -C "${frontend_worktree}" rev-parse HEAD)"
-remote_commit="$(git -C "${frontend_worktree}" ls-remote origin refs/heads/main | awk '{print $1}')"
-[[ "${published_commit}" == "${remote_commit}" ]] || {
-  echo "Remote main verification failed." >&2
-  exit 1
+node --input-type=module - "${public_base}" "${version}" <<'NODE'
+import crypto from "node:crypto"
+
+const [, , publicBase, expectedVersion] = process.argv
+const [manifestResponse, xpiResponse] = await Promise.all([
+  fetch(`${publicBase}/update.json`, { cache: "no-store" }),
+  fetch(`${publicBase}/zotero-geyi.xpi`, { cache: "no-store" }),
+])
+if (!manifestResponse.ok || !xpiResponse.ok) {
+  throw new Error(`GCS verification failed: manifest=${manifestResponse.status}, xpi=${xpiResponse.status}`)
 }
+const manifest = await manifestResponse.json()
+const update = manifest.addons?.["geyi-zotero-translator@geyi.net"]?.updates?.[0]
+const xpi = Buffer.from(await xpiResponse.arrayBuffer())
+const digest = crypto.createHash("sha512").update(xpi).digest("hex")
+if (update?.version !== expectedVersion || update?.update_hash !== `sha512:${digest}`) {
+  throw new Error("Published GCS manifest and XPI do not match")
+}
+NODE
 
-echo "Published Zotero plugin v${version} at ${published_commit}."
+echo "Published Zotero plugin v${version} to GCS."
