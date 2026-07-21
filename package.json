@@ -1,6 +1,6 @@
 {
   "name": "zotero-geyi-translator",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "格译 Geyi — 在 Zotero 里一键翻译文献，译文自动挂回原条目（GEYI-328）",
   "config": {
     "addonName": "Geyi Translator",
