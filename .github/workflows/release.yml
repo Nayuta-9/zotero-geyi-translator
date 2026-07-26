@@ -37,6 +37,10 @@ jobs:
       - run: npm test
       - run: npm run build
 
+      # 只挂 .xpi。update.json 属于 GCS 那条链路：它的 update_link 固定指向
+      # www.geyi.net/plugin/zotero-geyi.xpi，而 update_hash 只会匹配打它的那次
+      # 构建的产物——CI 与本地各自打包，zip 元数据不同,hash 必然对不上。把它挂进
+      # Release 只会得到一份自相矛盾的清单。
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -44,5 +48,4 @@ jobs:
           gh release create "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
-            build/geyi-translator.xpi \
-            build/update.json
+            build/geyi-translator.xpi
