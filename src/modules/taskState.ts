@@ -134,17 +134,25 @@ function extensionForFormat(format: string): string {
   return format
 }
 
+// GEYI-398：译文附件带品牌标识。品牌串取代了旧的 `_zh` / `_bilingual` 后缀,
+// 但简体单语之外的两个维度(繁体、双语对照)仍需可区分——否则同一篇文献翻两次
+// 会重名——故以括号限定词补充,简体单语为默认档不标注。
+const BRAND_SUFFIX = "Translated by Geyi"
+
 export function outputBaseName(
   originalName: string,
   format: string,
   targetLanguage: string,
 ): string {
   const ext = extensionForFormat(format)
-  const suffix =
-    format === "pdf_bilingual" || format === "pdf_dual"
-      ? "bilingual"
-      : languageSuffix(targetLanguage)
-  return `${originalName}_${suffix}.${ext}`
+  const qualifiers: string[] = []
+  if (format === "pdf_bilingual" || format === "pdf_dual") qualifiers.push("Bilingual")
+  const lang = languageSuffix(targetLanguage)
+  if (lang !== "zh") qualifiers.push(lang)
+  const tail = qualifiers.length
+    ? `${BRAND_SUFFIX} (${qualifiers.join(", ")})`
+    : BRAND_SUFFIX
+  return `${originalName}_${tail}.${ext}`
 }
 
 export function addVersionSuffix(filename: string, version: number): string {
