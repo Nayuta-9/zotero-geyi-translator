@@ -7,7 +7,7 @@
 - **单文件翻译主路径（F3）**：右键条目/PDF 附件 →「用格译翻译」→ 确认目标语言/管线/精度 → 提交云端；≥100 页的高精度 AI 重排任务自动使用慢速翻译，小文件仍走实时路径。
 - **浏览器授权登录（F2）**：无需在插件里输密码。插件生成一次性 nonce 并打开系统浏览器；用户确认后，插件每 2 秒轮询后端 Device Flow 端点领取 API Key，不依赖浏览器 loopback/CORS/PNA。凭证 base64 包装后存 Zotero 偏好（Zotero 无系统钥匙串，此为防随手翻文件的可达口径）。
 - **任务进度（F4）**：条目侧边栏「格译任务」显示进行中与最近 20 条；活跃任务每 3 秒轮询，空闲自动停止；插件重启后用服务端列表与本地 job id 交集恢复，只展示插件自己发起的任务。
-- **译文回填（F5）**：产物作为同条目子附件导入，按 `_zh` / `_bilingual` / `_v2` 命名并打管线 tag；重复翻译明确选择覆盖、生成新版本或取消；默认生成任务 note。右键插件译文可换管线重跑。
+- **译文回填（F5）**：产物作为同条目子附件导入，命名为 `{原名}_Translated by Geyi.pdf` 并打管线 tag；繁體与双语对照以括号限定词区分（`… (zh-TW)` / `… (Bilingual)`），重复翻译加 `_v2`。重复翻译明确选择覆盖、生成新版本或取消；默认生成任务 note。右键插件译文可换管线重跑。
 - **术语表联动（F6）**：账户个人术语全量自动应用。插件读取并展示当前术语条目数，缓存不超过 5 分钟；不提供术语表选择、“不使用”或条目级置顶，网页端提供管理入口。
 - **设置面板（F7）**：账户余额/会员/术语数、默认目标语言/管线/精度/产物、自动 note、通知、并发上限、日志级别、反馈与隐私入口，修改即时生效。
 - **埋点与反馈（F8）**：插件请求以 `GeyiZoteroPlugin/x.y.z` 标识，并以自定义头兜底；安装、登录、提交、完成/失败、工单、充值事件通过现有健康端点 best-effort 上报；反馈链接预填插件/Zotero/系统版本与最近任务 id。
@@ -34,7 +34,19 @@ npm run build  # tsc 类型检查 + 打包 build/*.xpi + 生成 update.json
 
 1. `npm run publish:web -- --dry-run`：运行测试与构建，校验版本、稳定下载地址及 XPI SHA-512，不上传文件。
 2. `npm run publish:web`：重复上述校验，把版本化 XPI、稳定 XPI 和 `update.json` 依次上传到专用公共 GCS 桶，并回读验证版本与哈希。更新清单最后上传，避免客户端读到悬空版本。
-3. 官网 `/download` 的稳定地址由 Nginx 重定向到 GCS；以后发布插件不需要改动或部署官网/后端，只需插件仓 `main` 已同步后执行本命令。脚本不创建 GitHub Release；官方插件目录提审推迟到 GA（GEYI-330 Q2）。可用 `GEYI_PLUGIN_BUCKET=<bucket>` 覆盖默认发布桶。
+3. 官网 `/download` 的稳定地址由 Nginx 重定向到 GCS；以后发布插件不需要改动或部署官网/后端，只需插件仓 `main` 已同步后执行本命令。可用 `GEYI_PLUGIN_BUCKET=<bucket>` 覆盖默认发布桶。
+
+### GitHub Release（插件商店用，GEYI-399）
+
+插件商店 [syt2/zotero-addons-scraper](https://github.com/syt2/zotero-addons-scraper)（Zotero Addons 的数据源）按 **GitHub Releases** 抓取新版本，因此上架后每次发版都要留下一个挂着 `.xpi` 的 Release：
+
+```bash
+npm version patch && git push --follow-tags   # 打 v* tag 即触发 .github/workflows/release.yml
+```
+
+workflow 会校验 tag 与 `package.json` 版本一致，跑完验证门后创建 Release 并挂 `geyi-translator.xpi` + `update.json`。两条分发链路互相独立：网页端（`publish:web` → GCS）面向官网下载页与自升级，GitHub Release 面向插件商店。
+
+> 收录入口注意：`zotero-chinese/zotero-plugins` 已停止接受新插件提交（其站点 zotero-chinese.com 上的「请求收录插件」链接尚未更新），现行入口是 `syt2/zotero-addons-scraper` 的 `addons/` 目录，条目文件名为 `Nayuta-9@zotero-geyi-translator`。
 
 ## 已知限制与待验证
 

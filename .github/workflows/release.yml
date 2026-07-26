@@ -1,0 +1,48 @@
+name: release
+
+# GEYI-399：插件商店（syt2/zotero-addons-scraper）按 GitHub Releases 抓取新版本，
+# 故上架后每次发版都必须留下一个挂着 .xpi 的 Release。打 tag 即发布：
+#   npm version patch && git push --follow-tags
+# 网页端分发（www.geyi.net/plugin/，GCS）仍走 `npm run publish:web`，两者互不依赖。
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # tag 与 package.json 不一致会发出版本号对不上的 Release，客户端据 update.json
+      # 的 version 判断更新，错位即静默不升级——先失败掉。
+      - name: Verify tag matches package version
+        run: |
+          expected="v$(node -p "require('./package.json').version")"
+          [ "$expected" = "${GITHUB_REF_NAME}" ] || {
+            echo "tag ${GITHUB_REF_NAME} does not match package version ${expected}" >&2
+            exit 1
+          }
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            build/geyi-translator.xpi \
+            build/update.json
