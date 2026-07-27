@@ -8,8 +8,10 @@
       <button id="geyi-login-btn" />
       <button id="geyi-manual-btn" />
       <button id="geyi-logout-btn" hidden="true" />
+      <button id="geyi-upgrade-btn" hidden="true" />
     </hbox>
     <description id="geyi-account-detail" class="geyi-muted" />
+    <description id="geyi-membership-hint" class="geyi-muted" />
   </groupbox>
 
   <groupbox>
@@ -58,6 +60,17 @@
         </menupopup>
       </menulist>
     </hbox>
+
+    <hbox align="center" style="gap: 8px;">
+      <label id="geyi-lbl-speed" flex="1" />
+      <menulist id="geyi-speed-mode">
+        <menupopup>
+          <menuitem id="geyi-speed-fast" value="fast" />
+          <menuitem id="geyi-speed-slow" value="slow" />
+        </menupopup>
+      </menulist>
+    </hbox>
+    <description id="geyi-speed-hint" class="geyi-muted" />
 
     <checkbox id="geyi-auto-note" />
     <checkbox id="geyi-notify" />

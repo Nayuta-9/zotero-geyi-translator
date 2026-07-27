@@ -1,7 +1,6 @@
 import { config } from "../utils/config"
 import { getString } from "../utils/locale"
 import { getPref, setPref } from "../utils/prefs"
-import { api } from "../utils/api"
 import { logDebug } from "../utils/log"
 import {
   clearCredentials,
@@ -10,8 +9,21 @@ import {
   startLogin,
 } from "./auth"
 import { clearGlossaryCache, getGlossaries } from "./glossary"
+import {
+  type AccountSnapshot,
+  clearAccountCache,
+  FEATURE_MIN_TIER,
+  getAccountSnapshot,
+  hasFeature,
+  MEMBER_FEATURE,
+  type MemberFeature,
+} from "./memberFeatures"
 import { loadTrackedTasks } from "./taskState"
 import { emitTelemetry } from "./telemetry"
+import {
+  LARGE_DOCUMENT_MIN_PAGES,
+  resolveConcurrencyCap,
+} from "./translationPolicy"
 
 // 设置面板(GEYI-328 · F7 精简版:账户 + 默认偏好)。注册后由 content/prefsPane-init.js
 // 在面板 load 时桥接到 onPrefsPaneLoad(bundle 内逻辑无法被 XHTML 直接引用)。
@@ -56,6 +68,7 @@ export function onPrefsPaneLoad(win: Window): void {
   setText(doc, "geyi-lbl-layout", getString("pref-layout"))
   setText(doc, "geyi-lbl-precision", getString("pref-precision"))
   setText(doc, "geyi-lbl-output", getString("pref-output"))
+  setText(doc, "geyi-lbl-speed", getString("pref-speed"))
   setText(doc, "geyi-lbl-concurrency", getString("pref-concurrency"))
   setText(doc, "geyi-lbl-log-level", getString("pref-log-level"))
   setText(doc, "geyi-upload-strategy", getString("pref-upload-strategy"))
@@ -67,6 +80,8 @@ export function onPrefsPaneLoad(win: Window): void {
   setLabel(doc, "geyi-output-pdf", getString("pref-output-pdf"))
   setLabel(doc, "geyi-output-bilingual", getString("pref-output-bilingual"))
   setLabel(doc, "geyi-output-docx", getString("pref-output-docx"))
+  setLabel(doc, "geyi-speed-fast", getString("pref-speed-fast"))
+  setLabel(doc, "geyi-speed-slow", getString("pref-speed-slow"))
   setLabel(doc, "geyi-auto-note", getString("pref-auto-note"))
   setLabel(doc, "geyi-notify", getString("pref-notify"))
   setLabel(doc, "geyi-log-error", getString("pref-log-error"))
@@ -75,6 +90,7 @@ export function onPrefsPaneLoad(win: Window): void {
   setLabel(doc, "geyi-login-btn", getString("pref-login"))
   setLabel(doc, "geyi-manual-btn", getString("pref-manual"))
   setLabel(doc, "geyi-logout-btn", getString("pref-logout"))
+  setLabel(doc, "geyi-upgrade-btn", getString("pref-upgrade"))
   setLabel(doc, "geyi-open-web", getString("pref-open-web"))
   setLabel(doc, "geyi-manage-glossary", getString("pref-manage-glossary"))
   setLabel(doc, "geyi-help", getString("pref-help"))
@@ -84,6 +100,111 @@ export function onPrefsPaneLoad(win: Window): void {
   refreshAccount(doc)
   bindDefaults(doc)
   bindButtons(win, doc)
+}
+
+/**
+ * 给下拉里的某一项上锁(GEYI-422)。
+ *
+ * 除了 disabled,还把 label 改成带锁后缀 —— XUL 的 menulist 在收起态显示的是**当前
+ * 选中项**的 label,如果用户之前选了双语对照、之后降了档,只设 disabled 的话他看到的
+ * 仍是「双语对照 PDF」,像是还选着且没有任何提示。改 label 才能让锁在收起态可见。
+ */
+function applyLock(
+  doc: Document,
+  id: string,
+  baseLabel: string,
+  locked: boolean,
+  feature: MemberFeature,
+): void {
+  const el = doc.getElementById(id)
+  if (!el) return
+  if (!locked) {
+    el.removeAttribute("disabled")
+    el.setAttribute("label", baseLabel)
+    return
+  }
+  el.setAttribute("disabled", "true")
+  el.setAttribute(
+    "label",
+    getString("pref-locked-suffix", {
+      label: baseLabel,
+      lock: getString(`pref-locked-${FEATURE_MIN_TIER[feature]}`),
+    }),
+  )
+}
+
+/**
+ * 按账户快照渲染会员相关的一切。三态各有各的渲染策略,**不能合并**:
+ *
+ * - `unknown`(未登录 / 离线 / 旧后端没下发权益)→ 什么都不知道,一律不锁。把未知
+ *   当成「没权益」会在网络抖动时把付费用户的选项全灰掉。
+ * - `expired`(/v1/me 明确返回 403)→ 这是确定的负面事实。会员过期时后端在 deps 层
+ *   就拦下整把 Key,插件永远拿不到「空 member_features」,只会拿到 403;若把它并进
+ *   unknown,页面就会写着「已登录」、所有选项可点,点了全 403 —— 那正是改动前的症状。
+ * - `ok` → 按 member_features 逐项上锁。
+ */
+function applyMembership(doc: Document, snapshot: AccountSnapshot): void {
+  const status = doc.getElementById("geyi-account-status")
+  const detail = doc.getElementById("geyi-account-detail")
+  const hint = doc.getElementById("geyi-membership-hint")
+  const upgradeBtn = doc.getElementById("geyi-upgrade-btn")
+  const speedHint = doc.getElementById("geyi-speed-hint")
+
+  if (snapshot.state === "unknown") {
+    // 不动任何锁,也不改状态行 —— 保持 refreshAccount 已经填好的通用文案。
+    if (hint) hint.textContent = ""
+    upgradeBtn?.setAttribute("hidden", "true")
+    return
+  }
+
+  const bilingualLocked = hasFeature(snapshot, MEMBER_FEATURE.BILINGUAL) === false
+  const slowLocked = hasFeature(snapshot, MEMBER_FEATURE.BATCH_SLOW) === false
+  const glossaryLocked = hasFeature(snapshot, MEMBER_FEATURE.GLOSSARY) === false
+
+  applyLock(
+    doc,
+    "geyi-output-bilingual",
+    getString("pref-output-bilingual"),
+    bilingualLocked,
+    MEMBER_FEATURE.BILINGUAL,
+  )
+  applyLock(
+    doc,
+    "geyi-speed-slow",
+    getString("pref-speed-slow"),
+    slowLocked,
+    MEMBER_FEATURE.BATCH_SLOW,
+  )
+  if (speedHint) {
+    speedHint.textContent = slowLocked
+      ? getString("pref-speed-hint-locked")
+      : getString("pref-speed-hint", { n: LARGE_DOCUMENT_MIN_PAGES })
+  }
+
+  if (snapshot.state === "expired") {
+    if (status) status.textContent = getString("pref-membership-expired")
+    if (detail) detail.textContent = ""
+    if (hint) hint.textContent = getString("pref-membership-expired-hint")
+    upgradeBtn?.removeAttribute("hidden")
+    return
+  }
+
+  upgradeBtn?.setAttribute("hidden", "true")
+  if (hint) hint.textContent = glossaryLocked ? getString("pref-glossary-locked") : ""
+
+  // 并发上限的权威在后端:输入框的 max 与当前值都跟着档位走(bindDefaults 是同步的,
+  // 拿不到账户,所以只能在这里回填)。
+  const account = snapshot.account
+  const backendCap = account?.concurrent_translate_limit
+  if (typeof backendCap === "number" && backendCap > 0) {
+    const input = doc.getElementById("geyi-concurrency") as HTMLInputElement | null
+    if (input) {
+      input.max = String(backendCap)
+      input.value = String(
+        resolveConcurrencyCap(getPref<number>("maxConcurrentTasks"), backendCap),
+      )
+    }
+  }
 }
 
 function refreshAccount(doc: Document): void {
@@ -101,18 +222,20 @@ function refreshAccount(doc: Document): void {
   if (loggedIn) {
     if (status) status.textContent = getString("pref-logged-in", { email: "…" })
     logoutBtn?.removeAttribute("hidden")
-    // 异步补上邮箱(best-effort)。
-    api
-      .me()
-      .then(async (me) => {
-        if (status) status.textContent = getString("pref-logged-in", { email: me.email })
-        let glossaryCount: string | number = "—"
-        try {
-          glossaryCount = (await getGlossaries()).count
-        } catch {
-          /* 账户信息仍可展示 */
+    // 强刷:面板每次打开都取最新权益,保证「刚在网页升了级,回来就解锁」。
+    void getAccountSnapshot(true)
+      .then(async (snapshot) => {
+        const me = snapshot.account
+        if (me && status) {
+          status.textContent = getString("pref-logged-in", { email: me.email })
         }
-        if (detail) {
+        if (me && detail) {
+          let glossaryCount: string | number = "—"
+          try {
+            glossaryCount = (await getGlossaries()).count
+          } catch {
+            /* 账户信息仍可展示 */
+          }
           detail.textContent = getString("pref-account-detail", {
             available: me.available,
             held: me.held,
@@ -122,9 +245,10 @@ function refreshAccount(doc: Document): void {
             glossary: glossaryCount,
           })
         }
+        applyMembership(doc, snapshot)
       })
       .catch(() => {
-        /* 网络失败保持通用文案 */
+        /* getAccountSnapshot 自己吞了错误并返回 unknown;这里兜住渲染期异常 */
       })
   } else {
     if (status) status.textContent = getString("pref-not-logged-in")
@@ -145,13 +269,19 @@ function bindDefaults(doc: Document): void {
   bindMenu("geyi-layout-mode", "layoutMode")
   bindMenu("geyi-precision-mode", "precisionMode")
   bindMenu("geyi-output-format", "outputFormats")
+  bindMenu("geyi-speed-mode", "speedMode")
   bindMenu("geyi-log-level", "logLevel")
 
   const concurrency = doc.getElementById("geyi-concurrency") as HTMLInputElement | null
   if (concurrency) {
-    concurrency.value = String(getPref<number>("maxConcurrentTasks") || 3)
+    // 上限的权威在后端(按档位 1/3/8),这里先按回落值渲染,账户回来后由
+    // applyMembership 回填真实上限 —— bindDefaults 是同步的,拿不到账户。
+    concurrency.value = String(
+      resolveConcurrencyCap(getPref<number>("maxConcurrentTasks"), undefined),
+    )
     concurrency.addEventListener("input", () => {
-      const value = Math.max(1, Math.min(3, Number.parseInt(concurrency.value, 10) || 3))
+      const cap = Number.parseInt(concurrency.max, 10) || 3
+      const value = Math.max(1, Math.min(cap, Number.parseInt(concurrency.value, 10) || 1))
       concurrency.value = String(value)
       setPref("maxConcurrentTasks", value)
     })
@@ -182,7 +312,14 @@ function bindButtons(win: Window, doc: Document): void {
   doc.getElementById("geyi-logout-btn")?.addEventListener("command", () => {
     clearCredentials()
     clearGlossaryCache()
+    clearAccountCache()
     refreshAccount(doc)
+  })
+  // 升级入口:清缓存再跳,这样用户在网页升完档切回来,面板一刷新就能解锁。
+  doc.getElementById("geyi-upgrade-btn")?.addEventListener("command", () => {
+    clearAccountCache()
+    void emitTelemetry("click_upgrade")
+    Zotero.launchURL(`${config.webBase}/billing?source=zotero_plugin`)
   })
   doc.getElementById("geyi-open-web")?.addEventListener("command", () => {
     Zotero.launchURL(`${config.webBase}/api-keys`)

@@ -1,12 +1,21 @@
-// 插件常量(GEYI-328)。与 package.json 的 config 保持一致;硬编码在 src 单文件,避免
-// 打包侧占位符替换的复杂性(这些值稳定,rarely 改)。
+import { version } from "../../package.json"
+
+// 插件常量(GEYI-328)。标识类常量与 package.json 的 config 保持一致;硬编码在 src
+// 单文件,避免打包侧占位符替换的复杂性(这些值稳定,rarely 改)。
+//
+// 版本号是唯一的例外,必须**派生**而不是手抄(GEYI-424):它此前手写成 "0.9.0" 且
+// 自建仓起就没跟过 package.json,于是插件列表显示 manifest 里的真实版本、而设置页
+// 「关于」与 UA/X-Geyi-Client 恒为 0.9.0 —— 发多少次新包都不会变,用户报「装完版本号
+// 没变」。派生之后 package.json 成为唯一源,漂移在构造上不可能发生。
+// (tsconfig 已开 resolveJsonModule;esbuild 会把 package.json 的其余字段树摇掉,
+//  产物里只剩 `var version = "x.y.z"`,不会把整个 package.json 打进 xpi。)
 export const config = {
   addonID: "geyi-zotero-translator@geyi.net",
   addonRef: "geyi",
   addonInstance: "GeyiTranslator",
   addonName: "Geyi Translator",
-  version: "0.9.0",
-  userAgent: "GeyiZoteroPlugin/0.9.0",
+  version,
+  userAgent: `GeyiZoteroPlugin/${version}`,
   prefsPrefix: "extensions.zotero.geyi",
 
   // 网页端根域(下载页/控制台/授权同意页)。www.geyi.net 只有前端 nginx(SPA),

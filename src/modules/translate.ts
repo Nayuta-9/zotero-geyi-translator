@@ -9,8 +9,17 @@ import { getGlossaries } from "./glossary"
 import { refreshTaskPane } from "./taskPane"
 import { emitTelemetry } from "./telemetry"
 import {
-  automaticSpeedMode,
+  getAccountSnapshot,
+  hasFeature,
+  MEMBER_FEATURE,
+  type AccountSnapshot,
+} from "./memberFeatures"
+import {
   LARGE_DOCUMENT_MIN_PAGES,
+  resolveConcurrencyCap,
+  resolveOutputs,
+  resolveSpeedMode,
+  resolveSubmission,
 } from "./translationPolicy"
 import {
   addVersionSuffix,
@@ -209,11 +218,25 @@ async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
     precisionMode === "standard"
       ? getString("dialog-precision-standard")
       : getString("dialog-precision-high")
-  const speed = automaticSpeedMode(layoutMode, precisionMode)
+  // 处理档是用户在设置页显式选的(GEYI-422),这里只负责**展示**它最终会变成什么。
+  // 真正决定提交值的解算在 runTranslation 入口 —— 那是本对话框与「换管线重跑」
+  // 两条提交路径唯一的汇合点,只在这里算会漏掉重试路径。
+  const requestedSpeed = getPref<string>("speedMode") || "fast"
+  const snapshot = await getAccountSnapshot()
+  const preview = resolveSpeedMode(requestedSpeed, layoutMode, precisionMode, {
+    batchSlow: hasFeature(snapshot, MEMBER_FEATURE.BATCH_SLOW),
+  })
   const speedSummary =
-    speed === "slow"
-      ? getString("dialog-speed-auto-slow", { n: LARGE_DOCUMENT_MIN_PAGES })
-      : getString("dialog-speed-realtime")
+    preview.downgraded === "entitlement"
+      ? getString("dialog-speed-locked")
+      : preview.downgraded === "shape"
+        ? getString("dialog-speed-inapplicable")
+        : preview.speed === "slow"
+          ? getString("dialog-speed-slow", { n: LARGE_DOCUMENT_MIN_PAGES })
+          : getString("dialog-speed-realtime")
+  const outputPreview = resolveOutputs(outputFormats, {
+    bilingual: hasFeature(snapshot, MEMBER_FEATURE.BILINGUAL),
+  })
   let glossary = getString("dialog-glossary-unavailable")
   try {
     const list = await getGlossaries()
@@ -221,22 +244,32 @@ async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
   } catch {
     /* 术语读取失败不阻断翻译;后端仍按账户自动应用当前全量术语。 */
   }
+  // 被权益挡下的选项在摘要里明说,别让用户以为自己选的那档生效了。
+  const downgrades = [
+    preview.downgraded === "entitlement" ? getString("dialog-downgraded-speed") : "",
+    outputPreview.downgraded === "entitlement"
+      ? getString("dialog-downgraded-bilingual")
+      : "",
+  ].filter(Boolean)
   const summary =
     `${getString("dialog-title")}\n\n` +
     `${getString("dialog-target")}: ${targetLanguage}\n` +
     `${getString("dialog-pipeline")}: ${pipeline}\n` +
     `${getString("dialog-precision")}: ${precision}\n` +
     `${getString("dialog-speed")}: ${speedSummary}\n\n` +
-    `${getString("dialog-glossary")}: ${glossary}\n\n` +
-    getString("dialog-config-hint")
+    `${getString("dialog-glossary")}: ${glossary}\n` +
+    (downgrades.length ? `\n${downgrades.join("\n")}\n` : "") +
+    `\n${getString("dialog-config-hint")}`
   if (!win.confirm(summary)) return null
+  // speed 这里回填的是**用户选择的原始值**,不是上面算出的预览值 —— 解算权威在
+  // runTranslation,预览只是给人看的。两者若因缓存过期而不同,以入口的强刷为准。
   return {
     targetLanguage,
     layoutMode,
     precisionMode,
     bilingual: outputFormats.includes("pdf_bilingual"),
     outputFormats,
-    speed,
+    speed: requestedSpeed as TranslateOptions["speed"],
   }
 }
 
@@ -267,13 +300,44 @@ async function runTranslation(
   att: Zotero.Item,
   opts: TranslateOptions,
 ): Promise<void> {
-  const maxConcurrent = getPref<number>("maxConcurrentTasks") || 3
+  // 账户快照必须在这里、在任何判断之前取一次强刷的(GEYI-422):并发上限、权益降级、
+  // 余额预检三件事都读它,而且强刷保证「刚在网页升了级,回来就能用」。
+  // 这里也是右键翻译与「换管线重跑」两条提交路径唯一的汇合点 —— 解算只能放这儿。
+  const snapshot = await getAccountSnapshot(true)
+  if (snapshot.state === "expired") {
+    const upgrade = win.confirm(
+      `${getString("membership-required")}\n\n${getString("dialog-upgrade")}?`,
+    )
+    if (upgrade) {
+      void emitTelemetry("click_upgrade")
+      Zotero.launchURL(`${config.webBase}/billing?source=zotero_plugin`)
+    }
+    return
+  }
+  const submission = resolveSubmission(opts, {
+    batchSlow: hasFeature(snapshot, MEMBER_FEATURE.BATCH_SLOW),
+    bilingual: hasFeature(snapshot, MEMBER_FEATURE.BILINGUAL),
+  })
+  const effectiveOpts: TranslateOptions = {
+    ...opts,
+    speed: submission.speed,
+    bilingual: submission.bilingual,
+    outputFormats: submission.outputFormats,
+  }
+  for (const d of submission.downgrades) {
+    logDebug(`submission downgraded: ${d.field} (${d.reason})`)
+  }
+
+  const maxConcurrent = resolveConcurrencyCap(
+    getPref<number>("maxConcurrentTasks"),
+    snapshot.account?.concurrent_translate_limit ?? undefined,
+  )
   const activeCount = loadTrackedTasks().filter((task) => isActiveStatus(task.status)).length
   if (activeCount >= maxConcurrent) {
     win.alert(getString("concurrency-limit", { n: maxConcurrent }))
     return
   }
-  const duplicate = chooseDuplicateMode(win, relatedTranslations(att, opts))
+  const duplicate = chooseDuplicateMode(win, relatedTranslations(att, effectiveOpts))
   if (!duplicate) return
 
   const origName = (att.attachmentFilename || "document.pdf").replace(/\.pdf$/i, "")
@@ -296,28 +360,26 @@ async function runTranslation(
     return
   }
 
-  try {
-    const account = await api.me()
-    if (account.available <= 0) {
-      pw.close()
-      const topup = win.confirm(
-        `${getString("dialog-insufficient", { b: account.available, n: "?" })}\n\n${getString("dialog-topup")}?`,
-      )
-      if (topup) {
-        void emitTelemetry("click_topup")
-        Zotero.launchURL(`${config.webBase}/billing?source=zotero_plugin`)
-      }
-      return
+  // 余额预检复用上面那次强刷的快照,不再单独打一次 /v1/me。快照取不到(离线)时
+  // 跳过预检直接提交 —— 与改动前 catch 掉的行为一致,后端仍是权威。
+  const account = snapshot.account
+  if (account && account.available <= 0) {
+    pw.close()
+    const topup = win.confirm(
+      `${getString("dialog-insufficient", { b: account.available, n: "?" })}\n\n${getString("dialog-topup")}?`,
+    )
+    if (topup) {
+      void emitTelemetry("click_topup")
+      Zotero.launchURL(`${config.webBase}/billing?source=zotero_plugin`)
     }
-  } catch (error) {
-    logDebug(`preflight failed: ${error}`)
+    return
   }
 
   let job: Job
   try {
     job = await api.createTranslation(
       { name: `${origName}.pdf`, bytes, contentType: "application/pdf" },
-      opts,
+      effectiveOpts,
     )
   } catch (error: any) {
     const message =
@@ -335,7 +397,9 @@ async function runTranslation(
     sourceAttachmentKey: att.key,
     parentItemKey: att.parentItemKey || undefined,
     originalName: origName,
-    options: opts,
+    // 记的是**实际提交值**而不是用户原始选择:产物回填、重复检测、任务面板都按它
+    // 对号,记原始值会与后端实际产出的东西对不上。
+    options: effectiveOpts,
     duplicateChoice: duplicate.choice,
     overwriteItemKeys: duplicate.overwriteItemKeys,
     status: job.status,
@@ -658,10 +722,13 @@ export async function retryTrackedTask(jobId: string): Promise<void> {
   }
   const nextLayoutMode =
     task.options.layoutMode === "preserve" ? "reflow" : "preserve"
+  // speed 取用户**当前**设置而不是这个任务上次提交的值:上次可能因为权益不足被降级
+  // 成 fast,如果照抄,用户升级会员之后重试仍然拿不到慢速档。真正的解算在
+  // runTranslation 入口统一做,这里只负责把「用户此刻想要什么」喂进去。
   const nextOptions: TranslateOptions = {
     ...task.options,
     layoutMode: nextLayoutMode,
-    speed: automaticSpeedMode(nextLayoutMode, task.options.precisionMode),
+    speed: (getPref<string>("speedMode") || "fast") as TranslateOptions["speed"],
   }
   await runTranslation(win, source, nextOptions)
 }

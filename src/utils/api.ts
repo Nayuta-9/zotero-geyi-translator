@@ -25,6 +25,14 @@ export interface AccountInfo {
   membership_tier: string | null
   membership_active: boolean
   tier_expires_at: string | null
+  // GEYI-423 起 /v1/me 下发的权益与档位上限。**全部 optional**:字段缺失
+  // (旧后端 / 灰度期间)时值为 undefined,而 undefined ≠ 空数组 —— 这个区别正是
+  // fail-OPEN 的判据来源,见 modules/memberFeatures。不许在插件里按 membership_tier
+  // 反推权益(那是 GEYI-403 明令禁止的第二事实源)。
+  member_features?: string[]
+  concurrent_translate_limit?: number | null
+  batch_upload_limit?: number | null
+  max_file_mb?: number | null
 }
 
 export interface Job {

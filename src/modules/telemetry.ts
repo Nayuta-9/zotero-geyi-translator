@@ -11,6 +11,9 @@ export type PluginEvent =
   | "task_failed"
   | "click_ticket"
   | "click_topup"
+  // GEYI-422:会员权益不足时的升级引导(设置页的「去升级」钮 + 提交被会员门挡下时
+  // 的引导)。与 click_topup 分开记 —— 一个是没积分,一个是档位不够,处置完全不同。
+  | "click_upgrade"
 
 /**
  * 复用现有健康端点留下 UA + 事件查询参数,无需建立平行插件 API。

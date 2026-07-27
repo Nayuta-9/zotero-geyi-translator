@@ -17,10 +17,20 @@ const EN: Dict = {
   "dialog-precision-high": "High",
   "dialog-precision-standard": "Standard",
   "dialog-speed": "Large-document processing",
-  "dialog-speed-auto-slow":
-    "Slow mode automatically at {n}+ pages (smaller files stay real-time)",
-  "dialog-speed-realtime":
+  "dialog-speed-slow":
+    "Slow mode from {n}+ pages (smaller files stay real-time)",
+  "dialog-speed-realtime": "Real-time",
+  "dialog-speed-inapplicable":
     "Real-time (slow mode is unavailable for this pipeline)",
+  "dialog-speed-locked":
+    "Real-time (slow mode requires the Professional plan)",
+  "dialog-downgraded-speed":
+    "⚠ Slow mode requires the Professional plan; submitting in real-time mode instead.",
+  "dialog-downgraded-bilingual":
+    "⚠ Bilingual PDF requires the Research plan or above; a translated-only PDF will be produced.",
+  "dialog-upgrade": "View plans",
+  "membership-required":
+    "Your membership has expired or is not active, so the plugin cannot submit translations.",
   "dialog-config-hint": "Change these defaults in Settings → Geyi Translator. Click OK to start translating.",
   "dialog-formats": "Output formats",
   "dialog-glossary": "Glossary",
@@ -94,6 +104,22 @@ const EN: Dict = {
   "pref-output-pdf": "Translated PDF",
   "pref-output-bilingual": "Bilingual PDF",
   "pref-output-docx": "Translated DOCX",
+  "pref-speed": "Large-document processing",
+  "pref-speed-fast": "Real-time",
+  "pref-speed-slow": "Slow (cheaper for large documents)",
+  "pref-speed-hint":
+    "Slow mode kicks in only for AI-reflow documents of {n}+ pages; smaller files stay real-time either way.",
+  "pref-speed-hint-locked":
+    "Slow mode requires the Professional plan. Translations are submitted in real-time mode.",
+  "pref-locked-research": "Research plan or above required",
+  "pref-locked-professional": "Professional plan required",
+  "pref-locked-suffix": "{label} ({lock})",
+  "pref-upgrade": "Upgrade",
+  "pref-membership-expired": "Membership expired or not active",
+  "pref-membership-expired-hint":
+    "The plugin requires an active Research plan or above. Upgrade to keep translating.",
+  "pref-glossary-locked":
+    "Glossary is a member feature. Upgrade to create terms and apply them to translations.",
   "pref-auto-note": "Create a task note after importing",
   "pref-notify": "Notify me when a translation finishes",
   "pref-concurrency": "Maximum concurrent tasks",
@@ -126,8 +152,15 @@ const ZH: Dict = {
   "dialog-precision-high": "高精度",
   "dialog-precision-standard": "标准",
   "dialog-speed": "大文件处理",
-  "dialog-speed-auto-slow": "满 {n} 页自动使用慢速翻译（小文件仍为实时）",
-  "dialog-speed-realtime": "实时翻译（当前管线不适用慢速档）",
+  "dialog-speed-slow": "满 {n} 页走慢速档（小文件仍为实时）",
+  "dialog-speed-realtime": "实时翻译",
+  "dialog-speed-inapplicable": "实时翻译（当前管线不适用慢速档）",
+  "dialog-speed-locked": "实时翻译（慢速档需专业级会员）",
+  "dialog-downgraded-speed": "⚠ 慢速档需专业级会员，本次按实时档提交。",
+  "dialog-downgraded-bilingual":
+    "⚠ 双语对照需研究级及以上会员，本次只产出译文 PDF。",
+  "dialog-upgrade": "查看会员方案",
+  "membership-required": "会员已过期或未开通，插件暂时无法提交翻译。",
   "dialog-config-hint": "可在「设置 → Geyi Translator」里改这些默认。点「确定」开始翻译。",
   "dialog-formats": "输出格式",
   "dialog-glossary": "术语表",
@@ -201,6 +234,20 @@ const ZH: Dict = {
   "pref-output-pdf": "中文译文 PDF",
   "pref-output-bilingual": "双语对照 PDF",
   "pref-output-docx": "中文译文 DOCX",
+  "pref-speed": "大文件处理",
+  "pref-speed-fast": "实时档",
+  "pref-speed-slow": "慢速档（大文件更省）",
+  "pref-speed-hint":
+    "慢速档只对满 {n} 页的 AI 重排文档生效；小文件两种设置都走实时。",
+  "pref-speed-hint-locked": "慢速档需专业级会员，翻译将按实时档提交。",
+  "pref-locked-research": "需研究级及以上会员",
+  "pref-locked-professional": "需专业级会员",
+  "pref-locked-suffix": "{label}（{lock}）",
+  "pref-upgrade": "去升级",
+  "pref-membership-expired": "会员已过期或未开通",
+  "pref-membership-expired-hint":
+    "插件需要研究级及以上的有效会员，升级后即可继续翻译。",
+  "pref-glossary-locked": "术语表是会员功能，升级后即可创建并在翻译中生效。",
   "pref-auto-note": "回填后自动生成任务 note",
   "pref-notify": "翻译完成时通知我",
   "pref-concurrency": "任务并发上限",

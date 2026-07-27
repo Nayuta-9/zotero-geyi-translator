@@ -17,6 +17,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      # GEYI-424:此前这里不跑测试,于是「版本号只有 package.json 一个来源」这类
+      # 契约断言要等到发布时(publish-web.sh / release.yml 才调 npm test)才会执行 —— 闸
+      # 应该尽早响,而不是等到东西已经要发出去了。
+      - run: npm test
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:

@@ -32,6 +32,10 @@ npm run build  # tsc 类型检查 + 打包 build/*.xpi + 生成 update.json
 
 ## 发布
 
+**动 `src/` 或 `addon/` 就必须先 bump 版本**，顺序是 `npm version` → 推 tag → `publish:web`。原因是 Zotero 只在版本号**严格变大**时才升级：同版本号不同内容的包发出去，老用户既不会自动更新，手动装也看不出差别，症状是「已修已发但线上仍复现」（GEYI-424 踩过一次，那次是 `src/utils/config.ts` 里手写的版本号从没跟过 `package.json`，导致设置页与 UA 恒为 0.9.0）。
+
+如果同版本号的包已经流出：**不要覆盖 stable 试图修复**——Zotero 同号一律不升级。唯一出路是 bump 一个新 patch 重发；被覆盖的 `v{version}/` 归档路径带一年 immutable 缓存，靠桶的 object versioning 恢复旧 generation，该版本号作废不再复用。
+
 1. `npm run publish:web -- --dry-run`：运行测试与构建，校验版本、稳定下载地址及 XPI SHA-512，不上传文件。
 2. `npm run publish:web`：重复上述校验，把版本化 XPI、稳定 XPI 和 `update.json` 依次上传到专用公共 GCS 桶，并回读验证版本与哈希。更新清单最后上传，避免客户端读到悬空版本。
 3. 官网 `/download` 的稳定地址由 Nginx 重定向到 GCS；以后发布插件不需要改动或部署官网/后端，只需插件仓 `main` 已同步后执行本命令。可用 `GEYI_PLUGIN_BUCKET=<bucket>` 覆盖默认发布桶。
