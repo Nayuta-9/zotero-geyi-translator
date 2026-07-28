@@ -18,6 +18,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "typings"],
+  "include": ["src", "typings", "scripts"],
   "exclude": ["node_modules", "build", ".scaffold"]
 }

@@ -48,9 +48,11 @@ npm run build  # tsc 类型检查 + 打包 build/*.xpi + 生成 update.json
 npm version patch && git push --follow-tags   # 打 v* tag 即触发 .github/workflows/release.yml
 ```
 
-workflow 会校验 tag 与 `package.json` 版本一致，跑完验证门后创建 Release 并挂 `geyi-translator.xpi` + `update.json`。两条分发链路互相独立：网页端（`publish:web` → GCS）面向官网下载页与自升级，GitHub Release 面向插件商店。
+workflow 会校验 tag 与 `package.json` 版本一致，跑完验证门后创建 Release，**只挂 `geyi-translator.xpi`**——`update.json` 属于 GCS 那条链路，它的 `update_hash` 只匹配打它的那次构建，挂进 Release 只会得到一份自相矛盾的清单（见 `release.yml` 内注释）。两条分发链路互相独立：网页端（`publish:web` → GCS）面向官网下载页与自升级，GitHub Release 面向插件商店。
 
 > 收录入口注意：`zotero-chinese/zotero-plugins` 已停止接受新插件提交（其站点 zotero-chinese.com 上的「请求收录插件」链接尚未更新），现行入口是 `syt2/zotero-addons-scraper` 的 `addons/` 目录，条目文件名为 `Nayuta-9@zotero-geyi-translator`。
+
+> 商店多久能看到新版本：`addons/` 里的条目只记仓库名，版本靠上游定时抓 GitHub Releases（cron 每天 6 轮，实测漂移较大）。Zotero Addons 客户端直接读 scraper 的 `addon_infos.json`，只等这一轮；而 zotero-chinese.com 的插件页是**构建期**把数据烘进 bundle 的，还要再等它自己重新构建一次——所以网页上看到的版本天然比客户端里慢。发完版不必盯，也不要因为网页还是旧版本就怀疑发布失败。
 
 ## 已知限制与待验证
 

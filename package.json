@@ -1,7 +1,7 @@
 {
   "name": "zotero-geyi-translator",
   "version": "0.10.0",
-  "description": "格译 Geyi — 在 Zotero 里一键翻译文献，译文自动挂回原条目（GEYI-328）",
+  "description": "格译 Geyi — 在 Zotero 里一键翻译文献，译文自动挂回原条目",
   "config": {
     "addonName": "Geyi Translator",
     "addonID": "geyi-zotero-translator@geyi.net",
@@ -12,7 +12,7 @@
   "type": "module",
   "scripts": {
     "start": "zotero-plugin serve",
-    "build": "tsc --noEmit && zotero-plugin build",
+    "build": "tsc --noEmit && node scripts/build.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "publish:web": "bash scripts/publish-web.sh",
