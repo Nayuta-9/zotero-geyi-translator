@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "__addonName__",
   "version": "__version__",
-  "description": "在 Zotero 里一键翻译文献，译文自动挂回原条目。由格译 Geyi 提供。",
+  "description": "右键条目翻译其中的 PDF：保留原版式或 AI 重排，可输出双语对照，译文作为子附件挂回同一条目。",
   "homepage_url": "https://www.geyi.net/download",
   "author": "Geyi 格译",
   "icons": {
