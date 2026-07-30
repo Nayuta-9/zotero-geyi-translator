@@ -16,7 +16,13 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      # GEYI-428：版本单调闸要拿历史 tag 当基线，默认的浅克隆看不到它们，
+      # 闸会解析失败并「误判放行」（fail-open）。fetch-depth: 0 + fetch-tags
+      # 是那道闸能真正生效的前提；脚本侧也会主动拒绝 shallow 仓库兜底。
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -31,6 +37,12 @@ jobs:
             echo "tag ${GITHUB_REF_NAME} does not match package version ${expected}" >&2
             exit 1
           }
+
+      # GEYI-428：上面那道只校验「tag 与 package.json 对号」，拦不住「两者一致
+      # 但都没 bump」——那正是 src 改了却以旧版本号发布的事故形态。这道闸以上一个
+      # v* tag 为基线，src/ 或 addon/ 有变更就要求版本严格增长。
+      - name: Verify release version is monotonic
+        run: node scripts/check-release-version.mjs
 
       - run: npm ci
       - run: npm run typecheck
