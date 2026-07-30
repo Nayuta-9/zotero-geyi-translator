@@ -49,10 +49,17 @@ jobs:
       - run: npm test
       - run: npm run build
 
-      # 只挂 .xpi。update.json 属于 GCS 那条链路：它的 update_link 固定指向
-      # www.geyi.net/plugin/zotero-geyi.xpi，而 update_hash 只会匹配打它的那次
-      # 构建的产物——CI 与本地各自打包，zip 元数据不同,hash 必然对不上。把它挂进
-      # Release 只会得到一份自相矛盾的清单。
+      # GEYI-461 起 update.json 也一并挂上。
+      #
+      # 它此前被排除的唯一理由是「CI 与本地各自打包，zip 元数据不同，hash 必然
+      # 对不上，挂上去只会得到一份自相矛盾的清单」。那个前提已经不成立：
+      # scripts/build.mjs 现在把 zip 条目时间戳压成固定值（本地时间
+      # 1980-01-01 00:00）并重算清单 hash，同一 commit 在 CI 与本地产出逐字节
+      # 相同的 xpi —— 已实测跨秒、跨四个时区、跨构建目录均一致。
+      #
+      # 前提是 CI 用 `npm ci` 装真实 node_modules。若哪天改成 symlink 过来的
+      # node_modules，esbuild 会把它解析成绝对路径写进模块注释，产物字节随之
+      # 改变，这份清单就又会与 Release 里的 xpi 对不上号。
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -60,4 +67,5 @@ jobs:
           gh release create "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
-            build/geyi-translator.xpi
+            build/geyi-translator.xpi \
+            build/update.json
