@@ -112,7 +112,10 @@ node scripts/check-release-version.mjs
 #   npm version patch && git push --follow-tags
 # 推完再跑 publish:web。
 head_sha="$(git -C "${plugin_repo}" rev-parse HEAD)"
-tag_sha="$(git -C "${plugin_repo}" rev-parse "v${version}^{commit}" 2>/dev/null || true)"
+# 必须用 `--verify --quiet`:裸 `rev-parse <不存在的 ref>` 会把原字符串**回显**
+# 出来(而不是返回空),于是下面的 -z 判空永远不成立,报错会变成
+# 「v0.99.0 指向 v0.99.0^{com…」这种误导性输出。
+tag_sha="$(git -C "${plugin_repo}" rev-parse --verify --quiet "v${version}^{commit}" 2>/dev/null || true)"
 if [[ -z "${tag_sha}" ]]; then
   echo "✗ tag 闸失败:找不到 tag v${version}。" >&2
   echo "  先打 tag 并推送:npm version patch && git push --follow-tags" >&2
