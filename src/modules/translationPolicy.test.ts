@@ -10,9 +10,11 @@ import {
 } from "./translationPolicy"
 
 describe("形态适用性(镜像后端 batch_gate)", () => {
-  it("只有 reflow + 非标准档够格走慢速档", () => {
+  // GEYI-528:慢速档已撤除,后端 batch_gate 形态门恒 False,镜像判据随之恒 false。
+  // 原契约是「只有 reflow + 非标准档够格」。
+  it("恒 false —— 慢速档已撤除", () => {
     expect(LARGE_DOCUMENT_MIN_PAGES).toBe(100)
-    expect(speedModeApplicable("reflow", "high")).toBe(true)
+    expect(speedModeApplicable("reflow", "high")).toBe(false)
     expect(speedModeApplicable("reflow", "standard")).toBe(false)
     expect(speedModeApplicable("preserve", "high")).toBe(false)
     expect(speedModeApplicable("preserve", "standard")).toBe(false)
@@ -27,32 +29,33 @@ describe("处理档解算(GEYI-422)", () => {
     })
   })
 
-  it("有权益时尊重用户选的慢速档", () => {
+  // GEYI-528:撤除后无论权益如何,一律回落实时档,降级原因恒为 shape。
+  it("撤除后即便有权益也回落实时档", () => {
     expect(resolveSpeedMode("slow", "reflow", "high", { batchSlow: true })).toEqual({
-      speed: "slow",
-      downgraded: null,
+      speed: "fast",
+      downgraded: "shape",
     })
   })
 
-  // 这条是本次事故的核心:研究级用户没有 batch_slow,选了慢速档也必须回落成实时,
-  // 否则 POST /v1/translations 必然 403。写反了就等于什么都没修。
-  it("没有 batch_slow 权益时回落实时档,并标出原因是权益", () => {
+  // 原契约(GEYI-422):研究级用户没有 batch_slow,选慢速必须回落,否则必 403。
+  // GEYI-528 撤除后形态门先一步拦下,降级原因变成 shape —— 权益门不再有机会生效。
+  it("没有 batch_slow 权益时同样回落实时档", () => {
     expect(resolveSpeedMode("slow", "reflow", "high", { batchSlow: false })).toEqual({
       speed: "fast",
-      downgraded: "entitlement",
+      downgraded: "shape",
     })
   })
 
-  // 这条守 fail-OPEN:离线或旧后端没下发 member_features 时,权益是 undefined。
-  // 若把它当成 false,付费用户会在后端抖动时被静默降级 —— 那比 403 更难察觉。
-  it("权益未知时保持用户选择(fail-OPEN),不擅自降级", () => {
+  // 原契约守 fail-OPEN(权益 undefined 时不擅自降级)。GEYI-528 撤除后形态门恒
+  // 关闭,fail-OPEN 已无适用场景 —— 无论权益已知与否都回落实时档。
+  it("权益未知时同样回落实时档", () => {
     expect(resolveSpeedMode("slow", "reflow", "high", {})).toEqual({
-      speed: "slow",
-      downgraded: null,
+      speed: "fast",
+      downgraded: "shape",
     })
     expect(resolveSpeedMode("slow", "reflow", "high")).toEqual({
-      speed: "slow",
-      downgraded: null,
+      speed: "fast",
+      downgraded: "shape",
     })
   })
 
@@ -128,13 +131,15 @@ describe("提交参数的统一解算入口", () => {
     expect(out.speed).toBe("fast")
     expect(out.bilingual).toBe(false)
     expect(out.outputFormats).toEqual(["pdf"])
+    // GEYI-528:speed 的降级原因从 entitlement 变成 shape(形态门先一步拦下);
+    // bilingual 的权益门不受影响。
     expect(out.downgrades).toEqual([
-      { field: "speed", reason: "entitlement" },
+      { field: "speed", reason: "shape" },
       { field: "bilingual", reason: "entitlement" },
     ])
   })
 
-  it("权益齐全时原样提交,不产生降级说明", () => {
+  it("权益齐全时原样提交,除已撤除的慢速档外不产生降级说明", () => {
     const out = resolveSubmission(
       {
         layoutMode: "reflow",
@@ -144,9 +149,10 @@ describe("提交参数的统一解算入口", () => {
       },
       { batchSlow: true, bilingual: true },
     )
-    expect(out.speed).toBe("slow")
+    // GEYI-528:慢速档已撤除,即便权益齐全也回落实时档。
+    expect(out.speed).toBe("fast")
     expect(out.bilingual).toBe(true)
-    expect(out.downgrades).toEqual([])
+    expect(out.downgrades).toEqual([{ field: "speed", reason: "shape" }])
   })
 
   it("缺 outputFormats 时按单语 PDF 兜底", () => {

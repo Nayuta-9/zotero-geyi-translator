@@ -16,10 +16,18 @@ export type DowngradeReason = "shape" | "entitlement" | null
  * 档位归一成 None，插件若判得比它宽，用户就会在摘要里看到一个根本不会生效的档。
  */
 export function speedModeApplicable(
-  layoutMode: string,
-  precisionMode: string,
+  _layoutMode: string,
+  _precisionMode: string,
 ): boolean {
-  return layoutMode === "reflow" && precisionMode !== "standard"
+  // GEYI-528：慢速档已撤除。高精度档主翻译改走 easyrouter 上的 GPT-5.6 Luna，
+  // 栈里再没有 Vertex Batch 等价物，后端 batch_gate 的形态门恒 False、
+  // applicable_speed_mode 一律归一成 NULL。
+  //
+  // 本函数是后端判据的镜像，必须跟着恒 false —— 否则插件会在摘要里显示一个
+  // 后端根本不会生效的档位（这正是本函数注释里一直强调的「不能判得比后端宽」）。
+  // resolveSpeedMode 随之恒返回 fast，提交上去的 speed 也就永远是 fast；
+  // 即便老版本插件仍发 slow，后端也只是静默归一，不会 400。
+  return false
 }
 
 /**

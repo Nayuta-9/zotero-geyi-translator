@@ -68,7 +68,6 @@ export function onPrefsPaneLoad(win: Window): void {
   setText(doc, "geyi-lbl-layout", getString("pref-layout"))
   setText(doc, "geyi-lbl-precision", getString("pref-precision"))
   setText(doc, "geyi-lbl-output", getString("pref-output"))
-  setText(doc, "geyi-lbl-speed", getString("pref-speed"))
   setText(doc, "geyi-lbl-concurrency", getString("pref-concurrency"))
   setText(doc, "geyi-lbl-log-level", getString("pref-log-level"))
   setText(doc, "geyi-upload-strategy", getString("pref-upload-strategy"))
@@ -80,8 +79,6 @@ export function onPrefsPaneLoad(win: Window): void {
   setLabel(doc, "geyi-output-pdf", getString("pref-output-pdf"))
   setLabel(doc, "geyi-output-bilingual", getString("pref-output-bilingual"))
   setLabel(doc, "geyi-output-docx", getString("pref-output-docx"))
-  setLabel(doc, "geyi-speed-fast", getString("pref-speed-fast"))
-  setLabel(doc, "geyi-speed-slow", getString("pref-speed-slow"))
   setLabel(doc, "geyi-auto-note", getString("pref-auto-note"))
   setLabel(doc, "geyi-notify", getString("pref-notify"))
   setLabel(doc, "geyi-log-error", getString("pref-log-error"))
@@ -148,7 +145,6 @@ function applyMembership(doc: Document, snapshot: AccountSnapshot): void {
   const detail = doc.getElementById("geyi-account-detail")
   const hint = doc.getElementById("geyi-membership-hint")
   const upgradeBtn = doc.getElementById("geyi-upgrade-btn")
-  const speedHint = doc.getElementById("geyi-speed-hint")
 
   if (snapshot.state === "unknown") {
     // 不动任何锁,也不改状态行 —— 保持 refreshAccount 已经填好的通用文案。
@@ -157,8 +153,8 @@ function applyMembership(doc: Document, snapshot: AccountSnapshot): void {
     return
   }
 
+  // GEYI-528：慢速档已撤除，设置页不再有速度档行，相关 applyLock / 提示语一并移除。
   const bilingualLocked = hasFeature(snapshot, MEMBER_FEATURE.BILINGUAL) === false
-  const slowLocked = hasFeature(snapshot, MEMBER_FEATURE.BATCH_SLOW) === false
   const glossaryLocked = hasFeature(snapshot, MEMBER_FEATURE.GLOSSARY) === false
 
   applyLock(
@@ -168,18 +164,6 @@ function applyMembership(doc: Document, snapshot: AccountSnapshot): void {
     bilingualLocked,
     MEMBER_FEATURE.BILINGUAL,
   )
-  applyLock(
-    doc,
-    "geyi-speed-slow",
-    getString("pref-speed-slow"),
-    slowLocked,
-    MEMBER_FEATURE.BATCH_SLOW,
-  )
-  if (speedHint) {
-    speedHint.textContent = slowLocked
-      ? getString("pref-speed-hint-locked")
-      : getString("pref-speed-hint", { n: LARGE_DOCUMENT_MIN_PAGES })
-  }
 
   if (snapshot.state === "expired") {
     if (status) status.textContent = getString("pref-membership-expired")
@@ -269,7 +253,6 @@ function bindDefaults(doc: Document): void {
   bindMenu("geyi-layout-mode", "layoutMode")
   bindMenu("geyi-precision-mode", "precisionMode")
   bindMenu("geyi-output-format", "outputFormats")
-  bindMenu("geyi-speed-mode", "speedMode")
   bindMenu("geyi-log-level", "logLevel")
 
   const concurrency = doc.getElementById("geyi-concurrency") as HTMLInputElement | null
