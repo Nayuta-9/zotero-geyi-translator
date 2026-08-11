@@ -102,6 +102,18 @@ function renderBody(body: HTMLDivElement): void {
   for (const task of tasks) renderTask(body, task)
 }
 
+// GEYI-618：header 与 sidenav 的两条 l10n 消息必须分开、且**只能带属性不能带值**。
+//
+// Zotero 把 header.l10nID 挂到 <collapsible-section> 上、把 sidenav.l10nID 挂到侧栏那个
+// 28×28 的按钮上。Fluent 一旦发现消息带值,就用这个值覆写整个元素的 textContent:
+//   · 面板侧 → 标题栏与整块 body 被一句纯文本顶掉,插件内容全部消失(只剩一行「格译任务」);
+//   · 侧栏侧 → 按钮里多出一行文字,在 28px 宽度里逐字换行,竖着压在图标上。
+// 两处正是 GEYI-618 截图里的重叠。标题文字走 .label(Zotero 读它填 section 标题),
+// 侧栏按钮走 .tooltiptext —— 与 Zotero 自带的 section-* / sidenav-* 消息同一写法。
+//
+// 图标同理要按槽位给尺寸:两个槽位都用 CSS background 画图且没设 background-size,
+// 图片按自身固有尺寸绘制并被元素裁掉。标题图标的格子是 16×16、侧栏按钮是 28×28
+// (Zotero 自带图标 20×20),所以塞一张 32×32 的进去只会被裁一圈、还明显大过邻居。
 export function registerTaskPane(actions: TaskPaneActions): void {
   paneActions = actions
   if (registeredPaneID) return
@@ -110,11 +122,11 @@ export function registerTaskPane(actions: TaskPaneActions): void {
     pluginID: config.addonID,
     header: {
       l10nID: "geyi-item-pane-tasks",
-      icon: `chrome://${config.addonRef}/content/icons/icon.svg`,
+      icon: `chrome://${config.addonRef}/content/icons/icon-16.svg`,
     },
     sidenav: {
-      l10nID: "geyi-item-pane-tasks",
-      icon: `chrome://${config.addonRef}/content/icons/icon.svg`,
+      l10nID: "geyi-item-pane-tasks-sidenav",
+      icon: `chrome://${config.addonRef}/content/icons/icon-20.svg`,
     },
     onRender: ({ body }) => {
       renderedBodies.add(body)
