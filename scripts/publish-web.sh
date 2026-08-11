@@ -179,13 +179,22 @@ remote_manifest="$(gcloud storage cat "${stable_manifest}" 2>/dev/null || true)"
 if [[ -z "${remote_manifest}" ]]; then
   echo "闸 3/4 远端比对:远端尚无 update.json(首次发布),放行。"
 else
-  printf '%s' "${remote_manifest}" | node - \
-    "${xpi_path}" "${version}" "${force_republish_reason}" <<'NODE'
+  # GEYI-653:远端 manifest 必须经**临时文件 + argv** 传进去,不能走 stdin。
+  # `node -` 从 stdin 读**程序**,而 heredoc 也占 stdin —— 两者互斥:bash 按左到右
+  # 应用重定向,heredoc 排在管道之后所以它赢,node 拿到的程序是对的,而随后
+  # readFileSync(0) 再读 stdin 时已 EOF、得到空串,JSON.parse("") 必抛。
+  # 于是这道闸从 6bd7627(2026-07-30)加上起就恒炸,只是上一次发布(2026-07-28)
+  # 早于它、没人撞到过。紧邻的「本地校验」那段一直是好的,因为它就是经 argv 传路径。
+  remote_manifest_file="$(mktemp -t geyi-remote-update)"
+  trap 'rm -f "${remote_manifest_file}"' EXIT
+  printf '%s' "${remote_manifest}" >"${remote_manifest_file}"
+  node - "${xpi_path}" "${version}" "${force_republish_reason}" \
+    "${remote_manifest_file}" <<'NODE'
 const crypto = require("node:crypto")
 const fs = require("node:fs")
 
-const [, , xpiPath, localVersion, forceReason] = process.argv
-const remote = JSON.parse(fs.readFileSync(0, "utf8"))
+const [, , xpiPath, localVersion, forceReason, remotePath] = process.argv
+const remote = JSON.parse(fs.readFileSync(remotePath, "utf8"))
 const update =
   remote.addons?.["geyi-zotero-translator@geyi.net"]?.updates?.[0] ?? {}
 const localHash =
