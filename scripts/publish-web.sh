@@ -19,7 +19,7 @@ GEYI-428 的两个逃生口刻意分成两个粒度,不要合并成一个 --forc
 
   --resume-upload
       仅绕过「v{version}/ 已存在」这道存在性闸,用于上传中途失败后重跑。
-      绕过后**强制**校验远端已有字节与本次构建逐字一致,不一致即中止 ——
+      绕过后**强制**校验远端已有字节与本次待发产物逐字一致,不一致即中止 ——
       所以它不能用来偷偷换掉一个已发布版本的内容。
 
   --force-republish REASON
@@ -267,7 +267,7 @@ if (forceReason) {
   process.exit(0)
 }
 console.error(
-  `✗ 闸 3/4 远端比对失败:线上已是 v${localVersion},但内容与本次构建不同。\n` +
+  `✗ 闸 3/4 远端比对失败:线上已是 v${localVersion},但内容与本次待发产物不同。\n` +
     `  远端 hash ${String(update.update_hash).slice(0, 24)}…\n` +
     `  本次 hash ${localHash.slice(0, 24)}…\n` +
     `  Zotero 只在版本号严格变大时升级,同号换内容 = 用户永远收不到这次改动。\n` +
@@ -295,7 +295,7 @@ if gcloud storage objects describe "${versioned_xpi}" >/dev/null 2>&1; then
     echo "  若是上一次上传中断要续传:--resume-upload(会强校验远端字节与本次一致)。" >&2
     exit 1
   fi
-  # --resume-upload 的代价:必须证明远端已有字节与本次构建逐字相同,否则它就
+  # --resume-upload 的代价:必须证明远端已有字节与本次待发产物逐字相同,否则它就
   # 退化成一个能偷换已发布版本的后门。
   echo "闸 4/4 存在性:--resume-upload 已给出,校验远端字节与本次是否一致 ..."
   remote_tmp="$(mktemp)"
@@ -310,7 +310,7 @@ const h = (p) =>
 const [a, b] = [h(localPath), h(remotePath)]
 if (a !== b) {
   console.error(
-    "✗ --resume-upload 校验失败:远端已归档的字节与本次构建不一致。\n" +
+    "✗ --resume-upload 校验失败:远端已归档的字节与本次待发产物不一致。\n" +
       `  远端 ${b.slice(0, 24)}…\n  本次 ${a.slice(0, 24)}…\n` +
       "  这不是「中断续传」,而是在换掉一个已发布版本的内容。\n" +
       "  要覆盖请改用 --force-republish \"<原因>\",并明确这会破坏 immutable 归档。",
