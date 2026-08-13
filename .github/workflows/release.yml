@@ -60,6 +60,17 @@ jobs:
       # 前提是 CI 用 `npm ci` 装真实 node_modules。若哪天改成 symlink 过来的
       # node_modules，esbuild 会把它解析成绝对路径写进模块注释，产物字节随之
       # 改变，这份清单就又会与 Release 里的 xpi 对不上号。
+      #
+      # GEYI-675 订正:上面那句「同一 commit 在 CI 与本地产出逐字节相同」**还少了
+      # 一个前提 —— 同一个 Node 大版本**。adm-zip 走 Node 自带的 zlib，而 deflate
+      # 输出随 Node 版本变化：同样的输入，node 24 把 bootstrap.js 压成 783 字节，
+      # node 26.3 压成 772（解包后内容逐字一致，差的只是 zip 容器）。v0.10.3 与
+      # v0.10.4 两个渠道的 xpi 因此 hash 不同。
+      #
+      # 该问题已从**源头**消除：publish-web.sh 不再本地重打一份，而是直接把这里
+      # 产出的 xpi + update.json 下载下来传 GCS。所以**这两个 asset 是网页端发布
+      # 链路的输入**，别改名、别只挂其中一个 —— scripts/publish-web.test.ts 有闸
+      # 守着这条耦合。
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}

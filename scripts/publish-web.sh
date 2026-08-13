@@ -72,7 +72,17 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-for command_name in git npm node gcloud; do
+# GEYI-675 起多了 gh:网页端要发的产物**直接取自 GitHub Release**,不再本地重打一份。
+# 临时文件统一收口。bash 的 `trap ... EXIT` 是**替换**而非追加:本脚本原先在两处
+# 各装了一个 EXIT trap,后装的把先装的顶掉,于是 remote_manifest_file 每跑一次就
+# 在 /tmp 里留一份。改成一张清单 + 一个 trap,新增临时路径只要 _tmp+=(…)。
+_tmp=()
+_cleanup() {
+  if [[ ${#_tmp[@]} -gt 0 ]]; then rm -rf "${_tmp[@]}"; fi
+}
+trap _cleanup EXIT
+
+for command_name in git npm node gcloud gh; do
   command -v "${command_name}" >/dev/null || {
     echo "Missing required command: ${command_name}" >&2
     exit 1
@@ -133,14 +143,47 @@ if [[ "${head_sha}" != "${tag_sha}" ]]; then
 fi
 
 npm test
-npm run build
-xpi_path="${plugin_repo}/build/geyi-translator.xpi"
-update_path="${plugin_repo}/build/update.json"
+
+# ── 产物来源:GitHub Release(GEYI-675)──────────────────────────────────────
+# 这里**不再 `npm run build`**。原先是本地重打一份传 GCS,而 CI 另打一份挂
+# Release —— 于是同一个 commit、同一个版本号,两个分发渠道的 xpi 字节不同。
+#
+# 实测(v0.10.3 与 v0.10.4 都是这样):解包后 `diff -rq` 零差异,17 个文件、
+# 216659 字节、时间戳都是 GEYI-461 钉死的 1980-01-01,**内容逐字一致**;差的只是
+# zip 容器 —— 同样的输入,CI(node 24)把 bootstrap.js 压成 783 字节,本机
+# (node 26.3)压成 772。adm-zip 走 Node 自带的 zlib,而 zlib 的 deflate 输出随
+# Node 大版本变化。GEYI-461 把**时间戳**定死了,但没管**压缩器**;release.yml 里
+# 那句「同一 commit 在 CI 与本地产出逐字节相同」少了一个前提:还得同一个 Node。
+#
+# 修法不是去追平工具链(钉 Node 大版本只是把概率压小:zlib 也可能随小版本变,
+# 而且它要求每个发版的人都装对版本),而是**取消第二次构建** —— 网页端与插件
+# 商店从此发的是同一个文件,字节一致成为构造上的事实,不再是一条需要维护的承诺。
+#
+# 顺带修好的两处:
+#   * `--resume-upload` 的强字节校验此前会被工具链差异误伤,现在天然幂等;
+#   * 闸 3 的「版本与内容都相同 → 幂等放行」分支同理,重跑必然命中。
+#
+# 代价与取舍:发布因此依赖 release workflow 已跑完(它由 push tag 触发,约 35 秒)。
+# 这个耦合本来就在 —— 闸 2 已经要求 tag 存在,而插件商店本就只认 Release。
+# Release 还没出来就发,等于把一份「没人见过的字节」推给自动更新通道,不如等。
+release_dir="$(mktemp -d)"
+_tmp+=("${release_dir}")
+if ! gh release download "v${version}" --dir "${release_dir}" \
+  --pattern "geyi-translator.xpi" --pattern "update.json" 2>/dev/null; then
+  echo "✗ 取产物失败:GitHub Release v${version} 不存在,或缺少 xpi / update.json。" >&2
+  echo "  tag 推上去后 release workflow 约 35 秒出 Release,先确认它跑完:" >&2
+  echo "    gh run list --workflow=release.yml --limit 1" >&2
+  echo "  网页端与插件商店必须发同一份字节,所以这里不再本地重打一份兜底。" >&2
+  exit 1
+fi
+xpi_path="${release_dir}/geyi-translator.xpi"
+update_path="${release_dir}/update.json"
 
 [[ -s "${xpi_path}" && -s "${update_path}" ]] || {
-  echo "Build did not produce the expected XPI and update manifest." >&2
+  echo "GitHub Release v${version} 的产物为空。" >&2
   exit 1
 }
+echo "产物取自 GitHub Release v${version}(与插件商店同一份字节)。"
 
 node - "${xpi_path}" "${update_path}" "${version}" <<'NODE'
 const crypto = require("node:crypto")
@@ -185,8 +228,8 @@ else
   # readFileSync(0) 再读 stdin 时已 EOF、得到空串,JSON.parse("") 必抛。
   # 于是这道闸从 6bd7627(2026-07-30)加上起就恒炸,只是上一次发布(2026-07-28)
   # 早于它、没人撞到过。紧邻的「本地校验」那段一直是好的,因为它就是经 argv 传路径。
-  remote_manifest_file="$(mktemp -t geyi-remote-update)"
-  trap 'rm -f "${remote_manifest_file}"' EXIT
+  remote_manifest_file="$(mktemp)"
+  _tmp+=("${remote_manifest_file}")
   printf '%s' "${remote_manifest}" >"${remote_manifest_file}"
   node - "${xpi_path}" "${version}" "${force_republish_reason}" \
     "${remote_manifest_file}" <<'NODE'
@@ -208,9 +251,10 @@ if (update.version !== localVersion) {
   process.exit(0)
 }
 if (update.update_hash === localHash) {
-  // GEYI-461 之后这是**正常路径**:构建已可复现,同源码重跑必然走到这里,
-  // 于是上传中断后直接重跑即可,不需要任何逃生口。
-  // (461 之前 zip 条目时间戳取打包时刻,这个分支不可达,重跑必撞下面的失败。)
+  // 这是**正常路径**:GEYI-675 起产物直接取自 Release,同一个版本号重跑取到的
+  // 永远是同一份字节,于是上传中断后直接重跑即可,不需要任何逃生口。
+  // (GEYI-461 之前 zip 时间戳取打包时刻、461 之后仍受 Node 版本影响,这个分支
+  //  都不稳定可达;取消第二次构建之后它才真正成为常态。)
   console.log("闸 3/4 远端比对:远端版本与内容均与本次一致,幂等放行(可安全重跑)。")
   process.exit(0)
 }
@@ -228,8 +272,9 @@ console.error(
     `  本次 hash ${localHash.slice(0, 24)}…\n` +
     `  Zotero 只在版本号严格变大时升级,同号换内容 = 用户永远收不到这次改动。\n` +
     `  正常做法:npm version patch && git push --follow-tags,然后重跑。\n` +
-    `  注:构建已可复现(GEYI-461),同源码重跑本应命中上面的幂等分支。走到这里说明\n` +
-    `  产物字节确实变了 —— 先确认是不是依赖树变动或源码真被改过。\n` +
+    `  注:GEYI-675 起产物直接取自 Release,同一版本号重跑取到的是同一份字节,本应\n` +
+    `  命中上面的幂等分支。走到这里说明该 tag 的 Release 被重新产出过(删了重发 /\n` +
+    `  改了 tag 指向),或线上这份是更早以别的方式传上去的。\n` +
     `  若确实要以同版本号覆盖:--force-republish "<原因>"。\n` +
     `  若远端处于部分失败的中间态:--resume-upload(它会强校验字节一致)。`,
 )
@@ -254,7 +299,7 @@ if gcloud storage objects describe "${versioned_xpi}" >/dev/null 2>&1; then
   # 退化成一个能偷换已发布版本的后门。
   echo "闸 4/4 存在性:--resume-upload 已给出,校验远端字节与本次是否一致 ..."
   remote_tmp="$(mktemp)"
-  trap 'rm -f "${remote_tmp}"' EXIT
+  _tmp+=("${remote_tmp}")
   gcloud storage cp "${versioned_xpi}" "${remote_tmp}" >/dev/null
   node - "${xpi_path}" "${remote_tmp}" <<'NODE'
 const crypto = require("node:crypto")
