@@ -411,12 +411,63 @@ async function runTranslation(
   upsertTrackedTask(task)
   void emitTelemetry("task_submitted", job.id)
   refreshTaskPane()
+  // GEYI-645:任务已入库、面板已接管 → 浮窗到此为止。
+  //
+  // 改之前浮窗全程悬在主窗右下角:`closeOnClick: false`,而 `startCloseTimer`
+  // 只在终态才调,于是一次十几分钟的翻译就悬十几分钟 —— 而同一份状态(进度百分
+  // 比、状态文案、错误文案)条目面板里每 3 秒刷一次,一样不少,还多出重试/报障
+  // 按钮。GEYI-618 已查清浮窗是 Zotero 平台的独立 chrome 窗口
+  // (`chrome://zotero/content/progressWindow.xhtml`,`alwaysontop=yes`),位置由
+  // `ProgressWindowSet.tile()` 钉死,插件改不了它的位置和尺寸 —— 所以方向不是
+  // 「挪走」,是「让它早点关」。
+  //
+  // 文案换成「已提交」而不是留着「翻译中…」:窗口马上要消失,留一句「翻译中」
+  // 会让人以为翻译被取消了。这句话同时把「去哪儿看进度」说清楚。
   pw.changeLine({
-    text: getString("progress-translating"),
-    type: "default",
+    text: getString("progress-submitted"),
+    type: "success",
     progress: 20,
   })
-  startPolling(job.id, pw, win)
+  closeSubmitProgress(pw)
+  // **不再把 pw 交给轮询**。这是本票风险点(「窗口关掉之后再 changeLine 有踩空
+  // 的风险」)的处理方式:与其在下游到处判窗口还在不在,不如根本不把它传下去 ——
+  // handleJob / updateProgressWindow 里那些 `pw?.` 于是结构性地成为 no-op。
+  //
+  // 顺带修掉一个真实的小泄漏:Zotero 的 `close()` 会把 `_windowLoaded` 置回
+  // false,此后 `setText`/`setProgress` 既不抛也不渲染,而是被
+  // `_deferUntilWindowLoad` 静默推进一个**永远不会 flush** 的数组(本插件不会
+  // 再 show 第二次)。按 3 秒一轮,十分钟攒约 200 条。
+  startPolling(job.id, win)
+}
+
+// 提交阶段那个浮窗的收尾。
+//
+// 两道一起上是有原因的:
+// 1. `startCloseTimer` 是 Zotero 自己的关闭流程,鼠标划过主窗时
+//    `_onMouseOver` 会 `_disableTimeout()` 把它取消掉 —— 用户手正好在窗口上,
+//    浮窗就又不走了,而本票要的恰恰是「无论如何别一直悬着」。
+// 2. 所以再加一道兜底 `close()`。用 `Zotero.Promise.delay` 而不是 `setTimeout`:
+//    本仓一贯用它(轮询就是),模块作用域里没有可靠的 `setTimeout`。
+//
+// 另:`startCloseTimer` 必须在窗口 **load 完之后**调才有效(底层 `_windowLoading`
+// 时挂的 timer 会随 about:blank 那个 inner window 一起被 Gecko 丢掉 —— 这正是
+// `show()` 里那次隐含的 5 秒定时器从来没生效过的原因)。这里的调用点在
+// `readBytes` 与 `createTranslation` 两次 await 之后,窗口早已 load 完。
+const SUBMIT_PROGRESS_CLOSE_MS = 2500
+
+function closeSubmitProgress(pw: any): void {
+  try {
+    pw?.startCloseTimer?.(SUBMIT_PROGRESS_CLOSE_MS)
+  } catch {
+    /* 关不掉不该影响任务本身 */
+  }
+  void Zotero.Promise.delay(SUBMIT_PROGRESS_CLOSE_MS + 500).then(() => {
+    try {
+      pw?.close?.()
+    } catch {
+      /* 已经关了 / 窗口已销毁 */
+    }
+  })
 }
 
 function updateProgressWindow(pw: any, task: TrackedTask): void {
@@ -471,12 +522,22 @@ async function handleJob(job: Job, win?: Window, pw?: any): Promise<boolean> {
       type: "fail",
     })
     pw?.startCloseTimer?.(6000)
+    // GEYI-645:浮窗在提交阶段就关掉了,失败终态原先那条浮窗提示于是没人看得见。
+    // 成功侧一直有系统通知兜着(上面那段),失败侧此前没有 —— 不补的话这一票会
+    // 让**失败反而比成功更不可见**,那是个货真价实的倒退。用同一个
+    // `notifyOnComplete` 开关:关掉通知的人两种终态都不想被打扰。
+    if (getPref<boolean>("notifyOnComplete") !== false) {
+      notify(
+        win || mainWindow(),
+        job.error || getString("notify-failed", { name: task.originalName }),
+      )
+    }
     return true
   }
   return false
 }
 
-function startPolling(jobId: string, pw?: any, win?: Window): void {
+function startPolling(jobId: string, win?: Window): void {
   const addon = (Zotero as any)[config.addonInstance]
   if (addon?.data.activePolls.has(jobId)) return
   let stopped = false
@@ -498,9 +559,16 @@ function startPolling(jobId: string, pw?: any, win?: Window): void {
           await Zotero.Promise.delay(POLL_INTERVAL_MS)
           continue
         }
-        if (await handleJob(job, win, pw)) return
+        if (await handleJob(job, win)) return
         await Zotero.Promise.delay(POLL_INTERVAL_MS)
       }
+    } catch (error) {
+      // GEYI-645:这里原先只有 try/finally,没有 catch。handleJob 里任何一步抛
+      // 出来(它要碰 UI、要写库、要挂产物),整条轮询就静默死掉、finally 清掉
+      // activePolls,任务从此永远不再回填 —— 用户看到的是「翻译中」停在那儿。
+      // 本票动了 handleJob 的终态分支,顺手把这条防线补上:UI 层的意外不该吃掉
+      // 产物回填。
+      Zotero.logError(error as Error)
     } finally {
       addon?.data.activePolls.delete(jobId)
     }

@@ -51,6 +51,9 @@ const EN: Dict = {
   "notify-failed": "Translation failed: {name}",
   "progress-uploading": "Uploading…",
   "progress-translating": "Translating…",
+  // GEYI-645: the popup closes right after this line — say where the progress
+  // actually lives, otherwise its disappearance reads as "the job got cancelled".
+  "progress-submitted": "Submitted — progress shows on the item pane",
   "progress-done": "Done",
   "duplicate-title": "Existing Geyi translation",
   "duplicate-body": "This item already has a translation from the same pipeline. Choose how to continue.",
@@ -181,6 +184,9 @@ const ZH: Dict = {
   "notify-failed": "翻译失败：{name}",
   "progress-uploading": "上传中…",
   "progress-translating": "翻译中…",
+  // GEYI-645:这句一出浮窗就开始关,所以必须把「去哪儿看进度」说清楚,否则窗口
+  // 一消失会被读成「任务没了」。
+  "progress-submitted": "已提交 —— 进度见条目面板",
   "progress-done": "完成",
   "duplicate-title": "已有格译译文",
   "duplicate-body": "同一原文已有同管线译文，请选择处理方式。",
