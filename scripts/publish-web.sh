@@ -4,7 +4,7 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 plugin_repo="$(cd "${script_dir}/.." && pwd)"
-plugin_bucket="${GEYI_PLUGIN_BUCKET:-immersive-translator-plugin-releases}"
+plugin_bucket="${GEYI_PLUGIN_BUCKET:-geyi-translator-plugin-releases}"
 dry_run=false
 resume_upload=false
 force_republish_reason=""
@@ -208,7 +208,10 @@ NODE
 versioned_xpi="gs://${plugin_bucket}/plugin/v${version}/zotero-geyi.xpi"
 stable_xpi="gs://${plugin_bucket}/plugin/zotero-geyi.xpi"
 stable_manifest="gs://${plugin_bucket}/plugin/update.json"
-public_base="https://storage.googleapis.com/${plugin_bucket}/plugin"
+# 桶已私有(geyi-trans 组织禁公开读),对外分发走 www.geyi.net/plugin/*(入口
+# 负载均衡直挂私有桶)。终验因此改走真实用户入口 —— 不只验桶,连路由/缓存头
+# 一起验。stable 两件都带 no-cache,读到的就是刚上传的字节。
+public_base="https://www.geyi.net/plugin"
 
 # ── 闸 3/4:远端比对(GEYI-428 项①)───────────────────────────────────────
 # 原有的两组校验(:74-92 构建后、:120-138 上传后回读)比较对象**全部取自本次
