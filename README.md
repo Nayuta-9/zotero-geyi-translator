@@ -37,8 +37,17 @@ npm run build  # tsc 类型检查 + 打包 build/*.xpi + 生成 update.json
 如果同版本号的包已经流出：**不要覆盖 stable 试图修复**——Zotero 同号一律不升级。唯一出路是 bump 一个新 patch 重发；被覆盖的 `v{version}/` 归档路径带一年 immutable 缓存，靠桶的 object versioning 恢复旧 generation，该版本号作废不再复用。
 
 1. `npm run publish:web -- --dry-run`：运行测试与构建，校验版本、稳定下载地址及 XPI SHA-512，不上传文件。
-2. `npm run publish:web`：重复上述校验，把版本化 XPI、稳定 XPI 和 `update.json` 依次上传到专用公共 GCS 桶，并回读验证版本与哈希。更新清单最后上传，避免客户端读到悬空版本。
-3. 官网 `/download` 的稳定地址由 Nginx 重定向到 GCS；以后发布插件不需要改动或部署官网/后端，只需插件仓 `main` 已同步后执行本命令。可用 `GEYI_PLUGIN_BUCKET=<bucket>` 覆盖默认发布桶。
+2. `npm run publish:web`：重复上述校验，把版本化 XPI、稳定 XPI 和 `update.json` 依次上传到 GCS 桶，并回读验证版本与哈希（回读走 `https://www.geyi.net/plugin/*` 真实入口，路由与缓存头一起验）。更新清单最后上传，避免客户端读到悬空版本。
+3. 以后发布插件不需要改动或部署官网/后端，只需插件仓 `main` 已同步后执行本命令。可用 `GEYI_PLUGIN_BUCKET=<bucket>` 覆盖默认发布桶。
+
+**发布桶从 GEYI-894 起是前端静态桶 `gs://geyi-frontend-static`**（此前是专用桶 `gs://geyi-translator-plugin-releases`）。桶是**私有桶**，由 geyi-trans 的全局负载均衡代读，`/plugin/*` 交给 backend bucket `geyi-frontend-bucket` 服务——**对外 URL 一字未变**，仍是 `https://www.geyi.net/plugin/…`。
+
+换桶的理由与插件无关：项目的 backend bucket 配额是 3 个且已满、提额被自动拒，而前端要给 `/assets/*` 单开一个 `FORCE_CACHE_ALL` 的 backend bucket 才能让 Cloud CDN 真正命中，槽位只能从插件这边腾。两个连带后果要知道：
+
+- 前端仓 `geyi-frontend` 的发布脚本会把「不在本次构建产物里」的桶内对象当陈旧对象删掉，`plugin/` 前缀在那边有专门的保护（`scripts/deploy-static.sh` 的 `PROTECTED_PREFIXES`，发布日志里会打印「受保护(插件分发对象) N 个」）。**改本仓发布目标前先确认那道保护还在**，否则前端发一次版就会把插件分发整片删掉。
+- 插件分发件现在与前端产物同桶，因此前端的 Cloud Build 账号 `geyi-static-deploy@geyi-trans.iam.gserviceaccount.com` 对它们也有写权限（此前只有项目 Owner/Editor 能写）。
+
+老桶 `gs://geyi-translator-plugin-releases` 作为回滚件保留到 GEYI-894 结案 30 天后，里面 9 个对象与新桶逐字节相同。
 
 ### GitHub Release（插件商店用，GEYI-399）
 

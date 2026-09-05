@@ -4,7 +4,19 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 plugin_repo="$(cd "${script_dir}/.." && pwd)"
-plugin_bucket="${GEYI_PLUGIN_BUCKET:-geyi-translator-plugin-releases}"
+# GEYI-894:发布目标从专用桶 geyi-translator-plugin-releases 改成前端静态桶。
+# 换桶的理由与插件无关 —— 项目的 backend bucket 配额是 3 个且已满、提额被自动
+# 拒,而前端要给 /assets/* 单开一个 FORCE_CACHE_ALL 的 backend bucket 才能让
+# Cloud CDN 真正命中,槽位只能从插件这边腾。对象键 `plugin/…` 一字未动,对外
+# URL 仍是 https://www.geyi.net/plugin/…,`/plugin/*` 改由前端 backend bucket 服务。
+#
+# 前端发布脚本(geyi-frontend 仓 scripts/deploy-static.sh)会把「不在本次构建
+# 产物里」的对象当陈旧对象删掉,所以它那边先加了 `plugin/` 前缀保护,本仓传上去
+# 的东西不会被前端发版清掉。改这个默认值前先确认那道保护还在。
+#
+# 老桶 geyi-translator-plugin-releases 作为回滚件保留到 GEYI-894 结案 30 天后,
+# 里面的 9 个对象与新桶逐字节相同。要回去只需把这个默认值改回来。
+plugin_bucket="${GEYI_PLUGIN_BUCKET:-geyi-frontend-static}"
 dry_run=false
 resume_upload=false
 force_republish_reason=""
@@ -209,8 +221,9 @@ versioned_xpi="gs://${plugin_bucket}/plugin/v${version}/zotero-geyi.xpi"
 stable_xpi="gs://${plugin_bucket}/plugin/zotero-geyi.xpi"
 stable_manifest="gs://${plugin_bucket}/plugin/update.json"
 # 桶已私有(geyi-trans 组织禁公开读),对外分发走 www.geyi.net/plugin/*(入口
-# 负载均衡直挂私有桶)。终验因此改走真实用户入口 —— 不只验桶,连路由/缓存头
-# 一起验。stable 两件都带 no-cache,读到的就是刚上传的字节。
+# 负载均衡直挂私有桶,由 backend bucket geyi-frontend-bucket 服务)。终验因此改走
+# 真实用户入口 —— 不只验桶,连路由/缓存头一起验。stable 两件都带 no-cache,读到的
+# 就是刚上传的字节;那一层是 USE_ORIGIN_HEADERS,不会替它们改缓存头。
 public_base="https://www.geyi.net/plugin"
 
 # ── 闸 3/4:远端比对(GEYI-428 项①)───────────────────────────────────────
