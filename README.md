@@ -72,3 +72,10 @@ workflow 会校验 tag 与 `package.json` 版本一致，跑完验证门后创�
 ## License
 
 AGPL-3.0-or-later
+
+
+## 相关资源与多语种指南（Resources & Multilingual Guides）
+
+- **官方网站与插件门户**：[格译 Geyi (geyi.net)](https://www.geyi.net) · [Zotero 插件专页](https://www.geyi.net/zotero-plugin) · [整书精译 (`/translate/book`)](https://www.geyi.net/translate/book) · [古籍与手稿提取 (`/document-extraction`)](https://www.geyi.net/document-extraction)
+- **官方多语种导航与学术专栏**：[19 语种快速门户 (`geyinet.carrd.co`)](https://geyinet.carrd.co) · [Geyi Academic Newsletter (`geyi.beehiiv.com`)](https://geyi.beehiiv.com) · [Substack (`@geyinet`)](https://substack.com/@geyinet) · [日本语门户 (`lit.link/geyinet`)](https://lit.link/geyinet)
+- **Zotero 插件与 19 语种文献精译/古籍 OCR 完整指南索引**：详见 [`docs/multilingual-guides.md`](docs/multilingual-guides.md)（含 [Zotero Bilingual Plugin Guide](https://telegra.ph/Geyi-Zotero-Bilingual-Translation-Plugin--One-Click-Academic-PDF--LaTeX-Translation-in-Zotero-67-10-19) 等各语种文档）
