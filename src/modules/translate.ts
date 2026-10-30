@@ -4,7 +4,7 @@ import { getPref } from "../utils/prefs"
 import { withPluginIdentity } from "../utils/http"
 import { logDebug } from "../utils/log"
 import { api, ApiError, type Job, type OutputItem, type TranslateOptions } from "../utils/api"
-import { showSignedInAccount } from "./accountNotice"
+import { accountLabel, showSignedInAccount } from "./accountNotice"
 import { isLoggedIn, showLoginFailure, startLogin } from "./auth"
 import { getGlossaries } from "./glossary"
 import { refreshTaskPane } from "./taskPane"
@@ -168,6 +168,7 @@ function chooseDuplicateMode(
 // ── 主命令与配置 ─────────────────────────────────────────────────────────────
 
 async function onTranslateCommand(win: Window): Promise<void> {
+  let signedInHere = false
   if (!isLoggedIn()) {
     const go = win.confirm(
       `${getString("login-required-title")}\n\n${getString("login-required-body")}`,
@@ -179,6 +180,7 @@ async function onTranslateCommand(win: Window): Promise<void> {
       showLoginFailure(win, error)
       return
     }
+    signedInHere = true
     void showSignedInAccount()
   }
 
@@ -196,12 +198,20 @@ async function onTranslateCommand(win: Window): Promise<void> {
     return
   }
 
-  const opts = await openConfigDialog(win)
+  const opts = await openConfigDialog(win, signedInHere)
   if (!opts) return
   await runTranslation(win, att, opts)
 }
 
-async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
+/**
+ * Confirms the translation settings. With `showAccount`, the account is read
+ * fresh and the summary names it, so a user who has just signed in sees which
+ * account the PDF goes to before confirming.
+ */
+export async function openConfigDialog(
+  win: Window,
+  showAccount = false,
+): Promise<TranslateOptions | null> {
   const targetLanguage = getPref<string>("targetLanguage") || "zh-CN"
   const layoutMode = getPref<string>("layoutMode") || "reflow"
   const precisionMode = getPref<string>("precisionMode") || "high"
@@ -221,7 +231,7 @@ async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
   // 真正决定提交值的解算在 runTranslation 入口 —— 那是本对话框与「换管线重跑」
   // 两条提交路径唯一的汇合点,只在这里算会漏掉重试路径。
   const requestedSpeed = getPref<string>("speedMode") || "fast"
-  const snapshot = await getAccountSnapshot()
+  const snapshot = await getAccountSnapshot(showAccount)
   const preview = resolveSpeedMode(requestedSpeed, layoutMode, precisionMode, {
     batchSlow: hasFeature(snapshot, MEMBER_FEATURE.BATCH_SLOW),
   })
@@ -252,6 +262,7 @@ async function openConfigDialog(win: Window): Promise<TranslateOptions | null> {
   ].filter(Boolean)
   const summary =
     `${getString("dialog-title")}\n\n` +
+    (showAccount ? `${getString("dialog-account")}: ${accountLabel(snapshot)}\n` : "") +
     `${getString("dialog-target")}: ${targetLanguage}\n` +
     `${getString("dialog-pipeline")}: ${pipeline}\n` +
     `${getString("dialog-precision")}: ${precision}\n` +

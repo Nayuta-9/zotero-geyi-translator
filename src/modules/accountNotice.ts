@@ -3,7 +3,7 @@ import { getString } from "../utils/locale"
 import { logDebug } from "../utils/log"
 import { clearCredentials, getCredentials } from "./auth"
 import { clearGlossaryCache } from "./glossary"
-import { clearAccountCache, getAccountSnapshot } from "./memberFeatures"
+import { type AccountSnapshot, clearAccountCache, getAccountSnapshot } from "./memberFeatures"
 
 // After a browser sign-in, names the account the plugin is now signed in to
 // and offers to sign out at once. The notice opens in its own non-modal window
@@ -23,14 +23,30 @@ export interface AccountNoticeOptions {
   onSignedOut?: () => void
 }
 
-/** Notice text; `email` is the signed-in account, or undefined when it could not be read. */
-export function accountNoticeContent(email: string | undefined): AccountNoticeContent {
+/**
+ * Names the signed-in account in a few words: its email, or why it is
+ * missing. A 403 from `/v1/me` (snapshot state `expired`) means the account
+ * has no membership that includes the plugin.
+ */
+export function accountLabel(snapshot: AccountSnapshot): string {
+  const email = snapshot.account?.email
+  if (email) return email
+  return snapshot.state === "expired"
+    ? getString("account-label-membership")
+    : getString("account-label-unknown")
+}
+
+/** Notice text for the account snapshot read right after sign-in. */
+export function accountNoticeContent(snapshot: AccountSnapshot): AccountNoticeContent {
+  const email = snapshot.account?.email
   return {
     title: getString("account-notice-title"),
     lines: [
       email
         ? getString("account-notice-email", { email })
-        : getString("account-notice-unknown"),
+        : snapshot.state === "expired"
+          ? getString("account-notice-membership")
+          : getString("account-notice-unknown"),
       getString("account-notice-hint"),
     ],
     signOutLabel: getString("account-notice-signout"),
@@ -44,7 +60,7 @@ export function accountNoticeContent(email: string | undefined): AccountNoticeCo
  *
  * Nothing opens when the plugin was signed out or signed in again while the
  * account was loading. The sign-out action clears only the credentials this
- * notice was opened for.
+ * notice was opened for, and it never throws, so the notice always closes.
  */
 export async function showSignedInAccount(options: AccountNoticeOptions = {}): Promise<void> {
   const key = getCredentials()?.key
@@ -54,18 +70,24 @@ export async function showSignedInAccount(options: AccountNoticeOptions = {}): P
   if (getCredentials()?.key !== key) return
 
   const signOut = () => {
-    if (getCredentials()?.key !== key) return
-    clearCredentials()
-    clearGlossaryCache()
-    clearAccountCache()
-    options.onSignedOut?.()
+    try {
+      if (getCredentials()?.key !== key) return
+      clearCredentials()
+      clearGlossaryCache()
+      clearAccountCache()
+    } catch (error) {
+      logDebug(`account notice sign-out failed: ${error}`)
+      return
+    }
     showSignedOutLine()
+    try {
+      options.onSignedOut?.()
+    } catch (error) {
+      logDebug(`account notice sign-out refresh failed: ${error}`)
+    }
   }
   try {
-    ;(options.open ?? openAccountNoticeWindow)(
-      accountNoticeContent(snapshot.account?.email || undefined),
-      signOut,
-    )
+    ;(options.open ?? openAccountNoticeWindow)(accountNoticeContent(snapshot), signOut)
   } catch (error) {
     logDebug(`account notice failed: ${error}`)
   }

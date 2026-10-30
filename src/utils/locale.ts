@@ -87,6 +87,11 @@ const EN: Dict = {
   "account-notice-email": "This plugin is now signed in as {email}.",
   "account-notice-unknown":
     "Signed in, but the account could not be loaded right now. You can check it in the Geyi settings pane.",
+  "account-notice-membership":
+    "Signed in, but this account has no active membership that includes the Zotero plugin, so its email cannot be shown.",
+  "account-label-unknown": "could not be loaded",
+  "account-label-membership": "no membership that includes the plugin",
+  "dialog-account": "Account",
   "account-notice-hint":
     "If this is not your account, someone else may have approved this sign-in. Sign out now, then sign in again from the plugin.",
   "account-notice-signout": "Not my account — sign out",
@@ -243,6 +248,10 @@ const ZH: Dict = {
   "account-notice-title": "已登录格译",
   "account-notice-email": "插件现在登录的账号是：{email}",
   "account-notice-unknown": "已登录，但暂时读取不到账号信息，可在格译设置页查看。",
+  "account-notice-membership": "已登录，但该账号当前没有包含 Zotero 插件的有效会员，因此无法显示邮箱。",
+  "account-label-unknown": "暂时读取不到",
+  "account-label-membership": "会员不含插件",
+  "dialog-account": "账号",
   "account-notice-hint": "如果这不是你的账号，可能是别人抢先确认了这次登录。请立即登出，再从插件重新登录。",
   "account-notice-signout": "不是我的账号，登出",
   "account-notice-close": "是我的账号",
