@@ -59,3 +59,23 @@ This index aggregates official multilingual documentation, user portals, and aca
 | **Turkish & Ottoman (`tr`)** | [geyi.net/en/document-extraction](https://www.geyi.net/en/document-extraction) | [Yapay Zeka ile Akademik Makale ve Kitap PDF Çeviri (LaTeX Formül ve Düzen Koruma) + Osmanlıca & El Yazısı OCR](https://telegra.ph/Yapay-Zeka-ile-Akademik-Makale-ve-Kitap-PDF-Çeviri-LaTeX-Formül-ve-Düzen-Koruma--Osmanlıca--El-Yazısı-OCR--Geyi-geyinet-10-19) |
 | **Vietnamese (`vi`)** | [geyi.net/en/translate/book](https://www.geyi.net/en/translate/book) | [Dịch sách PDF/EPUB và bài báo khoa học bằng AI (giữ nguyên định dạng, công thức LaTeX & OCR chữ Hán Nôm)](https://telegra.ph/Dịch-sách-PDFEPUB-và-bài-báo-khoa-học-bằng-AI-giữ-nguyên-định-dạng-công-thức-LaTeX--OCR-chữ-Hán-Nôm--Geyi-geyinet-10-19) |
 | **Thai (`th`)** | [geyi.net/en/file-translate](https://www.geyi.net/en/file-translate) | [แปลเอกสารวิชาการ PDF และหนังสือ EPUB ด้วย AI รักษาโครงสร้างหน้ากระดาษ สมการ LaTeX และระบบ Thai OCR](https://telegra.ph/แปลเอกสารวชาการ-PDF-และหนงสอ-EPUB-ดวย-AI-รกษาโครงสรางหนากระดาษ-สมการ-LaTeX-และระบบ-Thai-OCR--Geyi-geyinet-10-19) |
+
+---
+
+## 4. Academic Tool Directories, LaTeX Wiki Registries & Comparison Matrices
+
+- **Japanese TeX Users Group Official Wiki (`TeX Wiki` — `texwiki.texjp.org`)**:
+  - [TeX Wiki — 変換ツール (Conversion Tools)](https://texwiki.texjp.org/?%E5%A4%89%E6%8F%9B%E3%83%84%E3%83%BC%E3%83%AB)
+  - [TeX Wiki — Zotero & Bilingual Plugin Ecosystem](https://texwiki.texjp.org/?Zotero)
+  - [TeX Wiki — PDF Text & Formula Extraction (`テキスト抽出`)](https://texwiki.texjp.org/?PDF)
+  - [TeX Wiki — PDF to Markdown / LaTeX Conversion](https://texwiki.texjp.org/?Markdown)
+- **AlternativeTo Software Directory & Curated Research Stacks**:
+  - [Geyi on AlternativeTo](https://alternativeto.net/software/geyi/about/) · [Maintainer Profile](https://alternativeto.net/user/erika-nachtw-chterin/)
+  - [Geyi & Top Academic AI PDF, Manuscript OCR & Zotero Translation Suite (2026)](https://alternativeto.net/lists/47233/g-e-y-i-and-top-academic-ai-pdf-manuscript-ocr-and-zotero-translation-suite-2026/)
+  - [Best AI Academic PDF & LaTeX Formula Translators (2026)](https://alternativeto.net/lists/47234/best-ai-academic-pdf-and-latex-formula-translators-2026/)
+  - [Best Historical Manuscript, Vertical CJK (Kuzushiji) & Classical OCR Tools](https://alternativeto.net/lists/47235/best-historical-manuscript-vertical-cjk-kuzushiji-and-classical-ocr-tools/)
+  - [Essential Zotero 7 Workflow & Academic Whole-Book (PDF/EPUB) Translation Stack](https://alternativeto.net/lists/47236/essential-zotero-7-workflow-and-academic-whole-book-pdf-epub-translation-stack/)
+- **SaaSHub Software Comparison Matrix**:
+  - [Geyi Alternatives & Overview](https://www.saashub.com/geyi-alternatives)
+  - [Geyi vs Mathpix](https://www.saashub.com/compare-geyi-vs-mathpix) · [Geyi vs DeepL Translator](https://www.saashub.com/compare-geyi-vs-deepl-translator) · [Geyi vs Immersive Translate](https://www.saashub.com/compare-geyi-vs-immersive-translate) · [Geyi vs Transkribus](https://www.saashub.com/compare-geyi-vs-transkripshun) · [Geyi vs SciSpace](https://www.saashub.com/compare-geyi-vs-scispace) · [Geyi vs Zotero](https://www.saashub.com/compare-geyi-vs-zotero)
+
