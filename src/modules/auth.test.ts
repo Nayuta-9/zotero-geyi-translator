@@ -5,6 +5,7 @@ import {
   LoginError,
   loginFailureReason,
   pollOutcome,
+  requestFailureKind,
   showLoginFailure,
   startLogin,
 } from "./auth"
@@ -12,7 +13,12 @@ import {
 // Browser sign-in outcomes: the poll statuses that end polling early, the
 // local timeout and network give-up, and the dialogs that explain each one.
 
-type PollReply = { status: string; [key: string]: unknown } | Error
+type PollReply = { status: string; [key: string]: unknown } | Error | string
+
+/** A rejection shaped like `Zotero.HTTP.UnexpectedStatusException`. */
+function httpError(status: number): Error {
+  return Object.assign(new Error(`HTTP ${status}`), { status, xmlhttp: { status } })
+}
 
 const prefs = new Map<string, unknown>()
 let clock = 0
@@ -34,6 +40,7 @@ function request(_method: string, url: string): Promise<{ responseText: string }
     pollUrls.push(url)
     const reply = pollReplies.length > 1 ? pollReplies.shift()! : pollReplies[0]
     if (reply instanceof Error) return Promise.reject(reply)
+    if (typeof reply === "string") return Promise.resolve({ responseText: reply })
     return Promise.resolve({ responseText: JSON.stringify(reply) })
   }
   return Promise.resolve({ responseText: "{}" })
@@ -87,6 +94,19 @@ describe("poll status mapping", () => {
     expect(pollOutcome("pending")).toBe("pending")
     expect(pollOutcome("some_future_status")).toBe("pending")
     expect(pollOutcome(undefined)).toBe("pending")
+  })
+})
+
+describe("request failure classification", () => {
+  it("tells server answers apart from requests that never got one", () => {
+    expect(requestFailureKind(httpError(503))).toBe("busy")
+    expect(requestFailureKind(httpError(500))).toBe("busy")
+    expect(requestFailureKind(httpError(429))).toBe("busy")
+    expect(requestFailureKind({ xmlhttp: { status: 502 } })).toBe("busy")
+    expect(requestFailureKind(httpError(404))).toBe("rejected")
+    expect(requestFailureKind(httpError(0))).toBe("network")
+    expect(requestFailureKind(new Error("offline"))).toBe("network")
+    expect(requestFailureKind(undefined)).toBe("network")
   })
 })
 
@@ -153,6 +173,61 @@ describe("startLogin", () => {
     expect(error.reason).toBe("cancelled")
   })
 
+  it("keeps retrying server errors until the authorization window ends", async () => {
+    pollReplies = [{ status: "pending" }, httpError(503)]
+    const error = await loginFailure()
+    expect(error.reason).toBe("busy")
+    expect(error.message).toBe(getString("login-busy"))
+    expect(clock).toBeGreaterThanOrEqual(10 * 60 * 1000)
+  })
+
+  it("keeps polling through 429 and 5xx answers", async () => {
+    pollReplies = [httpError(429), httpError(502), httpError(503), { status: "cancelled" }]
+    const error = await loginFailure()
+    expect(error.reason).toBe("cancelled")
+  })
+
+  it("restarts the network give-up clock when the server answers, even with an error", async () => {
+    const offline = Array.from({ length: 25 }, () => new Error("offline"))
+    pollReplies = [...offline, httpError(503), ...offline, { status: "not_eligible" }]
+    const error = await loginFailure()
+    expect(error.reason).toBe("not_eligible")
+    expect(clock).toBeGreaterThan(60 * 1000)
+  })
+
+  it("treats a non-JSON success body as a server problem, not a network one", async () => {
+    pollReplies = ["<html>gateway</html>"]
+    const error = await loginFailure()
+    expect(error.reason).toBe("busy")
+  })
+
+  it("stops at once when the server rejects the request", async () => {
+    pollReplies = [httpError(404)]
+    const error = await loginFailure()
+    expect(error.reason).toBe("failed")
+    expect(pollUrls).toHaveLength(1)
+  })
+
+  it("asks Zotero not to retry 5xx answers on its own", async () => {
+    pollReplies = [{ status: "cancelled" }]
+    await loginFailure()
+    const calls = (Zotero.HTTP.request as ReturnType<typeof vi.fn>).mock.calls
+    const authCalls = calls.filter(([, url]) => String(url).includes("/plugin/authorize/"))
+    expect(authCalls).toHaveLength(2)
+    for (const [, , options] of authCalls) {
+      expect(options).toMatchObject({ errorDelayMax: 0 })
+    }
+  })
+
+  it("reports a busy server when the authorization cannot start", async () => {
+    stubZotero({
+      HTTP: { request: vi.fn().mockRejectedValue(httpError(503)) },
+    })
+    const error = await loginFailure()
+    expect(error.reason).toBe("busy")
+    expect(launchURL).not.toHaveBeenCalled()
+  })
+
   it("reports a network error when the authorization cannot start", async () => {
     stubZotero({
       HTTP: { request: vi.fn().mockRejectedValue(new Error("offline")) },
@@ -206,6 +281,7 @@ describe("showLoginFailure", () => {
     ["expired", "login-expired"],
     ["timeout", "login-timeout"],
     ["network", "login-network"],
+    ["busy", "login-busy"],
   ] as const)("shows the %s explanation", (reason, key) => {
     const win = fakeWindow(true)
     showLoginFailure(win, new LoginError(reason))
@@ -228,6 +304,7 @@ describe("login failure strings", () => {
     "login-expired",
     "login-timeout",
     "login-network",
+    "login-busy",
   ]
 
   it("exist in both English and Simplified Chinese", () => {

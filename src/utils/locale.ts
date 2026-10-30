@@ -90,6 +90,7 @@ const EN: Dict = {
   "login-expired": "The authorization link has expired. Please sign in again.",
   "login-timeout": "Sign-in timed out because no authorization arrived from the browser. Please sign in again.",
   "login-network": "Could not reach Geyi. Check your network connection and try again.",
+  "login-busy": "Geyi is busy right now. Please try again later.",
   "onboarding-title": "Welcome to Geyi Translator",
   "onboarding-login":
     "Sign in: click “Sign in” below, or use Settings → Geyi Translator. You authorize in your browser; no password is entered in Zotero.",
@@ -237,6 +238,7 @@ const ZH: Dict = {
   "login-expired": "授权链接已过期，请重新登录。",
   "login-timeout": "登录超时：没有收到浏览器中的授权，请重新登录。",
   "login-network": "无法连接格译，请检查网络后重试。",
+  "login-busy": "格译服务暂时繁忙，请稍后再试。",
   "onboarding-title": "欢迎使用格译 Zotero 插件",
   "onboarding-login":
     "登录：点下方「登录」，或在「设置 → Geyi Translator」里登录。授权在浏览器中完成，无需在 Zotero 里输入密码。",

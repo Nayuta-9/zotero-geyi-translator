@@ -14,9 +14,14 @@ import { emitTelemetry } from "./telemetry"
 // `expired` after that; the local cap only covers a backend that never does.
 const AUTH_TIMEOUT_MS = 10 * 60 * 1000 + 30 * 1000
 const POLL_INTERVAL_MS = 2000
-// Polling stops with a network error once requests have failed for this long
-// without a single successful response in between.
+// Polling stops with a network error once requests have failed to reach the
+// server for this long with no server response in between. Error responses
+// from the server (429/5xx) do not count; they are retried until the
+// authorization window ends.
 const NETWORK_GIVE_UP_MS = 60 * 1000
+// Zotero retries 5xx responses internally for up to an hour unless this is 0;
+// the poll loop does its own retrying so its deadline stays in force.
+const AUTH_REQUEST_OPTIONS = { responseType: "text", errorDelayMax: 0 }
 
 const PLANS_URL = `${config.webBase}/billing?source=zotero_plugin`
 
@@ -27,6 +32,7 @@ export type LoginFailureReason =
   | "expired"
   | "timeout"
   | "network"
+  | "busy"
   | "failed"
 
 const FAILURE_MESSAGE_KEYS: Record<LoginFailureReason, string> = {
@@ -35,6 +41,7 @@ const FAILURE_MESSAGE_KEYS: Record<LoginFailureReason, string> = {
   expired: "login-expired",
   timeout: "login-timeout",
   network: "login-network",
+  busy: "login-busy",
   failed: "auth-failed",
 }
 
@@ -65,6 +72,19 @@ export function pollOutcome(
     default:
       return "pending"
   }
+}
+
+/**
+ * Classifies a rejected `Zotero.HTTP.request`. `busy` is a 429 or 5xx answer
+ * from the server, `rejected` is any other 4xx answer, and `network` is a
+ * request that got no HTTP answer (offline, DNS, TLS, timeout).
+ */
+export function requestFailureKind(error: unknown): "network" | "busy" | "rejected" {
+  const e = error as any
+  const status = Number(e?.status ?? e?.xmlhttp?.status ?? e?.xhr?.status ?? 0)
+  if (status === 429 || (status >= 500 && status < 600)) return "busy"
+  if (status >= 400 && status < 500) return "rejected"
+  return "network"
 }
 
 /** Returns the reason behind a `startLogin` rejection; non-login errors read as `failed`. */
@@ -144,10 +164,11 @@ export async function startLogin(): Promise<void> {
     xhr = await Zotero.HTTP.request(
       "GET",
       startUrl,
-      withPluginIdentity(startUrl, { responseType: "text" }),
+      withPluginIdentity(startUrl, { ...AUTH_REQUEST_OPTIONS }),
     )
-  } catch {
-    throw new LoginError("network")
+  } catch (error) {
+    const kind = requestFailureKind(error)
+    throw new LoginError(kind === "rejected" ? "failed" : kind)
   }
   let res: any
   try {
@@ -168,25 +189,41 @@ export async function startLogin(): Promise<void> {
     pollUrl += `&state=${encodeURIComponent(res.state_token)}`
   }
   const started = Date.now()
-  let failingSince: number | null = null
+  let unreachableSince: number | null = null
+  let lastFailure: "network" | "busy" | null = null
   while (Date.now() - started < AUTH_TIMEOUT_MS) {
     await Zotero.Promise.delay(POLL_INTERVAL_MS)
-    let data: any
+    let pr: XMLHttpRequest
     try {
-      const pr = await Zotero.HTTP.request(
+      pr = await Zotero.HTTP.request(
         "GET",
         pollUrl,
-        withPluginIdentity(pollUrl, { responseType: "text" }),
+        withPluginIdentity(pollUrl, { ...AUTH_REQUEST_OPTIONS }),
       )
-      data = JSON.parse(pr.responseText || "{}")
-    } catch {
-      failingSince ??= Date.now()
-      if (Date.now() - failingSince >= NETWORK_GIVE_UP_MS) {
+    } catch (error) {
+      const kind = requestFailureKind(error)
+      if (kind === "rejected") throw new LoginError("failed")
+      lastFailure = kind
+      if (kind === "busy") {
+        unreachableSince = null
+        continue
+      }
+      unreachableSince ??= Date.now()
+      if (Date.now() - unreachableSince >= NETWORK_GIVE_UP_MS) {
         throw new LoginError("network")
       }
       continue
     }
-    failingSince = null
+    unreachableSince = null
+    let data: any
+    try {
+      data = JSON.parse(pr.responseText || "{}")
+    } catch {
+      // A 2xx body that is not JSON comes from a misbehaving server or proxy.
+      lastFailure = "busy"
+      continue
+    }
+    lastFailure = null
     const outcome = pollOutcome(data?.status)
     if (outcome === "ready") {
       if (data.api_key && data.api_base_url) {
@@ -198,7 +235,7 @@ export async function startLogin(): Promise<void> {
     }
     if (outcome !== "pending") throw new LoginError(outcome)
   }
-  throw new LoginError(failingSince === null ? "timeout" : "network")
+  throw new LoginError(lastFailure ?? "timeout")
 }
 
 /** 手动兜底:loopback 不通时,用户从网页复制 Key 粘贴进来(base 默认生产 /v1)。 */
