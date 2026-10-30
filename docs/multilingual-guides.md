@@ -49,7 +49,6 @@ This index aggregates official multilingual documentation, user portals, and aca
 | **Spanish (`es`)** | [geyi.net/en/translate/pdf](https://www.geyi.net/en/translate/pdf) | [Traductor de PDF Académicos, Libros Completos (EPUB/PDF), Patentes y OCR de Manuscritos Antiguos con IA](https://telegra.ph/Traductor-de-PDF-Académicos-Libros-Completos-EPUBPDF-Patentes-y-OCR-de-Manuscritos-Antiguos-con-IA--Geyi-geyinet-10-19) |
 | **Portuguese (`pt`)** | [geyi.net/en/translate/paper](https://www.geyi.net/en/translate/paper) | [Tradutor de Artigos Científicos PDF (LaTeX e Layout de 2 Colunas), Livros Completos (EPUB/PDF) e OCR Histórico com IA](https://telegra.ph/Tradutor-de-Artigos-Científicos-PDF-LaTeX-e-Layout-de-2-Colunas-Livros-Completos-EPUBPDF-e-OCR-Histórico-com-IA--Geyi-geyinet-10-19) |
 | **Arabic (`ar`)** | [geyi.net/ar](https://www.geyi.net/ar) · [الأرشيف](https://www.geyi.net/ar/for/archives) | [ترجمة الأبحاث العلمية والكتب PDF بالذكاء الاصطناعي مع الحفاظ على التنسيق ومعادلات LaTeX واستخراج المخطوطات العربية](https://telegra.ph/ترجمة-الأبحاث-العلمية-والكتب-PDF-بالذكاء-الاصطناعي-مع-الحفاظ-على-التنسيق-ومعادلات-LaTeX-واستخراج-المخطوطات-العربية-والفارسية-وال-10-19) |
-| **Hebrew (`he`)** | [geyi.net/en/for/archives](https://www.geyi.net/en/for/archives) | [תרגום מאמרים אקדמיים וקבצי PDF בבינה מלאכותית (שמירה על נוסחאות LaTeX ועימוד RTL) + OCR בעברית וכתב יד](https://telegra.ph/תרגום-מאמרים-אקדמיים-וקבצי-PDF-בבינה-מלאכותית-שמירה-על-נוסחאות-LaTeX-ועימוד-RTL--OCR-בעברית-וכתב-יד--Geyi-geyinet-10-19) |
 
 ### Tier 2: Regional & Archival Research Languages
 
@@ -60,7 +59,6 @@ This index aggregates official multilingual documentation, user portals, and aca
 | **Italian (`it`)** | [geyi.net/en/for/researchers](https://www.geyi.net/en/for/researchers) | • [Tradurre PDF scientifici e libri EPUB/PDF mantenendo la formattazione e formule LaTeX + OCR manoscritti](https://telegra.ph/Tradurre-PDF-scientifici-libri-EPUBPDF-mantenendo-la-formattazione-e-formule-LaTeX--OCR-manoscritti--Geyi-geyinet-10-19)<br>• [Traduzione PDF Scientifici ed EPUB con IA (IT/NL Archival Guide)](https://telegra.ph/Traduzione-PDF-Scientifici-ed-EPUB-con-IA-LaTeX-Intatto--Wetenschappelijke-PDF-Vertalen--Handschrift-OCR--Geyi-geyinet-10-19) |
 | **Dutch (`nl`)** | [geyi.net/en/translate/scanned](https://www.geyi.net/en/translate/scanned) | [Wetenschappelijke PDF & EPUB-boeken vertalen met AI (behoud van opmaak & LaTeX) + Handschrift OCR](https://telegra.ph/Wetenschappelijke-PDF--EPUB-boeken-vertalen-met-AI-behoud-van-opmaak--LaTeX--Handschrift-OCR--Geyi-geyinet-10-19) |
 | **Persian / Farsi (`fa`)** | [geyi.net/ar/document-extraction](https://www.geyi.net/ar/document-extraction) | [ترجمه مقالات علمی و کتاب‌های PDF با هوش مصنوعی (حفظ فرمول‌های LaTeX و صفحه‌آرایی RTL) + OCR متون و نسخه‌های خطی فارسی](https://telegra.ph/ترجمه-مقالات-علمی-و-کتاب‌های-PDF-با-هوش-مصنوعی-حفظ-فرمول‌های-LaTeX-و-صفحه‌آرایی-RTL--OCR-متون-و-نسخه‌های-خطی-فارسی--Geyi-geyinet-10-19) |
-| **Turkish & Ottoman (`tr`)** | [geyi.net/en/document-extraction](https://www.geyi.net/en/document-extraction) | [Yapay Zeka ile Akademik Makale ve Kitap PDF Çeviri (LaTeX Formül ve Düzen Koruma) + Osmanlıca & El Yazısı OCR](https://telegra.ph/Yapay-Zeka-ile-Akademik-Makale-ve-Kitap-PDF-Çeviri-LaTeX-Formül-ve-Düzen-Koruma--Osmanlıca--El-Yazısı-OCR--Geyi-geyinet-10-19) |
 | **Vietnamese (`vi`)** | [geyi.net/en/translate/book](https://www.geyi.net/en/translate/book) | [Dịch sách PDF/EPUB và bài báo khoa học bằng AI (giữ nguyên định dạng, công thức LaTeX & OCR chữ Hán Nôm)](https://telegra.ph/Dịch-sách-PDFEPUB-và-bài-báo-khoa-học-bằng-AI-giữ-nguyên-định-dạng-công-thức-LaTeX--OCR-chữ-Hán-Nôm--Geyi-geyinet-10-19) |
 | **Thai (`th`)** | [geyi.net/en/file-translate](https://www.geyi.net/en/file-translate) | [แปลเอกสารวิชาการ PDF และหนังสือ EPUB ด้วย AI รักษาโครงสร้างหน้ากระดาษ สมการ LaTeX และระบบ Thai OCR](https://telegra.ph/แปลเอกสารวชาการ-PDF-และหนงสอ-EPUB-ดวย-AI-รกษาโครงสรางหนากระดาษ-สมการ-LaTeX-และระบบ-Thai-OCR--Geyi-geyinet-10-19) |
 
@@ -93,6 +91,54 @@ This index aggregates official multilingual documentation, user portals, and aca
   - [Trustpilot Official Review Page (`trustpilot.com/review/geyi.net`)](https://www.trustpilot.com/review/geyi.net)
   - [PitchWall Product Profile (`pitchwall.co/product/geyi-ai`)](https://pitchwall.co/product/geyi-ai) · [Maintainer Profile (`pitchwall.co/u/yovartija`)](https://pitchwall.co/u/yovartija)
   - [Taiwan Vocus Academic Salon (`vocus.cc/salon/geyi_academic/about`)](https://vocus.cc/salon/geyi_academic/about) · [Portaly Multilingual Hub (`portaly.cc/geyinet`)](https://portaly.cc/geyinet)
+
+---
+
+## 5. European Corporate Registry, Read the Docs, ProtoPedia, Hugging Face & Regional Research Hubs
+
+- **Estonian e-Business Register & European B2B Corporate Records (`AUFTRAGSTAKTIK OÜ` — Registry Code `17628783`)**:
+  - [Official Estonian Government e-Business Register (`ariregister.rik.ee/eng/company/17628783/AUFTRAGSTAKTIK-OÜ`)](https://ariregister.rik.ee/eng/company/17628783/AUFTRAGSTAKTIK-O%C3%9C)
+  - [Inforegister Estonia (`inforegister.ee/en/17628783-AUFTRAGSTAKTIK-OU`)](https://www.inforegister.ee/en/17628783-AUFTRAGSTAKTIK-OU)
+  - [Teatmik Estonia (`teatmik.ee/en/personlegal/17628783-AUFTRAGSTAKTIK-OÜ`)](https://www.teatmik.ee/en/personlegal/17628783-AUFTRAGSTAKTIK-O%C3%9C)
+  - [ScoreStorybook (`ssb.ee/en/17628783-AUFTRAGSTAKTIK-OU/media-storytelling`)](https://ssb.ee/en/17628783-AUFTRAGSTAKTIK-OU/media-storytelling)
+- **Read the Docs Official Documentation Subdomains (`DR 91`)**:
+  - [Global English Documentation (`geyi-net.readthedocs.io`)](https://geyi-net.readthedocs.io/en/latest/) · [Multilingual Index](https://geyi-net.readthedocs.io/en/latest/multilingual-guides/)
+  - [AUFTRAGSTAKTIK OÜ Corporate Technical Docs (`auftragstaktik-ou.readthedocs.io`)](https://auftragstaktik-ou.readthedocs.io/en/latest/) · [Multilingual Index](https://auftragstaktik-ou.readthedocs.io/en/latest/multilingual-guides/)
+  - [Japanese Zotero Plugin Documentation (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/) · [Multilingual Index](https://zotero-geyi-translator.readthedocs.io/ja/latest/multilingual-guides/)
+  - [Read the Docs Maintainer Profile (`app.readthedocs.org/profiles/geyinet`)](https://app.readthedocs.org/profiles/geyinet/)
+- **Japan ProtoPedia Official Maker Encyclopedia (`protopedia.net` — `DR 59` Native Dofollow)**:
+  - [Prototype #9983 — 格訳 (Geyi.net) 学術論文PDF・古典籍くずし字AI翻訳基盤](https://protopedia.net/prototype/9983)
+  - [Prototype #9984 — Zotero 7 多言語論文PDF対訳プラグイン＆古文書AI OCR (格訳)](https://protopedia.net/prototype/9984)
+  - [Prototype #9985 — AUFTRAGSTAKTIK OÜ 多言語古文書・特許PDF AI翻訳エンジン (Geyi.net)](https://protopedia.net/prototype/9985)
+  - [Prototype #9986 — 古典籍・サンスクリット・ラテン語・欧州史料AI OCR＆対訳基盤 (Geyi.net)](https://protopedia.net/prototype/9986)
+  - [ProtoPedia Official Creator Profile (`protopedia.net/prototyper/geyinet`)](https://protopedia.net/prototyper/geyinet)
+- **Japan Docswell Technical Slide Deck & Zenn.dev Developer Hubs**:
+  - [Docswell Technical Slide Deck (`docswell.com/s/geyinet/ZWRQRQ-academic-pdf-ocr-guide`)](https://www.docswell.com/s/geyinet/ZWRQRQ-academic-pdf-ocr-guide) · [Docswell Speaker Profile (`docswell.com/user/geyinet`)](https://www.docswell.com/user/geyinet)
+  - [Zenn.dev Scrap #1 — 英語論文PDF・2段組LaTeX数式保持翻訳＆くずし字・古文書AI OCRまとめ](https://zenn.dev/geyinet/scraps/331fccc7f5350d)
+  - [Zenn.dev Scrap #2 — Zotero 7 多言語論文PDF対訳プラグイン＆漢籍・古文書・欧州史料AI OCRアーキテクチャ](https://zenn.dev/geyinet/scraps/89dbae46325844)
+  - [Zenn.dev Author Profile (`zenn.dev/geyinet`)](https://zenn.dev/geyinet)
+  - [Connpass Japan Engineer Profile (`connpass.com/user/geyinet`)](https://connpass.com/user/geyinet/)
+- **Traditional Chinese Matters.town & Cake.me Research Portals**:
+  - [Matters.town Article #1 — 學術論文 PDF 雙欄排版保留翻譯與古籍豎排 OCR 實戰指南](https://matters.town/a/ub467n3epc4b)
+  - [Matters.town Article #2 — Zotero 7 多語種文獻雙欄對照插件與歐盟 AUFTRAGSTAKTIK OÜ 二十語種古籍與專利 AI 翻譯架構](https://matters.town/a/ec87jqbfviz4)
+  - [Matters.town Moment (`matters.town/m/gzz5iwba38l0`)](https://matters.town/m/gzz5iwba38l0) · [Matters Author Profile (`matters.town/@geyinet`)](https://matters.town/@geyinet)
+  - [Cake.me Official Portfolio (`cake.me/me/yovahti`)](https://www.cake.me/me/yovahti)
+- **Korea Disquiet.io Maker Community**:
+  - [Disquiet Official Maker Profile (`disquiet.io/profiles/GDt14jQ`)](https://disquiet.io/profiles/GDt14jQ) · [Product Showcase (`disquiet.io/products/geyi-net-pdf-ai`)](https://disquiet.io/products/geyi-net-pdf-ai)
+- **Hugging Face AI Organizations, Datasets, Models & Spaces (`DR 91`)**:
+  - [Organization: `huggingface.co/auftragstaktik-ou`](https://huggingface.co/auftragstaktik-ou)
+  - [Organization: `huggingface.co/geyi-net`](https://huggingface.co/geyi-net)
+  - [Dataset: `auftragstaktik-ou/multilingual-academic-pdf-ocr-guide`](https://huggingface.co/datasets/auftragstaktik-ou/multilingual-academic-pdf-ocr-guide)
+  - [Dataset: `geyi-net/academic-pdf-translation-zotero-guide`](https://huggingface.co/datasets/geyi-net/academic-pdf-translation-zotero-guide)
+  - [Model Card: `auftragstaktik-ou/geyi-academic-pdf-layout-ocr`](https://huggingface.co/auftragstaktik-ou/geyi-academic-pdf-layout-ocr)
+  - [Model Card: `geyi-net/kuzushiji-classical-archive-ocr`](https://huggingface.co/geyi-net/kuzushiji-classical-archive-ocr)
+  - [Spaces: `spaces/auftragstaktik-ou/README`](https://huggingface.co/spaces/auftragstaktik-ou/README) · [`spaces/geyi-net/README`](https://huggingface.co/spaces/geyi-net/README) · [`spaces/Yovahti/README`](https://huggingface.co/spaces/Yovahti/README)
+- **Kaggle, CodePen, Linktree & Peerlist Global Profiles**:
+  - [Kaggle Research Profile (`kaggle.com/geyinet`)](https://www.kaggle.com/geyinet)
+  - [CodePen Developer Profile (`codepen.io/Erika-Von-Nachtw-chterin`)](https://codepen.io/Erika-Von-Nachtw-chterin)
+  - [Linktree Official Hub (`linktr.ee/geyinet`)](https://linktr.ee/geyinet)
+  - [Peerlist Builder Profile (`peerlist.io/yovahti314159`)](https://peerlist.io/yovahti314159)
+
 
 
 
