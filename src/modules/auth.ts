@@ -15,8 +15,8 @@ import { emitTelemetry } from "./telemetry"
 // challenge reaches the start URL and the consent page, and the verifier
 // itself travels only in the poll request body.
 // A key the poll hands out is kept only after the user confirms its account,
-// unless that account is the one confirmed last time; a rejected key is
-// discarded and revoked on the server.
+// unless that account is the one confirmed last time; a rejected key is never
+// stored and is revoked on the server.
 
 // The backend signs the authorization state for 10 minutes and reports
 // `expired` after that; the local cap only covers a backend that never does.
@@ -39,6 +39,9 @@ const REVOKE_RETRY_MS = 1000
 export const CONFIRMED_ACCOUNT_PREF = "confirmedAccountFingerprint"
 const FINGERPRINT_RE = /^[0-9a-f]{16,128}$/
 const MAX_EMAIL_LENGTH = 254
+// Control and format characters, which include bidirectional overrides and
+// zero-width characters, are removed from the email before it is shown.
+const INVISIBLE_CHARS_RE = /[\p{Cc}\p{Cf}]/gu
 
 const PLANS_URL = `${config.webBase}/billing?source=zotero_plugin`
 
@@ -218,20 +221,31 @@ export async function codeChallengeFor(verifier: string): Promise<string> {
 }
 
 /**
- * Reads the key and account a `ready` poll answer carries. An account field
- * that is missing or malformed is left out.
+ * Reads the key and account a `ready` poll answer carries. Control and format
+ * characters are removed from the email; an account field that is missing,
+ * malformed or empty after that is left out.
  */
 export function issuedKeyFrom(data: any): IssuedKey {
   const issued: IssuedKey = { key: String(data.api_key), base: String(data.api_base_url) }
   const email = data.account_email
-  if (typeof email === "string" && email.trim()) {
-    issued.email = email.trim().slice(0, MAX_EMAIL_LENGTH)
+  if (typeof email === "string") {
+    const visible = email.replace(INVISIBLE_CHARS_RE, "").trim()
+    if (visible) issued.email = visible.slice(0, MAX_EMAIL_LENGTH)
   }
   const fingerprint = data.account_fingerprint
   if (typeof fingerprint === "string" && FINGERPRINT_RE.test(fingerprint)) {
     issued.fingerprint = fingerprint
   }
   return issued
+}
+
+/** Returns `win` while it is still open, or `null` for a closed or dead window. */
+function openWindow(win: Window | null | undefined): Window | null {
+  try {
+    return win && !win.closed ? win : null
+  } catch {
+    return null
+  }
 }
 
 /** Whether `fingerprint` names the account the user confirmed last time. */
@@ -271,9 +285,12 @@ export async function revokeIssuedKey(issued: IssuedKey): Promise<boolean> {
  * Stores `issued` as the plugin's credentials once its account is confirmed.
  *
  * The account the user confirmed last time is accepted without asking. Any
- * other account, including one the backend does not name, is put to the user;
- * a confirmation records its fingerprint. A rejection, or a dialog that fails,
- * signs the plugin out, revokes the key and rejects with a `LoginError`.
+ * other account, including one the backend does not name, is put to the user
+ * in a dialog over `options.win`, or over the main window when that one is
+ * closed. A confirmation records the fingerprint when the backend sent both
+ * the fingerprint and the email. A rejection, or a dialog that fails, revokes
+ * the key and rejects with a `LoginError` without touching stored
+ * credentials, so the plugin stays as it was before the sign-in.
  */
 async function acceptIssuedKey(issued: IssuedKey, options: LoginOptions): Promise<void> {
   if (!isConfirmedAccount(issued.fingerprint)) {
@@ -281,7 +298,8 @@ async function acceptIssuedKey(issued: IssuedKey, options: LoginOptions): Promis
       options.confirmAccount ??
       ((key: IssuedKey) =>
         promptAccountConfirm(
-          options.win ?? (Zotero.getMainWindow() as unknown as Window | null),
+          openWindow(options.win) ??
+            openWindow(Zotero.getMainWindow() as unknown as Window | null),
           accountConfirmContent(key.email),
         ))
     let confirmed: boolean | null
@@ -292,11 +310,10 @@ async function acceptIssuedKey(issued: IssuedKey, options: LoginOptions): Promis
       confirmed = null
     }
     if (!confirmed) {
-      clearCredentials()
       await revokeIssuedKey(issued)
       throw new LoginError(confirmed === null ? "failed" : "account_rejected")
     }
-    if (issued.fingerprint) setPref(CONFIRMED_ACCOUNT_PREF, issued.fingerprint)
+    if (issued.fingerprint && issued.email) setPref(CONFIRMED_ACCOUNT_PREF, issued.fingerprint)
   }
   setCredentials(issued.key, issued.base)
 }

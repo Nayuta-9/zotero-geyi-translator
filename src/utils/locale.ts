@@ -100,7 +100,7 @@ const EN: Dict = {
   "login-network": "Could not reach Geyi. Check your network connection and try again.",
   "login-busy": "Geyi is busy right now. Please try again later.",
   "login-account-rejected":
-    "Sign-in discarded. The plugin did not keep the key for that account and is now signed out. Sign in again from the plugin, and approve only a sign-in you started yourself.",
+    "Sign-in discarded. The plugin did not keep the key for that account. Sign in again from the plugin, and approve only a sign-in you started yourself.",
   "onboarding-title": "Welcome to Geyi Translator",
   "onboarding-login":
     "Sign in: click “Sign in” below, or use Settings → Geyi Translator. You authorize in your browser; no password is entered in Zotero.",
@@ -258,7 +258,7 @@ const ZH: Dict = {
   "login-network": "无法连接格译，请检查网络后重试。",
   "login-busy": "格译服务暂时繁忙，请稍后再试。",
   "login-account-rejected":
-    "已丢弃这次登录：插件没有保留该账号的密钥，现在处于未登录状态。请从插件重新登录，并且只确认你自己发起的登录。",
+    "已丢弃这次登录：插件没有保留该账号的密钥。请从插件重新登录，并且只确认你自己发起的登录。",
   "onboarding-title": "欢迎使用格译 Zotero 插件",
   "onboarding-login":
     "登录：点下方「登录」，或在「设置 → Geyi Translator」里登录。授权在浏览器中完成，无需在 Zotero 里输入密码。",

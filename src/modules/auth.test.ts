@@ -365,8 +365,7 @@ function confirmer(answer: boolean | Error) {
 }
 
 describe("account confirmation", () => {
-  it("shows another account's full email, and a rejection revokes its key and signs out", async () => {
-    setCredentials("sk_previous_session", "https://api.example.test/v1")
+  it("shows another account's full email, and a rejection revokes its key and leaves the plugin signed out", async () => {
     prefs.set(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`, VICTIM_FINGERPRINT)
     pollReplies = [ready({ email: "mallory@evil.example", fingerprint: ATTACKER_FINGERPRINT }, "sk_attacker")]
     const confirmAccount = confirmer(false)
@@ -382,12 +381,54 @@ describe("account confirmation", () => {
       fingerprint: ATTACKER_FINGERPRINT,
     })
     expect(isLoggedIn()).toBe(false)
-    expect(getCredentials()).toBeNull()
     expect(revokeCalls).toHaveLength(1)
     expect(revokeCalls[0].method).toBe("POST")
     expect(revokeCalls[0].options.headers).toMatchObject({ Authorization: "Bearer sk_attacker" })
     expect(revokeCalls[0].url).not.toContain("sk_attacker")
     expect(prefs.get(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`)).toBe(VICTIM_FINGERPRINT)
+  })
+
+  it.each([
+    ["a rejection", confirmer(false)],
+    ["a failed dialog", confirmer(new Error("no window"))],
+  ])("leaves stored credentials as they were after %s", async (_label, confirmAccount) => {
+    setCredentials("sk_previous_session", "https://api.example.test/v1")
+    const before = new Map(prefs)
+    pollReplies = [ready({ email: "mallory@evil.example", fingerprint: ATTACKER_FINGERPRINT }, "sk_attacker")]
+    await loginFailure({ confirmAccount })
+    expect(getCredentials()).toEqual({ key: "sk_previous_session", base: "https://api.example.test/v1" })
+    expect(new Map(prefs)).toEqual(before)
+    expect(revokeCalls[0].options.headers).toMatchObject({ Authorization: "Bearer sk_attacker" })
+  })
+
+  it("does not remember the account when the backend names no email", async () => {
+    pollReplies = [ready({ fingerprint: VICTIM_FINGERPRINT })]
+    const confirmAccount = confirmer(true)
+    await startLogin({ confirmAccount })
+    expect(isLoggedIn()).toBe(true)
+    expect(prefs.has(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`)).toBe(false)
+    expect(confirmAccount.mock.calls[0][0].email).toBeUndefined()
+  })
+
+  it.each([
+    ["closed", { closed: true }],
+    [
+      "dead",
+      Object.defineProperty({}, "closed", {
+        get() {
+          throw new Error("can't access dead object")
+        },
+      }),
+    ],
+  ])("opens the dialog over the main window when the caller's window is %s", async (_label, gone) => {
+    const confirmEx = vi.fn().mockReturnValue(0)
+    vi.stubGlobal("Services", { prompt: promptStub(confirmEx) })
+    const main = { closed: false, name: "main" }
+    stubZotero({ getMainWindow: () => main })
+    pollReplies = [ready({ email: "victim.owner@example.com", fingerprint: VICTIM_FINGERPRINT })]
+    await startLogin({ win: gone as unknown as Window })
+    expect(confirmEx.mock.calls[0][0]).toBe(main)
+    expect(isLoggedIn()).toBe(true)
   })
 
   it("asks before keeping the key and never stores it while asking", async () => {
@@ -512,6 +553,14 @@ describe("issued key parsing", () => {
       base: "https://api.example.test/v1",
     })
     expect(issuedKeyFrom(ready({ email: "x".repeat(400) })).email).toHaveLength(254)
+  })
+
+  it("removes bidirectional, zero-width and control characters from the email", () => {
+    const spoofed = "\u202Eelpmaxe.live@\u202Cvictim\u200B.owner\u0007@example.com\u2066\u2069\uFEFF"
+    expect(issuedKeyFrom(ready({ email: spoofed })).email).toBe(
+      "elpmaxe.live@victim.owner@example.com",
+    )
+    expect(issuedKeyFrom(ready({ email: "\u202E\u200F\n" })).email).toBeUndefined()
   })
 })
 
