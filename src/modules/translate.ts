@@ -4,6 +4,7 @@ import { getPref } from "../utils/prefs"
 import { withPluginIdentity } from "../utils/http"
 import { logDebug } from "../utils/log"
 import { api, ApiError, type Job, type OutputItem, type TranslateOptions } from "../utils/api"
+import { showSignedInAccount } from "./accountNotice"
 import { isLoggedIn, showLoginFailure, startLogin } from "./auth"
 import { getGlossaries } from "./glossary"
 import { refreshTaskPane } from "./taskPane"
@@ -174,13 +175,11 @@ async function onTranslateCommand(win: Window): Promise<void> {
     if (!go) return
     try {
       await startLogin()
-      new (ztk().ProgressWindow)(config.addonName)
-        .createLine({ text: getString("auth-success"), type: "success" })
-        .show()
     } catch (error) {
       showLoginFailure(win, error)
       return
     }
+    void showSignedInAccount()
   }
 
   const att = await resolvePdfAttachment(win)
