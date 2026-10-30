@@ -79,4 +79,11 @@ This index aggregates official multilingual documentation, user portals, and aca
 - **SaaSHub Software Comparison Matrix**:
   - [Geyi Alternatives & Overview](https://www.saashub.com/geyi-alternatives)
   - [Geyi vs Mathpix](https://www.saashub.com/compare-geyi-vs-mathpix) · [Geyi vs DeepL Translator](https://www.saashub.com/compare-geyi-vs-deepl-translator) · [Geyi vs Immersive Translate](https://www.saashub.com/compare-geyi-vs-immersive-translate) · [Geyi vs Transkribus](https://www.saashub.com/compare-geyi-vs-transkripshun) · [Geyi vs SciSpace](https://www.saashub.com/compare-geyi-vs-scispace) · [Geyi vs Zotero](https://www.saashub.com/compare-geyi-vs-zotero)
+- **Japanese Cosense (Scrapbox) Academic Knowledge Base (`geyi-academic-jp`)**:
+  - [Project Index (`geyi-academic-jp`)](https://scrapbox.io/geyi-academic-jp/)
+  - [格訳 (Geyi.net) — AI学術論文PDF翻訳・2段組LaTeX数式保持・古文書OCRプラットフォーム](https://scrapbox.io/geyi-academic-jp/%E6%A0%BC%E8%A8%B3_(Geyi.net)_%E2%80%94_AI%E5%AD%A6%E8%A1%93%E8%AB%96%E6%96%87PDF%E7%BF%BB%E8%A8%B3%E3%83%BB2%E6%AE%B5%E7%B5%84LaTeX%E6%95%B0%E5%BC%8F%E4%BF%9D%E6%8C%81%E3%83%BB%E5%8F%A4%E6%96%87%E6%9B%B8OCR%E3%83%97%E3%83%A9%E3%83%83%E3%83%88%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0)
+  - [くずし字・古文書・変体仮名・縦書き漢籍のAI OCR翻刻と現代語訳ガイド](https://scrapbox.io/geyi-academic-jp/%E3%81%8F%E3%81%9A%E3%81%97%E5%AD%97%E3%83%BB%E5%8F%A4%E6%96%87%E6%9B%B8%E3%83%BB%E5%A4%89%E4%BD%93%E4%BB%AE%E5%90%8D%E3%83%BB%E7%B8%A6%E6%9B%B8%E3%81%8D%E6%BC%A2%E7%B1%8D%E3%81%AEAI_OCR%E7%BF%BB%E5%88%BB%E3%81%A8%E7%8F%BE%E4%BB%A3%E8%AA%9E%E8%A8%B3%E3%82%AC%E3%82%A4%E3%83%89)
+  - [Zotero 6/7 双方向対訳PDF生成プラグインと学術PDFのMarkdown・LaTeX変換](https://scrapbox.io/geyi-academic-jp/Zotero_6_7_%E5%8F%8C%E6%96%B9%E5%90%91%E5%AF%BE%E8%A8%B3PDF%E7%94%9F%E6%88%90%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%A8%E5%AD%A6%E8%A1%93PDF%E3%81%AEMarkdown%E3%83%BBLaTeX%E5%A4%89%E6%8F%9B)
+  - [多言語学術研究ガイド・アーカイブ一覧 (Global 19-Language Academic PDF & OCR Index)](https://scrapbox.io/geyi-academic-jp/%E5%A4%9A%E8%A8%80%E8%AA%9E%E5%AD%A6%E8%A1%93%E7%A0%94%E7%A9%B6%E3%82%AC%E3%82%A4%E3%83%89%E3%83%BB%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96%E4%B8%80%E8%A6%A7_(Global_19-Language_Academic_PDF_&_OCR_Index))
+
 
