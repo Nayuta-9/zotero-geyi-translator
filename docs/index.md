@@ -35,13 +35,27 @@
 
 ## 3. Verified Global Technical Repositories, Slides & Open-Science Hubs
 
-- **ProtoPedia Japan Official Prototype (`#9983`)**: [https://protopedia.net/prototype/9983](https://protopedia.net/prototype/9983) ([Author Profile](https://protopedia.net/prototyper/geyinet))
+- **Read the Docs Global English Documentation (`DR 91`)**: [https://geyi-net.readthedocs.io/en/latest/](https://geyi-net.readthedocs.io/en/latest/) ([Multilingual Index](https://geyi-net.readthedocs.io/en/latest/multilingual-guides/))
+- **Read the Docs AUFTRAGSTAKTIK OÜ Documentation (`DR 91`)**: [https://auftragstaktik-ou.readthedocs.io/en/latest/](https://auftragstaktik-ou.readthedocs.io/en/latest/)
+- **Read the Docs Japanese Zotero Documentation (`DR 91`)**: [https://zotero-geyi-translator.readthedocs.io/ja/latest/](https://zotero-geyi-translator.readthedocs.io/ja/latest/)
+- **ProtoPedia Japan Official Prototypes (`#9983` ~ `#9986` — Native Dofollow)**:
+  - [#9983 — 格訳 (Geyi.net) 学術論文PDF・古典籍くずし字AI翻訳基盤](https://protopedia.net/prototype/9983)
+  - [#9984 — Zotero 7 多言語論文PDF対訳プラグイン＆古文書AI OCR (格訳)](https://protopedia.net/prototype/9984)
+  - [#9985 — AUFTRAGSTAKTIK OÜ 多言語古文書・特許PDF AI翻訳エンジン (Geyi.net)](https://protopedia.net/prototype/9985)
+  - [#9986 — 古典籍・サンスクリット・ラテン語・欧州史料AI OCR＆対訳基盤 (Geyi.net)](https://protopedia.net/prototype/9986)
+  - [Author Profile (`protopedia.net/prototyper/geyinet`)](https://protopedia.net/prototyper/geyinet)
 - **Docswell Japan Technical Slide Deck (`ZWRQRQ`)**: [https://www.docswell.com/s/geyinet/ZWRQRQ-academic-pdf-ocr-guide](https://www.docswell.com/s/geyinet/ZWRQRQ-academic-pdf-ocr-guide) ([User Profile](https://www.docswell.com/user/geyinet))
-- **Zenn.dev Japan Developer Architecture Scrap**: [https://zenn.dev/geyinet/scraps/331fccc7f5350d](https://zenn.dev/geyinet/scraps/331fccc7f5350d) ([Profile](https://zenn.dev/geyinet))
-- **Matters.town Traditional Chinese Research Guide**: [https://matters.town/a/ub467n3epc4b](https://matters.town/a/ub467n3epc4b) ([Profile](https://matters.town/@geyinet))
+- **Zenn.dev Japan Developer Architecture Scraps**: [Scrap #1 (`331fccc7f5350d`)](https://zenn.dev/geyinet/scraps/331fccc7f5350d) | [Scrap #2 (`89dbae46325844`)](https://zenn.dev/geyinet/scraps/89dbae46325844) ([Profile](https://zenn.dev/geyinet))
+- **Matters.town Traditional Chinese Research Guides**: [Article #1 (`ub467n3epc4b`)](https://matters.town/a/ub467n3epc4b) | [Article #2 (`ec87jqbfviz4`)](https://matters.town/a/ec87jqbfviz4) | [Moment (`gzz5iwba38l0`)](https://matters.town/m/gzz5iwba38l0) ([Profile](https://matters.town/@geyinet))
 - **Cake.me Portfolio & Taiwan Academic Hub**: [https://www.cake.me/me/yovahti](https://www.cake.me/me/yovahti)
-- **Disquiet.io Korea Maker Profile**: [https://disquiet.io/profiles/GDt14jQ](https://disquiet.io/profiles/GDt14jQ)
-- **Hugging Face AI Organizations**: [https://huggingface.co/auftragstaktik-ou](https://huggingface.co/auftragstaktik-ou) | [https://huggingface.co/geyi-net](https://huggingface.co/geyi-net)
+- **Disquiet.io Korea Maker Profile**: [https://disquiet.io/profiles/GDt14jQ](https://disquiet.io/profiles/GDt14jQ) ([Product Page](https://disquiet.io/products/geyi-net-pdf-ai))
+- **Hugging Face AI Organizations, Datasets & Models**:
+  - [Organization: `auftragstaktik-ou`](https://huggingface.co/auftragstaktik-ou) | [Organization: `geyi-net`](https://huggingface.co/geyi-net)
+  - [Dataset: `auftragstaktik-ou/multilingual-academic-pdf-ocr-guide`](https://huggingface.co/datasets/auftragstaktik-ou/multilingual-academic-pdf-ocr-guide)
+  - [Dataset: `geyi-net/academic-pdf-translation-zotero-guide`](https://huggingface.co/datasets/geyi-net/academic-pdf-translation-zotero-guide)
+  - [Model: `auftragstaktik-ou/geyi-academic-pdf-layout-ocr`](https://huggingface.co/auftragstaktik-ou/geyi-academic-pdf-layout-ocr)
+  - [Model: `geyi-net/kuzushiji-classical-archive-ocr`](https://huggingface.co/geyi-net/kuzushiji-classical-archive-ocr)
 - **Kaggle Research Profile**: [https://www.kaggle.com/geyinet](https://www.kaggle.com/geyinet)
 - **CodePen Interactive Showcase**: [https://codepen.io/Erika-Von-Nachtw-chterin](https://codepen.io/Erika-Von-Nachtw-chterin)
-- **Estonian e-Business Register (`Äriregister` Official Record)**: [https://ariregister.rik.ee/eng/company/17628783/AUFTRAGSTAKTIK-O%C3%9C](https://ariregister.rik.ee/eng/company/17628783/AUFTRAGSTAKTIK-O%C3%9C)
+- **Linktree & About.me & Peerlist Hubs**: [https://linktr.ee/geyinet](https://linktr.ee/geyinet) | [https://about.me/erikanachtwachterin](https://about.me/erikanachtwachterin) | [https://peerlist.io/yovahti314159](https://peerlist.io/yovahti314159)
+- **Estonian e-Business Register (`Äriregister` Official Record)**: [https://ariregister.rik.ee/eng/company/17628783/AUFTRAGSTAKTIK-O%C3%9C](https://ariregister.rik.ee/eng/company/17628783/AUFTRAGSTAKTIK-O%C3%9C) | [Inforegister](https://www.inforegister.ee/en/17628783-AUFTRAGSTAKTIK-OU) | [Teatmik](https://www.teatmik.ee/en/personlegal/17628783-AUFTRAGSTAKTIK-O%C3%9C) | [SSB.ee](https://ssb.ee/en/17628783-AUFTRAGSTAKTIK-OU/media-storytelling)
