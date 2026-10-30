@@ -347,12 +347,12 @@ describe("startLogin", () => {
 const VICTIM_FINGERPRINT = "a".repeat(32)
 const ATTACKER_FINGERPRINT = "b".repeat(32)
 
-function ready(account: { masked?: unknown; fingerprint?: unknown } = {}, key = "sk_issued_key") {
+function ready(account: { email?: unknown; fingerprint?: unknown } = {}, key = "sk_issued_key") {
   return {
     status: "ready",
     api_key: key,
     api_base_url: "https://api.example.test/v1",
-    account_email_masked: account.masked,
+    account_email: account.email,
     account_fingerprint: account.fingerprint,
   }
 }
@@ -365,10 +365,10 @@ function confirmer(answer: boolean | Error) {
 }
 
 describe("account confirmation", () => {
-  it("shows another account's approval, and a rejection revokes its key and signs out", async () => {
+  it("shows another account's full email, and a rejection revokes its key and signs out", async () => {
     setCredentials("sk_previous_session", "https://api.example.test/v1")
     prefs.set(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`, VICTIM_FINGERPRINT)
-    pollReplies = [ready({ masked: "ma…@evil.example", fingerprint: ATTACKER_FINGERPRINT }, "sk_attacker")]
+    pollReplies = [ready({ email: "mallory@evil.example", fingerprint: ATTACKER_FINGERPRINT }, "sk_attacker")]
     const confirmAccount = confirmer(false)
 
     const error = await loginFailure({ confirmAccount })
@@ -378,7 +378,7 @@ describe("account confirmation", () => {
     expect(confirmAccount).toHaveBeenCalledTimes(1)
     expect(confirmAccount.mock.calls[0][0]).toMatchObject({
       key: "sk_attacker",
-      emailMasked: "ma…@evil.example",
+      email: "mallory@evil.example",
       fingerprint: ATTACKER_FINGERPRINT,
     })
     expect(isLoggedIn()).toBe(false)
@@ -391,7 +391,7 @@ describe("account confirmation", () => {
   })
 
   it("asks before keeping the key and never stores it while asking", async () => {
-    pollReplies = [ready({ masked: "vi…@example.com", fingerprint: VICTIM_FINGERPRINT })]
+    pollReplies = [ready({ email: "victim.owner@example.com", fingerprint: VICTIM_FINGERPRINT })]
     let storedWhileAsking: unknown = "unset"
     await startLogin({
       confirmAccount: () => {
@@ -404,7 +404,7 @@ describe("account confirmation", () => {
   })
 
   it("keeps a confirmed account and does not ask again for it", async () => {
-    pollReplies = [ready({ masked: "vi…@example.com", fingerprint: VICTIM_FINGERPRINT }, "sk_first")]
+    pollReplies = [ready({ email: "victim.owner@example.com", fingerprint: VICTIM_FINGERPRINT }, "sk_first")]
     const first = confirmer(true)
     await startLogin({ confirmAccount: first })
     expect(first).toHaveBeenCalledTimes(1)
@@ -413,7 +413,7 @@ describe("account confirmation", () => {
     expect(revokeCalls).toHaveLength(0)
 
     prefs.delete("extensions.zotero.geyi.apiKeyEnc")
-    pollReplies = [ready({ masked: "vi…@example.com", fingerprint: VICTIM_FINGERPRINT }, "sk_second")]
+    pollReplies = [ready({ email: "victim.owner@example.com", fingerprint: VICTIM_FINGERPRINT }, "sk_second")]
     const second = confirmer(false)
     await startLogin({ confirmAccount: second })
     expect(second).not.toHaveBeenCalled()
@@ -423,7 +423,7 @@ describe("account confirmation", () => {
 
   it("asks again when a later sign-in lands in a different account", async () => {
     prefs.set(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`, VICTIM_FINGERPRINT)
-    pollReplies = [ready({ masked: "an…@example.org", fingerprint: ATTACKER_FINGERPRINT })]
+    pollReplies = [ready({ email: "another@example.org", fingerprint: ATTACKER_FINGERPRINT })]
     const confirmAccount = confirmer(true)
     await startLogin({ confirmAccount })
     expect(confirmAccount).toHaveBeenCalledTimes(1)
@@ -433,7 +433,7 @@ describe("account confirmation", () => {
 
   it.each([
     ["no account fields", {}],
-    ["a malformed fingerprint", { masked: "vi…@example.com", fingerprint: "VICTIM" }],
+    ["a malformed fingerprint", { email: "victim.owner@example.com", fingerprint: "VICTIM" }],
     ["a non-string fingerprint", { fingerprint: 42 }],
   ])("always asks for a key with %s and remembers nothing", async (_label, account) => {
     prefs.set(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`, VICTIM_FINGERPRINT)
@@ -470,11 +470,11 @@ describe("account confirmation", () => {
     const confirmEx = vi.fn().mockReturnValue(0)
     vi.stubGlobal("Services", { prompt: promptStub(confirmEx) })
     const win = { name: "prefs" } as unknown as Window
-    pollReplies = [ready({ masked: "vi…@example.com", fingerprint: VICTIM_FINGERPRINT })]
+    pollReplies = [ready({ email: "victim.owner@example.com", fingerprint: VICTIM_FINGERPRINT })]
     await startLogin({ win })
     expect(confirmEx).toHaveBeenCalledTimes(1)
     expect(confirmEx.mock.calls[0][0]).toBe(win)
-    expect(confirmEx.mock.calls[0][2]).toContain("vi…@example.com")
+    expect(confirmEx.mock.calls[0][2]).toContain("victim.owner@example.com")
     expect(isLoggedIn()).toBe(true)
   })
 
@@ -501,17 +501,17 @@ function promptStub(confirmEx: ReturnType<typeof vi.fn>) {
 
 describe("issued key parsing", () => {
   it("keeps a well-formed account and drops malformed fields", () => {
-    expect(issuedKeyFrom(ready({ masked: " vi…@example.com ", fingerprint: VICTIM_FINGERPRINT }))).toEqual({
+    expect(issuedKeyFrom(ready({ email: " victim.owner@example.com ", fingerprint: VICTIM_FINGERPRINT }))).toEqual({
       key: "sk_issued_key",
       base: "https://api.example.test/v1",
-      emailMasked: "vi…@example.com",
+      email: "victim.owner@example.com",
       fingerprint: VICTIM_FINGERPRINT,
     })
-    expect(issuedKeyFrom(ready({ masked: "", fingerprint: "../etc" }))).toEqual({
+    expect(issuedKeyFrom(ready({ email: "", fingerprint: "../etc" }))).toEqual({
       key: "sk_issued_key",
       base: "https://api.example.test/v1",
     })
-    expect(issuedKeyFrom(ready({ masked: "x".repeat(400) })).emailMasked).toHaveLength(254)
+    expect(issuedKeyFrom(ready({ email: "x".repeat(400) })).email).toHaveLength(254)
   })
 })
 

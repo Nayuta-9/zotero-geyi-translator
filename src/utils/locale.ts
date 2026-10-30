@@ -85,7 +85,7 @@ const EN: Dict = {
   "auth-failed": "Sign-in failed. Please try again.",
   "account-confirm-title": "Confirm your Geyi account",
   "account-confirm-body":
-    "This sign-in was approved for the Geyi account:\n\n{account}\n\nIs this your account? Choose “This is my account” only if you clicked Sign in in your own Zotero and approved it in your own browser. Otherwise choose “Not my account”: the plugin discards this sign-in and Geyi revokes its key.",
+    "This sign-in was approved for the Geyi account:\n\n{account}\n\nCheck that this is exactly your email address. Choose “This is my account” only if you clicked Sign in in your own Zotero and approved it in your own browser. Otherwise choose “Not my account”: the plugin discards this sign-in and Geyi revokes its key.",
   "account-confirm-unknown": "(the account could not be identified)",
   "account-confirm-yes": "This is my account",
   "account-confirm-no": "Not my account",
@@ -244,7 +244,7 @@ const ZH: Dict = {
   "auth-failed": "登录失败，请重试。",
   "account-confirm-title": "确认格译账号",
   "account-confirm-body":
-    "这次登录授权给了以下格译账号：\n\n{account}\n\n这是你的账号吗？只有你在自己的 Zotero 中点了登录、并在自己的浏览器里确认过，才选「是我的账号」；否则请选「不是我的账号」，插件会丢弃这次登录，格译会作废它的密钥。",
+    "这次登录授权给了以下格译账号：\n\n{account}\n\n请逐字核对这是不是你的邮箱。只有你在自己的 Zotero 中点了登录、并在自己的浏览器里确认过，才选「是我的账号」；否则请选「不是我的账号」，插件会丢弃这次登录，格译会作废它的密钥。",
   "account-confirm-unknown": "（暂时无法识别账号）",
   "account-confirm-yes": "是我的账号",
   "account-confirm-no": "不是我的账号",

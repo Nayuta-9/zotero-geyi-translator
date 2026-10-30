@@ -27,14 +27,14 @@ export function accountLabel(snapshot: AccountSnapshot): string {
 }
 
 /**
- * Confirmation text for a newly issued key. `emailMasked` is the masked email
- * of the key's account; without it the text says the account is unknown.
+ * Confirmation text for a newly issued key. `email` is the email of the key's
+ * account; without it the text says the account is unknown.
  */
-export function accountConfirmContent(emailMasked: string | undefined): AccountConfirmContent {
+export function accountConfirmContent(email: string | undefined): AccountConfirmContent {
   return {
     title: getString("account-confirm-title"),
     message: getString("account-confirm-body", {
-      account: emailMasked || getString("account-confirm-unknown"),
+      account: email || getString("account-confirm-unknown"),
     }),
     confirmLabel: getString("account-confirm-yes"),
     rejectLabel: getString("account-confirm-no"),

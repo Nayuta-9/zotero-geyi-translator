@@ -38,7 +38,7 @@ const REVOKE_RETRY_MS = 1000
 /** Pref holding the fingerprint of the account the user last confirmed. */
 export const CONFIRMED_ACCOUNT_PREF = "confirmedAccountFingerprint"
 const FINGERPRINT_RE = /^[0-9a-f]{16,128}$/
-const MAX_EMAIL_MASKED_LENGTH = 254
+const MAX_EMAIL_LENGTH = 254
 
 const PLANS_URL = `${config.webBase}/billing?source=zotero_plugin`
 
@@ -68,8 +68,8 @@ const FAILURE_MESSAGE_KEYS: Record<LoginFailureReason, string> = {
 export interface IssuedKey {
   key: string
   base: string
-  /** Masked email of the key's account. */
-  emailMasked?: string
+  /** Email of the key's account. */
+  email?: string
   /** Stable opaque identifier of the key's account. */
   fingerprint?: string
 }
@@ -223,9 +223,9 @@ export async function codeChallengeFor(verifier: string): Promise<string> {
  */
 export function issuedKeyFrom(data: any): IssuedKey {
   const issued: IssuedKey = { key: String(data.api_key), base: String(data.api_base_url) }
-  const masked = data.account_email_masked
-  if (typeof masked === "string" && masked.trim()) {
-    issued.emailMasked = masked.trim().slice(0, MAX_EMAIL_MASKED_LENGTH)
+  const email = data.account_email
+  if (typeof email === "string" && email.trim()) {
+    issued.email = email.trim().slice(0, MAX_EMAIL_LENGTH)
   }
   const fingerprint = data.account_fingerprint
   if (typeof fingerprint === "string" && FINGERPRINT_RE.test(fingerprint)) {
@@ -282,7 +282,7 @@ async function acceptIssuedKey(issued: IssuedKey, options: LoginOptions): Promis
       ((key: IssuedKey) =>
         promptAccountConfirm(
           options.win ?? (Zotero.getMainWindow() as unknown as Window | null),
-          accountConfirmContent(key.emailMasked),
+          accountConfirmContent(key.email),
         ))
     let confirmed: boolean | null
     try {

@@ -54,10 +54,10 @@ beforeEach(() => {
 })
 
 describe("account confirmation content", () => {
-  it("names the account by its masked email", () => {
-    const content = accountConfirmContent("vi…@example.com")
+  it("names the account by its email", () => {
+    const content = accountConfirmContent("victim.owner@example.com")
     expect(content.title).toBe(getString("account-confirm-title"))
-    expect(content.message).toContain("vi…@example.com")
+    expect(content.message).toContain("victim.owner@example.com")
     expect(content.confirmLabel).toBe(getString("account-confirm-yes"))
     expect(content.rejectLabel).toBe(getString("account-confirm-no"))
   })
@@ -125,7 +125,7 @@ describe("promptAccountConfirm", () => {
   it("confirms only on the first button and makes rejection the default", () => {
     const { confirmEx, prompt } = stubPrompt(0)
     const parent = {} as Window
-    const content = accountConfirmContent("vi…@example.com")
+    const content = accountConfirmContent("victim.owner@example.com")
     expect(promptAccountConfirm(parent, content)).toBe(true)
     const [win, title, message, flags, yes, no] = confirmEx.mock.calls[0]
     expect(win).toBe(parent)
