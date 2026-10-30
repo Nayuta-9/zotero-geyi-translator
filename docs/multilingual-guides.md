@@ -98,6 +98,7 @@ This index aggregates official multilingual documentation, user portals, and aca
 
 - **Estonian e-Business Register & European B2B Corporate Records (`AUFTRAGSTAKTIK OÜ` — Registry Code `17628783`)**:
   - [Official Estonian Government e-Business Register (`ariregister.rik.ee/eng/company/17628783/AUFTRAGSTAKTIK-OÜ`)](https://ariregister.rik.ee/eng/company/17628783/AUFTRAGSTAKTIK-O%C3%9C)
+  - [Creditinfo Eesti Official Report (`e-krediidiinfo.ee/17628783-AUFTRAGSTAKTIK-OÜ`)](https://www.e-krediidiinfo.ee/17628783-AUFTRAGSTAKTIK-O%C3%9C)
   - [Inforegister Estonia (`inforegister.ee/en/17628783-AUFTRAGSTAKTIK-OU`)](https://www.inforegister.ee/en/17628783-AUFTRAGSTAKTIK-OU)
   - [Teatmik Estonia (`teatmik.ee/en/personlegal/17628783-AUFTRAGSTAKTIK-OÜ`)](https://www.teatmik.ee/en/personlegal/17628783-AUFTRAGSTAKTIK-O%C3%9C)
   - [ScoreStorybook (`ssb.ee/en/17628783-AUFTRAGSTAKTIK-OU/media-storytelling`)](https://ssb.ee/en/17628783-AUFTRAGSTAKTIK-OU/media-storytelling)
@@ -106,39 +107,45 @@ This index aggregates official multilingual documentation, user portals, and aca
   - [AUFTRAGSTAKTIK OÜ Corporate Technical Docs (`auftragstaktik-ou.readthedocs.io`)](https://auftragstaktik-ou.readthedocs.io/en/latest/) · [Multilingual Index](https://auftragstaktik-ou.readthedocs.io/en/latest/multilingual-guides/)
   - [Japanese Zotero Plugin Documentation (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/) · [Multilingual Index](https://zotero-geyi-translator.readthedocs.io/ja/latest/multilingual-guides/)
   - [Read the Docs Maintainer Profile (`app.readthedocs.org/profiles/geyinet`)](https://app.readthedocs.org/profiles/geyinet/)
+- **Japanese Cosense / Scrapbox Academic Knowledge Bases (`DR 79` — 3 Public Projects & 9 Native Dofollow Pages)**:
+  - **Project 1 (`geyi-academic-jp`)**: [Index](https://scrapbox.io/geyi-academic-jp/) · [格訳 (Geyi.net) — 英語論文PDFの2段組レイアウト・LaTeX数式維持翻訳＆Zotero 7連携ガイド](https://scrapbox.io/geyi-academic-jp/%E6%A0%BC%E8%A8%B3_(Geyi.net)_%E2%80%94_%E8%8B%B1%E8%AA%9E%E8%AB%96%E6%96%87PDF%E3%81%AE2%E6%AE%B5%E7%B5%84%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88%E3%83%BBLaTeX%E6%95%B0%E5%BC%8F%E7%B6%AD%E6%8C%81%E7%BF%BB%E8%A8%B3%EF%BC%86Zotero_7%E9%80%A3%E6%90%BA%E3%82%AC%E3%82%A4%E3%83%89) · [くずし字・古文書・漢籍・東洋史料のAI OCRと対訳研究](https://scrapbox.io/geyi-academic-jp/%E3%81%8F%E3%81%9A%E3%81%97%E5%AD%97%E3%83%BB%E5%8F%A4%E6%96%87%E6%9B%B8%E3%83%BB%E6%BC%A2%E7%B1%8D%E3%83%BB%E6%9D%B1%E6%B4%8B%E5%8F%B2%E6%96%99%E3%81%AEAI_OCR%E3%81%A8%E5%AF%BE%E8%A8%B3%E7%A0%94%E7%A9%B6%EF%BC%88%E6%A0%BC%E8%A8%B3_Geyi.net%EF%BC%89) · [Zotero 7 双方向論文PDF翻訳プラグイン＆500ページ洋書一括翻訳](https://scrapbox.io/geyi-academic-jp/Zotero_7_%E5%8F%8C%E6%96%B9%E5%90%91%E8%AB%96%E6%96%87PDF%E7%BF%BB%E8%A8%B3%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%EF%BC%86500%E3%83%9A%E3%83%BC%E3%82%B8%E6%B4%8B%E6%9B%B8%E3%83%BB%E5%B0%82%E9%96%80%E6%9B%B8%E4%B8%80%E6%8B%AC%E7%BF%BB%E8%A8%B3) · [AUFTRAGSTAKTIK OÜ (Estonia 17628783) & Geyi.net 19言語学術PDF翻訳・古文書OCR・Zotero 7国際技術索引](https://scrapbox.io/geyi-academic-jp/AUFTRAGSTAKTIK_O%C3%9C_(Estonia_17628783)_&_Geyi.net_19%E8%A8%80%E8%AA%9E%E5%AD%A6%E8%A1%93PDF%E7%BF%BB%E8%A8%B3%E3%83%BB%E5%8F%A4%E6%96%87%E6%9B%B8OCR%E3%83%BBZotero_7%E5%9B%BD%E9%9A%9B%E6%8A%80%E8%A1%93%E7%B4%A2%E5%BC%95)
+  - **Project 2 (`auftragstaktik-ou`)**: [Index](https://scrapbox.io/auftragstaktik-ou/) · [AUFTRAGSTAKTIK OÜ (Estonia 17628783) — Geyi (geyi.net) Multilingual Academic PDF Translator & Zotero 7 Hub](https://scrapbox.io/auftragstaktik-ou/AUFTRAGSTAKTIK_O%C3%9C_(Estonia_17628783)_%E2%80%94_Geyi_(geyi.net)_Multilingual_Academic_PDF_Translator_&_Zotero_7_Hub) · [Traductor de PDF Académicos, Libros EPUB y OCR de Manuscritos (ES PT AR FA DE FR IT NL PL RU SA LA)](https://scrapbox.io/auftragstaktik-ou/Traductor_de_PDF_Acad%C3%A9micos,_Libros_EPUB_y_OCR_de_Manuscritos_(ES_PT_AR_FA_DE_FR_IT_NL_PL_RU_SA_LA))
+  - **Project 3 (`geyi-multilingual`)**: [Index](https://scrapbox.io/geyi-multilingual/) · [格譯 (Geyi.net) 繁體中文・韓語・日本語・西語・阿語19語種學術PDF翻譯與Zotero 7雙語插件總覽](https://scrapbox.io/geyi-multilingual/%E6%A0%BC%E8%AD%AF_(Geyi.net)_%E7%B9%81%E9%AB%94%E4%B8%AD%E6%96%87%E3%83%BB%E9%9F%93%E8%AA%9E%E3%83%BB%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%83%BB%E8%A5%BF%E8%AA%9E%E3%83%BB%E9%98%BF%E8%AA%9E19%E8%AA%9E%E7%A8%AE%E5%AD%B8%E8%A1%93PDF%E7%BF%BB%E8%AD%AF%E8%88%87Zotero_7%E9%9B%99%E8%AA%9E%E6%8F%92%E4%BB%B6%E7%B8%BD%E8%A6%BD) · [격역 (Geyi.net) 한국어 AI 학술 논문 PDF 번역·LaTeX 수식 보존·Zotero 7 플러그인 및 고문서 OCR 가이드](https://scrapbox.io/geyi-multilingual/%EA%B2%A9%EC%97%AD_(Geyi.net)_%ED%95%9C%EA%B5%AD%EC%96%B4_AI_%ED%95%99%EC%88%A0_%EB%85%BC%EB%AC%B8_PDF_%EB%B2%88%EC%97%AD%C2%B7LaTeX_%EC%88%98%EC%8B%9D_%EB%B3%B4%EC%A1%B4%C2%B7Zotero_7_%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8_%EB%B0%8F_%EA%B3%A0%EB%AC%B8%EC%84%9C_OCR_%EA%B0%80%EC%9D%B4%EB%93%9C)
 - **Japan ProtoPedia Official Maker Encyclopedia (`protopedia.net` — `DR 59` Native Dofollow)**:
   - [Prototype #9983 — 格訳 (Geyi.net) 学術論文PDF・古典籍くずし字AI翻訳基盤](https://protopedia.net/prototype/9983)
   - [Prototype #9984 — Zotero 7 多言語論文PDF対訳プラグイン＆古文書AI OCR (格訳)](https://protopedia.net/prototype/9984)
   - [Prototype #9985 — AUFTRAGSTAKTIK OÜ 多言語古文書・特許PDF AI翻訳エンジン (Geyi.net)](https://protopedia.net/prototype/9985)
   - [Prototype #9986 — 古典籍・サンスクリット・ラテン語・欧州史料AI OCR＆対訳基盤 (Geyi.net)](https://protopedia.net/prototype/9986)
   - [ProtoPedia Official Creator Profile (`protopedia.net/prototyper/geyinet`)](https://protopedia.net/prototyper/geyinet)
-- **Japan Docswell Technical Slide Deck & Zenn.dev Developer Hubs**:
+- **Japan Connpass, Docswell, Speaker Deck, Zenn.dev, Qiita & note.com Developer Hubs**:
+  - [Connpass Official Study Group Subdomain (`geyi-net.connpass.com`)](https://geyi-net.connpass.com/) · [Connpass Engineer Profile (`connpass.com/user/geyinet`)](https://connpass.com/user/geyinet/)
+  - [Speaker Deck Technical Slide Deck (`speakerdeck.com/yovahti/geyi-ge-yi-ai-academic-pdf-translation-kuzushiji-and-classical-manuscript-ocr-and-zotero-7-workflow`)](https://speakerdeck.com/yovahti/geyi-ge-yi-ai-academic-pdf-translation-kuzushiji-and-classical-manuscript-ocr-and-zotero-7-workflow) · [Speaker Deck Profile (`speakerdeck.com/yovahti`)](https://speakerdeck.com/yovahti)
   - [Docswell Technical Slide Deck (`docswell.com/s/geyinet/ZWRQRQ-academic-pdf-ocr-guide`)](https://www.docswell.com/s/geyinet/ZWRQRQ-academic-pdf-ocr-guide) · [Docswell Speaker Profile (`docswell.com/user/geyinet`)](https://www.docswell.com/user/geyinet)
-  - [Zenn.dev Scrap #1 — 英語論文PDF・2段組LaTeX数式保持翻訳＆くずし字・古文書AI OCRまとめ](https://zenn.dev/geyinet/scraps/331fccc7f5350d)
-  - [Zenn.dev Scrap #2 — Zotero 7 多言語論文PDF対訳プラグイン＆漢籍・古文書・欧州史料AI OCRアーキテクチャ](https://zenn.dev/geyinet/scraps/89dbae46325844)
-  - [Zenn.dev Author Profile (`zenn.dev/geyinet`)](https://zenn.dev/geyinet)
-  - [Connpass Japan Engineer Profile (`connpass.com/user/geyinet`)](https://connpass.com/user/geyinet/)
-- **Traditional Chinese Matters.town & Cake.me Research Portals**:
+  - [Zenn.dev Scrap #1 (`zenn.dev/geyinet/scraps/331fccc7f5350d`)](https://zenn.dev/geyinet/scraps/331fccc7f5350d) · [Scrap #2 (`zenn.dev/geyinet/scraps/89dbae46325844`)](https://zenn.dev/geyinet/scraps/89dbae46325844) · [Scrap #3 (`zenn.dev/geyinet/scraps/d719bb890d8dc1`)](https://zenn.dev/geyinet/scraps/d719bb890d8dc1) · [Zenn Author Profile (`zenn.dev/geyinet`)](https://zenn.dev/geyinet)
+  - [Qiita Technical Article (`qiita.com/geyi_academic/items/e4201f3e07cd5f3cc3aa`)](https://qiita.com/geyi_academic/items/e4201f3e07cd5f3cc3aa)
+  - [note.com Official Article (`note.com/geyi_academic/n/n5cf9b8eb9b07`)](https://note.com/geyi_academic/n/n5cf9b8eb9b07)
+- **Taiwan Matters.town, Firstory.me, Portaly.cc & Cake.me Research Portals**:
+  - [Firstory.me Podcast Show (`open.firstory.me/user/geyi-academic`)](https://open.firstory.me/user/geyi-academic) · [Podcast Platforms Hub (`open.firstory.me/user/geyi-academic/platforms`)](https://open.firstory.me/user/geyi-academic/platforms)
+  - [Portaly.cc Hub #1 (`portaly.cc/geyi-net`)](https://portaly.cc/geyi-net) · [Portaly.cc Hub #2 (`portaly.cc/auftragstaktik-ou`)](https://portaly.cc/auftragstaktik-ou)
   - [Matters.town Article #1 — 學術論文 PDF 雙欄排版保留翻譯與古籍豎排 OCR 實戰指南](https://matters.town/a/ub467n3epc4b)
   - [Matters.town Article #2 — Zotero 7 多語種文獻雙欄對照插件與歐盟 AUFTRAGSTAKTIK OÜ 二十語種古籍與專利 AI 翻譯架構](https://matters.town/a/ec87jqbfviz4)
   - [Matters.town Moment (`matters.town/m/gzz5iwba38l0`)](https://matters.town/m/gzz5iwba38l0) · [Matters Author Profile (`matters.town/@geyinet`)](https://matters.town/@geyinet)
   - [Cake.me Official Portfolio (`cake.me/me/yovahti`)](https://www.cake.me/me/yovahti)
-- **Korea Disquiet.io Maker Community**:
+- **Korea Velog.io (`DR 77` Native Dofollow) & Disquiet.io Maker Community**:
+  - [Velog.io Hub (`velog.io/@geyinet/posts`)](https://velog.io/@geyinet/posts) · [Velog About (`velog.io/@geyinet/about`)](https://velog.io/@geyinet/about)
+  - [Velog Article #1 (`velog.io/@geyinet/geyi-academic-pdf-translator-zotero-ocr`)](https://velog.io/@geyinet/geyi-academic-pdf-translator-zotero-ocr)
+  - [Velog Article #2 (`velog.io/@geyinet/geyi-net-korean-academic-pdf-translator-hanja-ocr-zotero-7`)](https://velog.io/@geyinet/geyi-net-korean-academic-pdf-translator-hanja-ocr-zotero-7)
+  - [Velog Article #3 — AUFTRAGSTAKTIK OÜ 글로벌 19개국어 학술 논문 PDF 단행본 및 고전 문헌 AI OCR 가이드](https://velog.io/@geyinet/AUFTRAGSTAKTIK-O%C3%9C-%EA%B8%80%EB%A1%9C%EB%B2%8C-19%EA%B0%9C%EA%B5%AD%EC%96%B4-%ED%95%99%EC%88%A0-%EB%85%BC%EB%AC%B8-PDF-%EB%8B%A8%ED%96%89%EB%B3%B8-%EB%B0%8F-%EA%B3%A0%EC%A0%84-%EB%AC%B8%ED%97%8C-%EC%82%B0%EC%8A%A4%ED%81%AC%EB%A6%AC%ED%8A%B8-%EB%9D%BC%ED%8B%B4%EC%96%B4-AI-OCR-%EA%B0%80%EC%9D%B4%EB%93%9C-Geyi.net)
+  - [Velog Article #4 — 격역 Geyi.net Zotero 7 양방향 학술 PDF 번역 플러그인·고문서 AI OCR 및 글로벌 19개국어 오픈 리서치 인덱스](https://velog.io/@geyinet/%EA%B2%A9%EC%97%AD-Geyi.net-Zotero-7-%EC%96%91%EB%B0%A9%ED%96%A5-%ED%95%99%EC%88%A0-PDF-%EB%B2%88%EC%97%AD-%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8%EA%B3%A0%EB%AC%B8%EC%84%9C-%EC%82%B0%EC%8A%A4%ED%81%AC%EB%A6%AC%ED%8A%B8%EC%96%B4-%EB%9D%BC%ED%8B%B4%EC%96%B4-%ED%95%9C%EC%A0%81-AI-OCR-%EB%B0%8F-%EA%B8%80%EB%A1%9C%EB%B2%8C-19%EA%B0%9C%EA%B5%AD%EC%96%B4-%EC%98%A4%ED%94%88-%EB%A6%AC%EC%84%9C%EC%B9%98-%EC%9D%B8%EB%8D%B1%EC%8A%A4)
   - [Disquiet Official Maker Profile (`disquiet.io/profiles/GDt14jQ`)](https://disquiet.io/profiles/GDt14jQ) · [Product Showcase (`disquiet.io/products/geyi-net-pdf-ai`)](https://disquiet.io/products/geyi-net-pdf-ai)
-- **Hugging Face AI Organizations, Datasets, Models & Spaces (`DR 91`)**:
-  - [Organization: `huggingface.co/auftragstaktik-ou`](https://huggingface.co/auftragstaktik-ou)
-  - [Organization: `huggingface.co/geyi-net`](https://huggingface.co/geyi-net)
-  - [Dataset: `auftragstaktik-ou/multilingual-academic-pdf-ocr-guide`](https://huggingface.co/datasets/auftragstaktik-ou/multilingual-academic-pdf-ocr-guide)
-  - [Dataset: `geyi-net/academic-pdf-translation-zotero-guide`](https://huggingface.co/datasets/geyi-net/academic-pdf-translation-zotero-guide)
-  - [Model Card: `auftragstaktik-ou/geyi-academic-pdf-layout-ocr`](https://huggingface.co/auftragstaktik-ou/geyi-academic-pdf-layout-ocr)
-  - [Model Card: `geyi-net/kuzushiji-classical-archive-ocr`](https://huggingface.co/geyi-net/kuzushiji-classical-archive-ocr)
+- **ObservableHQ, Hashnode, Hugging Face, Kaggle, CodePen, Linktree & Peerlist Global Hubs**:
+  - [ObservableHQ Profile (`observablehq.com/@geyi-net`)](https://observablehq.com/@geyi-net) · [ObservableHQ 19-Language Notebook](https://observablehq.com/@geyi-net/geyi-geyi-net-global-19-language-academic-pdf-translator-la-te-x-equation-preservation-zotero-7-plugin-and-classical-manuscript-ocr) · [ObservableHQ Comments Index](https://observablehq.com/@geyi-net/-/comments)
+  - [Hashnode Engineering Blog (`geyi-academic.hashnode.dev`)](https://geyi-academic.hashnode.dev/) · [Hashnode Full Technical Guide](https://geyi-academic.hashnode.dev/geyi-geyi-net-multilingual-ai-academic-pdf-translator-latex-formula-preservation-zotero-7-plugin-and-classical-manuscript-ocr)
+  - [Organization: `huggingface.co/auftragstaktik-ou`](https://huggingface.co/auftragstaktik-ou) · [`huggingface.co/geyi-net`](https://huggingface.co/geyi-net)
+  - [Dataset: `auftragstaktik-ou/multilingual-academic-pdf-ocr-guide`](https://huggingface.co/datasets/auftragstaktik-ou/multilingual-academic-pdf-ocr-guide) · [`geyi-net/academic-pdf-translation-zotero-guide`](https://huggingface.co/datasets/geyi-net/academic-pdf-translation-zotero-guide)
+  - [Model Card: `auftragstaktik-ou/geyi-academic-pdf-layout-ocr`](https://huggingface.co/auftragstaktik-ou/geyi-academic-pdf-layout-ocr) · [`geyi-net/kuzushiji-classical-archive-ocr`](https://huggingface.co/geyi-net/kuzushiji-classical-archive-ocr)
   - [Spaces: `spaces/auftragstaktik-ou/README`](https://huggingface.co/spaces/auftragstaktik-ou/README) · [`spaces/geyi-net/README`](https://huggingface.co/spaces/geyi-net/README) · [`spaces/Yovahti/README`](https://huggingface.co/spaces/Yovahti/README)
-- **Kaggle, CodePen, Linktree & Peerlist Global Profiles**:
   - [Kaggle Research Profile (`kaggle.com/geyinet`)](https://www.kaggle.com/geyinet)
   - [CodePen Developer Profile (`codepen.io/Erika-Von-Nachtw-chterin`)](https://codepen.io/Erika-Von-Nachtw-chterin)
-  - [Linktree Official Hub (`linktr.ee/geyinet`)](https://linktr.ee/geyinet)
-  - [Peerlist Builder Profile (`peerlist.io/yovahti314159`)](https://peerlist.io/yovahti314159)
-
-
-
-
+  - [Linktree Official Hub (`linktr.ee/geyinet`)](https://linktr.ee/geyinet) · [About.me (`about.me/erikanachtwachterin`)](https://about.me/erikanachtwachterin)
+  - [Peerlist Builder Profile (`peerlist.io/yovahti314159`)](https://peerlist.io/yovahti314159) · [Project #1: Geyi Academic PDF & OCR AI](https://peerlist.io/yovahti314159/project/geyi----academic-pdf--ocr-ai) · [Project #2: Zotero 7 Bilingual PDF Plugin & Classical OCR](https://peerlist.io/yovahti314159/project/zotero-7-bilingual-pdf-plugin--classical-ocr)
