@@ -10,6 +10,7 @@ import {
   unregisterMenus,
 } from "./modules/translate"
 import { emitInstallOnce } from "./modules/telemetry"
+import { showOnboardingIfNeeded } from "./modules/onboarding"
 
 // 生命周期(GEYI-328)。bootstrap.js 直接调用这些。
 
@@ -30,6 +31,8 @@ async function onStartup() {
     report: reportTrackedTask,
   })
   void emitInstallOnce()
+  // Not awaited: the guidance window must never hold up task recovery.
+  void showOnboardingIfNeeded()
   await resumeTrackedTasks()
 }
 

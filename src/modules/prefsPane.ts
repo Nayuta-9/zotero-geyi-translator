@@ -6,6 +6,7 @@ import {
   clearCredentials,
   isLoggedIn,
   manualLogin,
+  showLoginFailure,
   startLogin,
 } from "./auth"
 import { clearGlossaryCache, getGlossaries } from "./glossary"
@@ -337,9 +338,8 @@ async function doLogin(win: Window, doc: Document): Promise<void> {
   try {
     await startLogin()
     refreshAccount(doc)
-  } catch {
-    // 自动授权失败(loopback 被浏览器 CORS/PNA 拦等)→ 引导改用「手动输入密钥」。
-    win.alert(getString("auth-failed"))
+  } catch (error) {
+    showLoginFailure(win, error)
   }
 }
 
