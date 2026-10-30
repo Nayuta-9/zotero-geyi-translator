@@ -2,6 +2,7 @@ import { config } from "../utils/config"
 import { getString } from "../utils/locale"
 import { logDebug } from "../utils/log"
 import { getPref, setPref } from "../utils/prefs"
+import { showSignedInAccount } from "./accountNotice"
 import { isLoggedIn, showLoginFailure, startLogin } from "./auth"
 
 // First-run guidance shown once per installed version, so a new install and
@@ -89,11 +90,10 @@ function openOnboardingWindow(content: OnboardingContent): void {
 async function signInFromOnboarding(): Promise<void> {
   try {
     await startLogin()
-    new (ztk().ProgressWindow)(config.addonName)
-      .createLine({ text: getString("auth-success"), type: "success" })
-      .show()
   } catch (error) {
     const win = Zotero.getMainWindow() as unknown as Window | null
     if (win) showLoginFailure(win, error)
+    return
   }
+  void showSignedInAccount()
 }

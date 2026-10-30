@@ -9,6 +9,9 @@ import { emitTelemetry } from "./telemetry"
 // 的 loopback);失败可手动粘贴 Key。
 // The poll also reports why an authorization ended (cancelled in the browser,
 // ineligible membership, expired link) so the plugin can stop and explain.
+// Each sign-in proves possession of a local code verifier: only its S256
+// challenge reaches the start URL and the consent page, and the verifier
+// itself travels only in the poll request body.
 
 // The backend signs the authorization state for 10 minutes and reports
 // `expired` after that; the local cap only covers a backend that never does.
@@ -143,10 +146,34 @@ function decodeKey(e: string): string {
   return decodeURIComponent(escape(atob(e)))
 }
 
-function randomNonce(): string {
-  const a = new Uint8Array(24)
-  ;(globalThis.crypto as Crypto).getRandomValues(a)
-  return Array.from(a, (b) => b.toString(16).padStart(2, "0")).join("")
+/** Encodes `bytes` as base64url without padding. */
+function base64Url(bytes: Uint8Array): string {
+  let binary = ""
+  for (const b of bytes) binary += String.fromCharCode(b)
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
+}
+
+/** Returns a fresh code verifier: 32 random bytes as 43 base64url characters. */
+export function createCodeVerifier(): string {
+  const bytes = new Uint8Array(32)
+  ;(globalThis.crypto as Crypto).getRandomValues(bytes)
+  return base64Url(bytes)
+}
+
+/** WebCrypto digest API of the plugin scope, or of the main window when the scope lacks it. */
+function subtleCrypto(): SubtleCrypto | undefined {
+  const own = (globalThis.crypto as Crypto | undefined)?.subtle
+  if (own) return own
+  return (Zotero as any).getMainWindow?.()?.crypto?.subtle
+}
+
+/** Returns the S256 code challenge of `verifier`: unpadded base64url of its SHA-256. */
+export async function codeChallengeFor(verifier: string): Promise<string> {
+  const subtle = subtleCrypto()
+  if (!subtle) throw new Error("WebCrypto digest is unavailable")
+  const data = new Uint8Array(verifier.length)
+  for (let i = 0; i < verifier.length; i++) data[i] = verifier.charCodeAt(i)
+  return base64Url(new Uint8Array(await subtle.digest("SHA-256", data)))
 }
 
 /**
@@ -155,9 +182,17 @@ function randomNonce(): string {
  * rejects with a `LoginError` that says why it stopped.
  */
 export async function startLogin(): Promise<void> {
-  const nonce = randomNonce()
+  let verifier: string
+  let challenge: string
+  try {
+    verifier = createCodeVerifier()
+    challenge = await codeChallengeFor(verifier)
+  } catch {
+    throw new LoginError("failed")
+  }
   const startUrl =
-    `${config.authApiBase}/plugin/authorize/start?nonce=${encodeURIComponent(nonce)}`
+    `${config.authApiBase}/plugin/authorize/start` +
+    `?code_challenge=${encodeURIComponent(challenge)}&code_challenge_method=S256`
 
   let xhr: XMLHttpRequest
   try {
@@ -182,11 +217,18 @@ export async function startLogin(): Promise<void> {
 
   // Zotero's XHR is not subject to browser CORS or private network access
   // checks. Sending the state lets the backend answer `expired` once the
-  // consent link is no longer valid.
-  let pollUrl =
-    `${config.authApiBase}/plugin/authorize/poll?nonce=${encodeURIComponent(nonce)}`
+  // consent link is no longer valid. `logBodyLength: 0` keeps the verifier out
+  // of Zotero's debug output.
+  const pollUrl = `${config.authApiBase}/plugin/authorize/poll`
+  const pollBody: { code_verifier: string; state?: string } = { code_verifier: verifier }
   if (typeof res.state_token === "string" && res.state_token) {
-    pollUrl += `&state=${encodeURIComponent(res.state_token)}`
+    pollBody.state = res.state_token
+  }
+  const pollOptions = {
+    ...AUTH_REQUEST_OPTIONS,
+    body: JSON.stringify(pollBody),
+    headers: { "Content-Type": "application/json" },
+    logBodyLength: 0,
   }
   const started = Date.now()
   let unreachableSince: number | null = null
@@ -196,9 +238,9 @@ export async function startLogin(): Promise<void> {
     let pr: XMLHttpRequest
     try {
       pr = await Zotero.HTTP.request(
-        "GET",
+        "POST",
         pollUrl,
-        withPluginIdentity(pollUrl, { ...AUTH_REQUEST_OPTIONS }),
+        withPluginIdentity(pollUrl, { ...pollOptions }),
       )
     } catch (error) {
       const kind = requestFailureKind(error)

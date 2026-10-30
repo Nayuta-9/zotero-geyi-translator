@@ -1,6 +1,6 @@
 {
   "name": "zotero-geyi-translator",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "格译 Geyi 的 Zotero 插件：右键条目翻译其中的 PDF，保留原版式或 AI 重排，可输出双语对照，译文作为子附件挂回原条目",
   "config": {
     "addonName": "Geyi Translator",

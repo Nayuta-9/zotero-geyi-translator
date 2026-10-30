@@ -1,6 +1,9 @@
+import { createHash, webcrypto } from "node:crypto"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { getString } from "../utils/locale"
 import {
+  codeChallengeFor,
+  createCodeVerifier,
   isLoggedIn,
   LoginError,
   loginFailureReason,
@@ -24,10 +27,17 @@ const prefs = new Map<string, unknown>()
 let clock = 0
 let pollReplies: PollReply[] = []
 let pollUrls: string[] = []
+let startUrls: string[] = []
+let pollCalls: { method: string; options: Record<string, any> }[] = []
 const launchURL = vi.fn()
 
-function request(_method: string, url: string): Promise<{ responseText: string }> {
+function request(
+  method: string,
+  url: string,
+  options: Record<string, any> = {},
+): Promise<{ responseText: string }> {
   if (url.includes("/plugin/authorize/start")) {
+    startUrls.push(url)
     return Promise.resolve({
       responseText: JSON.stringify({
         authorize_url: "https://www.geyi.net/plugin/authorize?state=st",
@@ -38,6 +48,7 @@ function request(_method: string, url: string): Promise<{ responseText: string }
   }
   if (url.includes("/plugin/authorize/poll")) {
     pollUrls.push(url)
+    pollCalls.push({ method, options })
     const reply = pollReplies.length > 1 ? pollReplies.shift()! : pollReplies[0]
     if (reply instanceof Error) return Promise.reject(reply)
     if (typeof reply === "string") return Promise.resolve({ responseText: reply })
@@ -79,10 +90,28 @@ beforeEach(() => {
   clock = 0
   pollReplies = []
   pollUrls = []
+  startUrls = []
+  pollCalls = []
   launchURL.mockClear()
   vi.restoreAllMocks()
+  vi.unstubAllGlobals()
   vi.spyOn(Date, "now").mockImplementation(() => clock)
   stubZotero()
+})
+
+describe("code verifier and challenge", () => {
+  it("derives the RFC 7636 example challenge", async () => {
+    expect(await codeChallengeFor("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk")).toBe(
+      "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM",
+    )
+  })
+
+  it("draws 32 random bytes as 43 base64url characters", () => {
+    const verifier = createCodeVerifier()
+    expect(verifier).toMatch(/^[A-Za-z0-9_-]{43}$/)
+    expect(Buffer.from(verifier, "base64url")).toHaveLength(32)
+    expect(createCodeVerifier()).not.toBe(verifier)
+  })
 })
 
 describe("poll status mapping", () => {
@@ -129,9 +158,63 @@ describe("startLogin", () => {
     expect(launchURL).toHaveBeenCalledWith(
       "https://www.geyi.net/plugin/authorize?state=st",
     )
-    const url = new URL(pollUrls[0])
-    expect(url.searchParams.get("state")).toBe("header.payload+/=.sig")
-    expect(url.searchParams.get("nonce")).toMatch(/^[0-9a-f]{48}$/)
+    const body = JSON.parse(pollCalls[0].options.body)
+    expect(body.state).toBe("header.payload+/=.sig")
+  })
+
+  it("starts with the S256 challenge and proves the verifier only in the poll body", async () => {
+    pollReplies = [{ status: "pending" }, { status: "cancelled" }]
+    await loginFailure()
+
+    const start = new URL(startUrls[0])
+    expect(start.searchParams.has("nonce")).toBe(false)
+    expect(start.searchParams.get("code_challenge_method")).toBe("S256")
+
+    expect(pollCalls).toHaveLength(2)
+    const verifier = JSON.parse(pollCalls[0].options.body).code_verifier
+    expect(verifier).toMatch(/^[A-Za-z0-9_-]{43}$/)
+    const challenge = createHash("sha256").update(verifier).digest("base64url")
+    expect(start.searchParams.get("code_challenge")).toBe(challenge)
+
+    for (const call of pollCalls) {
+      expect(call.method).toBe("POST")
+      expect(JSON.parse(call.options.body).code_verifier).toBe(verifier)
+      expect(call.options.headers).toMatchObject({ "Content-Type": "application/json" })
+      expect(call.options.logBodyLength).toBe(0)
+    }
+    for (const url of [...startUrls, ...pollUrls]) expect(url).not.toContain(verifier)
+    expect(new URL(pollUrls[0]).search).toBe("")
+    expect(JSON.stringify(launchURL.mock.calls)).not.toContain(verifier)
+  })
+
+  it("uses a fresh verifier for every sign-in", async () => {
+    pollReplies = [{ status: "cancelled" }]
+    await loginFailure()
+    await loginFailure()
+    const verifiers = pollCalls.map((call) => JSON.parse(call.options.body).code_verifier)
+    expect(verifiers).toHaveLength(2)
+    expect(verifiers[0]).not.toBe(verifiers[1])
+    expect(new Set(startUrls).size).toBe(2)
+  })
+
+  it("falls back to the main window's WebCrypto when the plugin scope lacks it", async () => {
+    vi.stubGlobal("crypto", { getRandomValues: webcrypto.getRandomValues.bind(webcrypto) })
+    stubZotero({ getMainWindow: () => ({ crypto: webcrypto }) })
+    pollReplies = [{ status: "cancelled" }]
+    const error = await loginFailure()
+    expect(error.reason).toBe("cancelled")
+    const verifier = JSON.parse(pollCalls[0].options.body).code_verifier
+    const challenge = createHash("sha256").update(verifier).digest("base64url")
+    expect(new URL(startUrls[0]).searchParams.get("code_challenge")).toBe(challenge)
+  })
+
+  it("fails before any request when no WebCrypto digest is available", async () => {
+    vi.stubGlobal("crypto", { getRandomValues: webcrypto.getRandomValues.bind(webcrypto) })
+    stubZotero({ getMainWindow: () => null })
+    const error = await loginFailure()
+    expect(error.reason).toBe("failed")
+    expect(startUrls).toHaveLength(0)
+    expect(launchURL).not.toHaveBeenCalled()
   })
 
   it("keeps polling through unknown statuses and signs in on ready", async () => {
