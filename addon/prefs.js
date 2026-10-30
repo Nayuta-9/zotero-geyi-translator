@@ -9,7 +9,8 @@ pref("__prefsPrefix__.outputFormats", "pdf");
  * 自动推导,默认 reflow+high 恒推出 slow,于是研究级用户每次翻译都吃 403 —— 而他
  * 从没选过慢速档。现在由用户在设置页显式选。 */
 pref("__prefsPrefix__.speedMode", "fast");
-pref("__prefsPrefix__.welcomeShown", false);
+/* Version whose first-run guidance has been shown; "" shows it on the next start. */
+pref("__prefsPrefix__.onboardingSeenVersion", "");
 pref("__prefsPrefix__.notifyOnComplete", true);
 pref("__prefsPrefix__.autoNote", true);
 /* 并发上限的权威在后端(task_service._TIER_ACTIVE,按档位 1/3/8),这里的默认值只是

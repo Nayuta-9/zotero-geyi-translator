@@ -2,16 +2,17 @@
 
 在 Zotero 7–9 里一键翻译文献，译文自动挂回原条目。由[格译 Geyi](https://www.geyi.net) 云端翻译，复用你在网页端的账号、积分与术语表。（Jira: GEYI-328～330）
 
-## 功能（v0.9）
+## 功能
 
 - **单文件翻译主路径（F3）**：右键条目/PDF 附件 →「用格译翻译」→ 确认目标语言/管线/精度 → 提交云端；≥100 页的高精度 AI 重排任务自动使用慢速翻译，小文件仍走实时路径。
-- **浏览器授权登录（F2）**：无需在插件里输密码。插件生成一次性 nonce 并打开系统浏览器；用户确认后，插件每 2 秒轮询后端 Device Flow 端点领取 API Key，不依赖浏览器 loopback/CORS/PNA。凭证 base64 包装后存 Zotero 偏好（Zotero 无系统钥匙串，此为防随手翻文件的可达口径）。
+- **浏览器授权登录（F2）**：无需在插件里输密码。插件生成一次性 nonce 并打开系统浏览器；用户确认后，插件每 2 秒轮询后端 Device Flow 端点领取 API Key，不依赖浏览器 loopback/CORS/PNA。用户在网页取消、会员档位不足（需研究级及以上）或授权链接过期（10 分钟）时，插件立即停止轮询并说明原因，档位不足时给出会员方案入口；网络持续不通约 1 分钟也会停止并提示检查网络；服务端繁忙（429/5xx）不算网络不通，会一直重试到授权链接过期，仍未恢复则提示稍后再试。凭证 base64 包装后存 Zotero 偏好（Zotero 无系统钥匙串，此为防随手翻文件的可达口径）。
 - **任务进度（F4）**：条目侧边栏「格译任务」显示进行中与最近 20 条；活跃任务每 3 秒轮询，空闲自动停止；插件重启后用服务端列表与本地 job id 交集恢复，只展示插件自己发起的任务。
 - **译文回填（F5）**：产物作为同条目子附件导入，命名为 `{原名}_Translated by Geyi.pdf` 并打管线 tag；繁體与双语对照以括号限定词区分（`… (zh-TW)` / `… (Bilingual)`），重复翻译加 `_v2`。重复翻译明确选择覆盖、生成新版本或取消；默认生成任务 note。右键插件译文可换管线重跑。
 - **术语表联动（F6）**：账户个人术语全量自动应用。插件读取并展示当前术语条目数，缓存不超过 5 分钟；不提供术语表选择、“不使用”或条目级置顶，网页端提供管理入口。
 - **设置面板（F7）**：账户余额/会员/术语数、默认目标语言/管线/精度/产物、自动 note、通知、并发上限、日志级别、反馈与隐私入口，修改即时生效。
 - **埋点与反馈（F8）**：插件请求以 `GeyiZoteroPlugin/x.y.z` 标识，并以自定义头兜底；安装、登录、提交、完成/失败、工单、充值事件通过现有健康端点 best-effort 上报；反馈链接预填插件/Zotero/系统版本与最近任务 id。
 - **安装与自升级（F1）**：`.xpi` 分发；`update.json` 指向 `https://www.geyi.net/plugin/`。中英双语跟随 Zotero 语言。
+- **首次引导**：新安装或升级后的第一次启动弹出一个不阻塞的小窗口，说明如何登录、如何右键翻译、需研究级及以上会员（新注册账号含 1 天体验）；同一版本只出现一次。
 
 ## 与后端/网页端的对接
 
@@ -23,12 +24,12 @@
 
 ```bash
 npm install
-npm start      # 启动 Zotero 并热重载(需本机装 Zotero 7 + 配置 .env 的 Zotero 路径)
+npm start      # 启动 Zotero 并热重载(需本机装 Zotero 7–9 之一 + 配置 .env 的 Zotero 路径)
 npm test       # Vitest 单测
 npm run build  # tsc 类型检查 + 打包 build/*.xpi + 生成 update.json
 ```
 
-技术栈：TypeScript + [zotero-plugin-scaffold](https://github.com/northword/zotero-plugin-scaffold) + [zotero-plugin-toolkit](https://github.com/windingwind/zotero-plugin-toolkit)，仅支持 Zotero 7。
+技术栈：TypeScript + [zotero-plugin-scaffold](https://github.com/northword/zotero-plugin-scaffold) + [zotero-plugin-toolkit](https://github.com/windingwind/zotero-plugin-toolkit)，支持 Zotero 7–9（`addon/manifest.json` 的 `strict_min_version` / `strict_max_version`）。
 
 ## 发布
 

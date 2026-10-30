@@ -4,7 +4,7 @@ import { getPref } from "../utils/prefs"
 import { withPluginIdentity } from "../utils/http"
 import { logDebug } from "../utils/log"
 import { api, ApiError, type Job, type OutputItem, type TranslateOptions } from "../utils/api"
-import { isLoggedIn, startLogin } from "./auth"
+import { isLoggedIn, showLoginFailure, startLogin } from "./auth"
 import { getGlossaries } from "./glossary"
 import { refreshTaskPane } from "./taskPane"
 import { emitTelemetry } from "./telemetry"
@@ -177,8 +177,8 @@ async function onTranslateCommand(win: Window): Promise<void> {
       new (ztk().ProgressWindow)(config.addonName)
         .createLine({ text: getString("auth-success"), type: "success" })
         .show()
-    } catch {
-      win.alert(getString("auth-failed"))
+    } catch (error) {
+      showLoginFailure(win, error)
       return
     }
   }
