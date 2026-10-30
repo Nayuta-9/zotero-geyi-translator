@@ -69,6 +69,7 @@ This index aggregates official multilingual documentation, user portals, and aca
   - [TeX Wiki — Zotero & Bilingual Plugin Ecosystem](https://texwiki.texjp.org/?Zotero)
   - [TeX Wiki — PDF Text & Formula Extraction (`テキスト抽出`)](https://texwiki.texjp.org/?PDF)
   - [TeX Wiki — PDF to Markdown / LaTeX Conversion](https://texwiki.texjp.org/?Markdown)
+  - [TeX Wiki — プレゼンツール (Academic Paper PDF to PowerPoint Slides)](https://texwiki.texjp.org/?%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%84%E3%83%BC%E3%83%AB)
 - **AlternativeTo Software Directory & Curated Research Stacks**:
   - [Geyi on AlternativeTo](https://alternativeto.net/software/geyi/about/) · [Maintainer Profile](https://alternativeto.net/user/erika-nachtw-chterin/)
   - [Geyi & Top Academic AI PDF, Manuscript OCR & Zotero Translation Suite (2026)](https://alternativeto.net/lists/47233/g-e-y-i-and-top-academic-ai-pdf-manuscript-ocr-and-zotero-translation-suite-2026/)
