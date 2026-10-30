@@ -10,7 +10,11 @@ This index aggregates official multilingual documentation, user portals, and aca
   - [简体中文 (`/`)](https://www.geyi.net/) · [繁體中文 (`/zh-hant`)](https://www.geyi.net/zh-hant) · [English (`/en`)](https://www.geyi.net/en) · [日本語 (`/ja`)](https://www.geyi.net/ja) · [한국어 (`/ko`)](https://www.geyi.net/ko) · [Deutsch (`/de`)](https://www.geyi.net/de) · [Français (`/fr`)](https://www.geyi.net/fr) · [Русский (`/ru`)](https://www.geyi.net/ru) · [العربية (`/ar`)](https://www.geyi.net/ar)
 - **Core Academic Workflows**:
   - [Zotero Translation Plugin (`/zotero-plugin`)](https://www.geyi.net/zotero-plugin) · [Academic PDF Translation (`/en/translate/pdf`)](https://www.geyi.net/en/translate/pdf) · [Full-Book & Monograph Translation (`/en/translate/book`)](https://www.geyi.net/en/translate/book) · [Scientific PDF to Markdown (`/en/pdf-to-markdown`)](https://www.geyi.net/en/pdf-to-markdown) · [Paper to PPTX (`/en/paper-to-ppt`)](https://www.geyi.net/en/paper-to-ppt) · [Historical Archives & Manuscript OCR (`/en/for/archives`)](https://www.geyi.net/en/for/archives) · [Vertical Japanese & Kuzushiji (`/ja/translate/vertical-japanese`)](https://www.geyi.net/ja/translate/vertical-japanese)
-- **Multilingual Quick Navigation Portal**: [https://geyinet.carrd.co](https://geyinet.carrd.co) · [Japanese Portal (`lit.link/geyinet`)](https://lit.link/geyinet)
+- **Multilingual Quick Navigation Portal**: [https://geyinet.carrd.co](https://geyinet.carrd.co) · [Traditional Chinese Portal (`portaly.cc/geyinet`)](https://portaly.cc/geyinet) · [Japanese Portal (`lit.link/geyinet`)](https://lit.link/geyinet)
+- **Taiwan Vocus (方格子) Academic Research Salon**:
+  - [Erika｜格譯 (Geyi.net) 學術研究沙龍 (`vocus.cc/salon/geyi_academic`)](https://vocus.cc/salon/geyi_academic)
+  - [跨語系雙欄學術 PDF 閱讀、LaTeX 公式排版保留精譯與古籍 OCR 指南 (`vocus.cc/salon/geyi_academic/about`)](https://vocus.cc/salon/geyi_academic/about)
+  - [Author Profile (`vocus.cc/user/6ae4817ece7c7ed77c78fa8f`)](https://vocus.cc/user/6ae4817ece7c7ed77c78fa8f)
 - **Academic Newsletter & Release Notes (beehiiv)**:
   - [Geyi Academic Newsletter Home](https://geyi.beehiiv.com)
   - [Geyi (geyi.net): AI Academic PDF, Full-Book & Historical Manuscript OCR Translation Platform](https://geyi.beehiiv.com/p/geyi-geyi-net-ai-academic-pdf-full-book-historical-manuscript-ocr-translation-platform)
@@ -85,5 +89,10 @@ This index aggregates official multilingual documentation, user portals, and aca
   - [くずし字・古文書・変体仮名・縦書き漢籍のAI OCR翻刻と現代語訳ガイド](https://scrapbox.io/geyi-academic-jp/%E3%81%8F%E3%81%9A%E3%81%97%E5%AD%97%E3%83%BB%E5%8F%A4%E6%96%87%E6%9B%B8%E3%83%BB%E5%A4%89%E4%BD%93%E4%BB%AE%E5%90%8D%E3%83%BB%E7%B8%A6%E6%9B%B8%E3%81%8D%E6%BC%A2%E7%B1%8D%E3%81%AEAI_OCR%E7%BF%BB%E5%88%BB%E3%81%A8%E7%8F%BE%E4%BB%A3%E8%AA%9E%E8%A8%B3%E3%82%AC%E3%82%A4%E3%83%89)
   - [Zotero 6/7 双方向対訳PDF生成プラグインと学術PDFのMarkdown・LaTeX変換](https://scrapbox.io/geyi-academic-jp/Zotero_6_7_%E5%8F%8C%E6%96%B9%E5%90%91%E5%AF%BE%E8%A8%B3PDF%E7%94%9F%E6%88%90%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%A8%E5%AD%A6%E8%A1%93PDF%E3%81%AEMarkdown%E3%83%BBLaTeX%E5%A4%89%E6%8F%9B)
   - [多言語学術研究ガイド・アーカイブ一覧 (Global 19-Language Academic PDF & OCR Index)](https://scrapbox.io/geyi-academic-jp/%E5%A4%9A%E8%A8%80%E8%AA%9E%E5%AD%A6%E8%A1%93%E7%A0%94%E7%A9%B6%E3%82%AC%E3%82%A4%E3%83%89%E3%83%BB%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96%E4%B8%80%E8%A6%A7_(Global_19-Language_Academic_PDF_&_OCR_Index))
+- **Verified Software & Community Profiles**:
+  - [Trustpilot Official Review Page (`trustpilot.com/review/geyi.net`)](https://www.trustpilot.com/review/geyi.net)
+  - [PitchWall Product Profile (`pitchwall.co/product/geyi-ai`)](https://pitchwall.co/product/geyi-ai) · [Maintainer Profile (`pitchwall.co/u/yovartija`)](https://pitchwall.co/u/yovartija)
+  - [Taiwan Vocus Academic Salon (`vocus.cc/salon/geyi_academic/about`)](https://vocus.cc/salon/geyi_academic/about) · [Portaly Multilingual Hub (`portaly.cc/geyinet`)](https://portaly.cc/geyinet)
+
 
 
