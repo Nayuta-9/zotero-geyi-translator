@@ -2,29 +2,21 @@ import { readFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { config } from "../utils/config"
 import { getString } from "../utils/locale"
-import {
-  type AccountNoticeContent,
-  accountLabel,
-  accountNoticeContent,
-  showSignedInAccount,
-} from "./accountNotice"
-import { getCredentials, isLoggedIn, setCredentials } from "./auth"
+import { accountConfirmContent, accountLabel, promptAccountConfirm } from "./accountNotice"
+import { setCredentials } from "./auth"
 import { clearGlossaryCache } from "./glossary"
 import { clearAccountCache, getAccountSnapshot } from "./memberFeatures"
 import { openConfigDialog } from "./translate"
 
-// The notice after a browser sign-in: it names the account the plugin is now
-// signed in to and lets the user sign out at once when it is not theirs.
+// Naming the account a key belongs to: the blocking confirmation a browser
+// sign-in shows before keeping a new key, and the translation settings summary.
 
 const prefs = new Map<string, unknown>()
 let meReply: Record<string, unknown> | Error = {}
-let meCalls = 0
 
 function request(_method: string, url: string): Promise<{ responseText: string }> {
   if (url.endsWith("/me")) {
-    meCalls += 1
     if (meReply instanceof Error) return Promise.reject(meReply)
     return Promise.resolve({ responseText: JSON.stringify(meReply) })
   }
@@ -51,21 +43,9 @@ function stubZotero(locale = "en-US"): void {
   })
 }
 
-type OpenNotice = (content: AccountNoticeContent, signOut: () => void) => void
-
-function opened() {
-  const open = vi.fn<OpenNotice>()
-  return {
-    open,
-    content: () => open.mock.calls[0][0],
-    signOut: () => open.mock.calls[0][1](),
-  }
-}
-
 beforeEach(() => {
   prefs.clear()
   meReply = { email: "owner@example.com" }
-  meCalls = 0
   vi.unstubAllGlobals()
   stubZotero()
   clearAccountCache()
@@ -73,27 +53,29 @@ beforeEach(() => {
   setCredentials("sk_live_first", "https://api.example.test/v1")
 })
 
-describe("account notice content", () => {
-  it("names the signed-in account and offers to sign out", () => {
-    const content = accountNoticeContent({
-      state: "ok",
-      account: { email: "owner@example.com" } as any,
-    })
-    expect(content.lines[0]).toContain("owner@example.com")
-    expect(content.lines[1]).toBe(getString("account-notice-hint"))
-    expect(content.signOutLabel).toBe(getString("account-notice-signout"))
+describe("account confirmation content", () => {
+  it("names the account by its masked email", () => {
+    const content = accountConfirmContent("vi…@example.com")
+    expect(content.title).toBe(getString("account-confirm-title"))
+    expect(content.message).toContain("vi…@example.com")
+    expect(content.confirmLabel).toBe(getString("account-confirm-yes"))
+    expect(content.rejectLabel).toBe(getString("account-confirm-no"))
   })
 
-  it("still offers to sign out when the account could not be read", () => {
-    const content = accountNoticeContent({ state: "unknown" })
-    expect(content.lines[0]).toBe(getString("account-notice-unknown"))
-    expect(content.signOutLabel).toBe(getString("account-notice-signout"))
+  it("says the account is unknown when the backend does not name it", () => {
+    expect(accountConfirmContent(undefined).message).toContain(getString("account-confirm-unknown"))
   })
 
-  it("explains a missing email as a membership matter when /me answered 403", () => {
-    const content = accountNoticeContent({ state: "expired" })
-    expect(content.lines[0]).toBe(getString("account-notice-membership"))
-    expect(content.lines[1]).toBe(getString("account-notice-hint"))
+  it("inserts the account literally even when it contains replacement patterns", () => {
+    const message = accountConfirmContent("$&$`…@example.com").message
+    expect(message).toContain("$&$`…@example.com")
+    expect(message).not.toContain("{account}")
+  })
+
+  it("tells the user to confirm only a sign-in started in their own Zotero", () => {
+    expect(accountConfirmContent("a…@b.c").message).toContain("your own Zotero")
+    stubZotero("zh-CN")
+    expect(accountConfirmContent("a…@b.c").message).toContain("自己的 Zotero")
   })
 
   it("labels the account by email, membership or unknown", () => {
@@ -106,17 +88,14 @@ describe("account notice content", () => {
 
   it("exists in both English and Simplified Chinese", () => {
     const keys = [
-      "account-notice-title",
-      "account-notice-email",
-      "account-notice-unknown",
-      "account-notice-membership",
-      "account-notice-hint",
+      "account-confirm-title",
+      "account-confirm-body",
+      "account-confirm-unknown",
+      "account-confirm-yes",
+      "account-confirm-no",
       "account-label-unknown",
       "account-label-membership",
       "dialog-account",
-      "account-notice-signout",
-      "account-notice-close",
-      "account-notice-signed-out",
     ]
     const en = keys.map((key) => getString(key))
     stubZotero("zh-CN")
@@ -126,115 +105,40 @@ describe("account notice content", () => {
       expect(zh[i]).not.toBe(key)
       expect(zh[i]).not.toBe(en[i])
     })
-    expect(getString("account-notice-email", { email: "a@b.c" })).toContain("a@b.c")
   })
 })
 
-describe("showSignedInAccount", () => {
-  it("shows the account from a fresh /me read, not a cached one", async () => {
-    meReply = { email: "stale@example.com" }
-    await getAccountSnapshot(true)
-    meReply = { email: "owner@example.com" }
-    const notice = opened()
-    await showSignedInAccount({ open: notice.open })
-    expect(meCalls).toBe(2)
-    expect(notice.open).toHaveBeenCalledTimes(1)
-    expect(notice.content().lines[0]).toContain("owner@example.com")
-    expect(notice.content().lines.join(" ")).not.toContain("stale@example.com")
-  })
-
-  it("signs out and notifies the caller when the account is not the user's", async () => {
-    const onSignedOut = vi.fn()
-    const notice = opened()
-    await showSignedInAccount({ open: notice.open, onSignedOut })
-    expect(isLoggedIn()).toBe(true)
-    notice.signOut()
-    expect(isLoggedIn()).toBe(false)
-    expect(onSignedOut).toHaveBeenCalledTimes(1)
-  })
-
-  it("never signs out a newer sign-in from an older notice", async () => {
-    const onSignedOut = vi.fn()
-    const notice = opened()
-    await showSignedInAccount({ open: notice.open, onSignedOut })
-    setCredentials("sk_live_second", "https://api.example.test/v1")
-    notice.signOut()
-    expect(getCredentials()?.key).toBe("sk_live_second")
-    expect(onSignedOut).not.toHaveBeenCalled()
-  })
-
-  it("words a 403 from /me as a membership matter", async () => {
-    meReply = httpError(403)
-    const notice = opened()
-    await showSignedInAccount({ open: notice.open })
-    expect(notice.content().lines[0]).toBe(getString("account-notice-membership"))
-    expect(isLoggedIn()).toBe(true)
-  })
-
-  it("signs out, says so and lets the notice close even when the caller's refresh throws", async () => {
-    const lines: string[] = []
-    ;(Zotero as any)[config.addonInstance] = {
-      data: {
-        ztoolkit: {
-          ProgressWindow: class {
-            createLine(line: { text: string }) {
-              lines.push(line.text)
-              return this
-            }
-            show() {
-              return this
-            }
-          },
-        },
-      },
+describe("promptAccountConfirm", () => {
+  function stubPrompt(pressed: number) {
+    const confirmEx = vi.fn().mockReturnValue(pressed)
+    const prompt = {
+      BUTTON_POS_0: 1,
+      BUTTON_POS_1: 256,
+      BUTTON_TITLE_IS_STRING: 127,
+      BUTTON_POS_1_DEFAULT: 256 * 256 * 256,
+      confirmEx,
     }
-    const notice = opened()
-    await showSignedInAccount({
-      open: notice.open,
-      onSignedOut: () => {
-        throw new Error("pane is gone")
-      },
-    })
-    expect(() => notice.signOut()).not.toThrow()
-    expect(isLoggedIn()).toBe(false)
-    expect(lines).toEqual([getString("account-notice-signed-out")])
+    vi.stubGlobal("Services", { prompt })
+    return { confirmEx, prompt }
+  }
+
+  it("confirms only on the first button and makes rejection the default", () => {
+    const { confirmEx, prompt } = stubPrompt(0)
+    const parent = {} as Window
+    const content = accountConfirmContent("vi…@example.com")
+    expect(promptAccountConfirm(parent, content)).toBe(true)
+    const [win, title, message, flags, yes, no] = confirmEx.mock.calls[0]
+    expect(win).toBe(parent)
+    expect(title).toBe(content.title)
+    expect(message).toBe(content.message)
+    expect(yes).toBe(content.confirmLabel)
+    expect(no).toBe(content.rejectLabel)
+    expect(flags & prompt.BUTTON_POS_1_DEFAULT).toBe(prompt.BUTTON_POS_1_DEFAULT)
   })
 
-  it("explains when the account cannot be read and still allows signing out", async () => {
-    meReply = new Error("offline")
-    const notice = opened()
-    await showSignedInAccount({ open: notice.open })
-    expect(notice.content().lines[0]).toBe(getString("account-notice-unknown"))
-    notice.signOut()
-    expect(isLoggedIn()).toBe(false)
-  })
-
-  it("opens nothing when not signed in", async () => {
-    prefs.clear()
-    const notice = opened()
-    await showSignedInAccount({ open: notice.open })
-    expect(notice.open).not.toHaveBeenCalled()
-    expect(meCalls).toBe(0)
-  })
-
-  it("opens nothing when the credentials change while the account loads", async () => {
-    meReply = { email: "owner@example.com" }
-    const http = (Zotero as any).HTTP
-    http.request = vi.fn(async (method: string, url: string) => {
-      const reply = await request(method, url)
-      setCredentials("sk_live_second", "https://api.example.test/v1")
-      return reply
-    })
-    const notice = opened()
-    await showSignedInAccount({ open: notice.open })
-    expect(notice.open).not.toHaveBeenCalled()
-  })
-
-  it("does not reject when the notice window fails to open", async () => {
-    const open = vi.fn(() => {
-      throw new Error("no window")
-    })
-    await expect(showSignedInAccount({ open })).resolves.toBeUndefined()
+  it.each([1, 2, -1])("reads button %i, or a closed dialog, as a rejection", (pressed) => {
+    stubPrompt(pressed)
+    expect(promptAccountConfirm(null, accountConfirmContent(undefined))).toBe(false)
   })
 })
 
@@ -276,7 +180,7 @@ describe("translation settings summary", () => {
   it("is asked to name the account only after the translate command signed in", () => {
     const source = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "translate.ts"), "utf8")
     const command = source.slice(source.indexOf("async function onTranslateCommand"))
-    const signIn = command.indexOf("await startLogin()")
+    const signIn = command.indexOf("await startLogin({ win })")
     const flagged = command.indexOf("signedInHere = true")
     expect(signIn).toBeGreaterThan(-1)
     expect(flagged).toBeGreaterThan(signIn)

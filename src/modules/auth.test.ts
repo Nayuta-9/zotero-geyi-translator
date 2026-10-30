@@ -2,13 +2,19 @@ import { createHash, webcrypto } from "node:crypto"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { getString } from "../utils/locale"
 import {
+  CONFIRMED_ACCOUNT_PREF,
   codeChallengeFor,
   createCodeVerifier,
+  getCredentials,
+  type IssuedKey,
   isLoggedIn,
+  issuedKeyFrom,
   LoginError,
   loginFailureReason,
   pollOutcome,
   requestFailureKind,
+  revokeIssuedKey,
+  setCredentials,
   showLoginFailure,
   startLogin,
 } from "./auth"
@@ -17,6 +23,7 @@ import {
 // local timeout and network give-up, and the dialogs that explain each one.
 
 type PollReply = { status: string; [key: string]: unknown } | Error | string
+type RevokeReply = Error | null
 
 /** A rejection shaped like `Zotero.HTTP.UnexpectedStatusException`. */
 function httpError(status: number): Error {
@@ -29,6 +36,8 @@ let pollReplies: PollReply[] = []
 let pollUrls: string[] = []
 let startUrls: string[] = []
 let pollCalls: { method: string; options: Record<string, any> }[] = []
+let revokeReplies: RevokeReply[] = []
+let revokeCalls: { method: string; url: string; options: Record<string, any> }[] = []
 const launchURL = vi.fn()
 
 function request(
@@ -54,6 +63,12 @@ function request(
     if (typeof reply === "string") return Promise.resolve({ responseText: reply })
     return Promise.resolve({ responseText: JSON.stringify(reply) })
   }
+  if (url.includes("/plugin/key/revoke")) {
+    revokeCalls.push({ method, url, options })
+    const reply = revokeReplies.length > 1 ? revokeReplies.shift()! : (revokeReplies[0] ?? null)
+    if (reply instanceof Error) return Promise.reject(reply)
+    return Promise.resolve({ responseText: JSON.stringify({ revoked: true }) })
+  }
   return Promise.resolve({ responseText: "{}" })
 }
 
@@ -76,8 +91,8 @@ function stubZotero(overrides: Record<string, unknown> = {}): void {
   })
 }
 
-async function loginFailure(): Promise<LoginError> {
-  const error = await startLogin().then(
+async function loginFailure(options: Parameters<typeof startLogin>[0] = {}): Promise<LoginError> {
+  const error = await startLogin(options).then(
     () => null,
     (e: unknown) => e,
   )
@@ -92,6 +107,8 @@ beforeEach(() => {
   pollUrls = []
   startUrls = []
   pollCalls = []
+  revokeReplies = []
+  revokeCalls = []
   launchURL.mockClear()
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
@@ -226,7 +243,7 @@ describe("startLogin", () => {
         api_base_url: "https://api.example.test/v1",
       },
     ]
-    await startLogin()
+    await startLogin({ confirmAccount: () => true })
     expect(pollUrls).toHaveLength(2)
     expect(isLoggedIn()).toBe(true)
   })
@@ -327,6 +344,214 @@ describe("startLogin", () => {
   })
 })
 
+const VICTIM_FINGERPRINT = "a".repeat(32)
+const ATTACKER_FINGERPRINT = "b".repeat(32)
+
+function ready(account: { masked?: unknown; fingerprint?: unknown } = {}, key = "sk_issued_key") {
+  return {
+    status: "ready",
+    api_key: key,
+    api_base_url: "https://api.example.test/v1",
+    account_email_masked: account.masked,
+    account_fingerprint: account.fingerprint,
+  }
+}
+
+function confirmer(answer: boolean | Error) {
+  return vi.fn(async (_issued: IssuedKey) => {
+    if (answer instanceof Error) throw answer
+    return answer
+  })
+}
+
+describe("account confirmation", () => {
+  it("shows another account's approval, and a rejection revokes its key and signs out", async () => {
+    setCredentials("sk_previous_session", "https://api.example.test/v1")
+    prefs.set(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`, VICTIM_FINGERPRINT)
+    pollReplies = [ready({ masked: "ma…@evil.example", fingerprint: ATTACKER_FINGERPRINT }, "sk_attacker")]
+    const confirmAccount = confirmer(false)
+
+    const error = await loginFailure({ confirmAccount })
+
+    expect(error.reason).toBe("account_rejected")
+    expect(error.message).toBe(getString("login-account-rejected"))
+    expect(confirmAccount).toHaveBeenCalledTimes(1)
+    expect(confirmAccount.mock.calls[0][0]).toMatchObject({
+      key: "sk_attacker",
+      emailMasked: "ma…@evil.example",
+      fingerprint: ATTACKER_FINGERPRINT,
+    })
+    expect(isLoggedIn()).toBe(false)
+    expect(getCredentials()).toBeNull()
+    expect(revokeCalls).toHaveLength(1)
+    expect(revokeCalls[0].method).toBe("POST")
+    expect(revokeCalls[0].options.headers).toMatchObject({ Authorization: "Bearer sk_attacker" })
+    expect(revokeCalls[0].url).not.toContain("sk_attacker")
+    expect(prefs.get(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`)).toBe(VICTIM_FINGERPRINT)
+  })
+
+  it("asks before keeping the key and never stores it while asking", async () => {
+    pollReplies = [ready({ masked: "vi…@example.com", fingerprint: VICTIM_FINGERPRINT })]
+    let storedWhileAsking: unknown = "unset"
+    await startLogin({
+      confirmAccount: () => {
+        storedWhileAsking = getCredentials()
+        return true
+      },
+    })
+    expect(storedWhileAsking).toBeNull()
+    expect(getCredentials()).toEqual({ key: "sk_issued_key", base: "https://api.example.test/v1" })
+  })
+
+  it("keeps a confirmed account and does not ask again for it", async () => {
+    pollReplies = [ready({ masked: "vi…@example.com", fingerprint: VICTIM_FINGERPRINT }, "sk_first")]
+    const first = confirmer(true)
+    await startLogin({ confirmAccount: first })
+    expect(first).toHaveBeenCalledTimes(1)
+    expect(getCredentials()?.key).toBe("sk_first")
+    expect(prefs.get(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`)).toBe(VICTIM_FINGERPRINT)
+    expect(revokeCalls).toHaveLength(0)
+
+    prefs.delete("extensions.zotero.geyi.apiKeyEnc")
+    pollReplies = [ready({ masked: "vi…@example.com", fingerprint: VICTIM_FINGERPRINT }, "sk_second")]
+    const second = confirmer(false)
+    await startLogin({ confirmAccount: second })
+    expect(second).not.toHaveBeenCalled()
+    expect(getCredentials()?.key).toBe("sk_second")
+    expect(revokeCalls).toHaveLength(0)
+  })
+
+  it("asks again when a later sign-in lands in a different account", async () => {
+    prefs.set(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`, VICTIM_FINGERPRINT)
+    pollReplies = [ready({ masked: "an…@example.org", fingerprint: ATTACKER_FINGERPRINT })]
+    const confirmAccount = confirmer(true)
+    await startLogin({ confirmAccount })
+    expect(confirmAccount).toHaveBeenCalledTimes(1)
+    expect(isLoggedIn()).toBe(true)
+    expect(prefs.get(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`)).toBe(ATTACKER_FINGERPRINT)
+  })
+
+  it.each([
+    ["no account fields", {}],
+    ["a malformed fingerprint", { masked: "vi…@example.com", fingerprint: "VICTIM" }],
+    ["a non-string fingerprint", { fingerprint: 42 }],
+  ])("always asks for a key with %s and remembers nothing", async (_label, account) => {
+    prefs.set(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`, VICTIM_FINGERPRINT)
+    for (let i = 0; i < 2; i++) {
+      prefs.delete("extensions.zotero.geyi.apiKeyEnc")
+      pollReplies = [ready(account)]
+      const confirmAccount = confirmer(true)
+      await startLogin({ confirmAccount })
+      expect(confirmAccount).toHaveBeenCalledTimes(1)
+      expect(confirmAccount.mock.calls[0][0].fingerprint).toBeUndefined()
+    }
+    expect(prefs.get(`extensions.zotero.geyi.${CONFIRMED_ACCOUNT_PREF}`)).toBe(VICTIM_FINGERPRINT)
+  })
+
+  it("discards and revokes the key when the dialog fails", async () => {
+    pollReplies = [ready({ fingerprint: ATTACKER_FINGERPRINT }, "sk_unasked")]
+    const error = await loginFailure({ confirmAccount: confirmer(new Error("no window")) })
+    expect(error.reason).toBe("failed")
+    expect(isLoggedIn()).toBe(false)
+    expect(revokeCalls).toHaveLength(1)
+    expect(revokeCalls[0].options.headers).toMatchObject({ Authorization: "Bearer sk_unasked" })
+  })
+
+  it("signs out even when the server cannot be reached to revoke the key", async () => {
+    pollReplies = [ready({ fingerprint: ATTACKER_FINGERPRINT })]
+    revokeReplies = [new Error("offline")]
+    const error = await loginFailure({ confirmAccount: confirmer(false) })
+    expect(error.reason).toBe("account_rejected")
+    expect(isLoggedIn()).toBe(false)
+    expect(revokeCalls).toHaveLength(3)
+  })
+
+  it("asks with the modal dialog over the caller's window by default", async () => {
+    const confirmEx = vi.fn().mockReturnValue(0)
+    vi.stubGlobal("Services", { prompt: promptStub(confirmEx) })
+    const win = { name: "prefs" } as unknown as Window
+    pollReplies = [ready({ masked: "vi…@example.com", fingerprint: VICTIM_FINGERPRINT })]
+    await startLogin({ win })
+    expect(confirmEx).toHaveBeenCalledTimes(1)
+    expect(confirmEx.mock.calls[0][0]).toBe(win)
+    expect(confirmEx.mock.calls[0][2]).toContain("vi…@example.com")
+    expect(isLoggedIn()).toBe(true)
+  })
+
+  it("treats closing the default dialog as a rejection", async () => {
+    vi.stubGlobal("Services", { prompt: promptStub(vi.fn().mockReturnValue(1)) })
+    stubZotero({ getMainWindow: () => null })
+    pollReplies = [ready({ fingerprint: ATTACKER_FINGERPRINT })]
+    const error = await loginFailure()
+    expect(error.reason).toBe("account_rejected")
+    expect(isLoggedIn()).toBe(false)
+    expect(revokeCalls).toHaveLength(1)
+  })
+})
+
+function promptStub(confirmEx: ReturnType<typeof vi.fn>) {
+  return {
+    BUTTON_POS_0: 1,
+    BUTTON_POS_1: 256,
+    BUTTON_TITLE_IS_STRING: 127,
+    BUTTON_POS_1_DEFAULT: 256 * 256 * 256,
+    confirmEx,
+  }
+}
+
+describe("issued key parsing", () => {
+  it("keeps a well-formed account and drops malformed fields", () => {
+    expect(issuedKeyFrom(ready({ masked: " vi…@example.com ", fingerprint: VICTIM_FINGERPRINT }))).toEqual({
+      key: "sk_issued_key",
+      base: "https://api.example.test/v1",
+      emailMasked: "vi…@example.com",
+      fingerprint: VICTIM_FINGERPRINT,
+    })
+    expect(issuedKeyFrom(ready({ masked: "", fingerprint: "../etc" }))).toEqual({
+      key: "sk_issued_key",
+      base: "https://api.example.test/v1",
+    })
+    expect(issuedKeyFrom(ready({ masked: "x".repeat(400) })).emailMasked).toHaveLength(254)
+  })
+})
+
+describe("revokeIssuedKey", () => {
+  const issued: IssuedKey = { key: "sk_rejected", base: "https://api.example.test/v1" }
+
+  it("revokes with the key as its own credential", async () => {
+    expect(await revokeIssuedKey(issued)).toBe(true)
+    expect(revokeCalls).toHaveLength(1)
+    expect(revokeCalls[0].url).toBe(
+      "https://translator-backend-78085454326.asia-southeast1.run.app/api/v1/plugin/key/revoke",
+    )
+    expect(revokeCalls[0].options).toMatchObject({ errorDelayMax: 0 })
+  })
+
+  it("counts a key that no longer authenticates as revoked", async () => {
+    revokeReplies = [httpError(401)]
+    expect(await revokeIssuedKey(issued)).toBe(true)
+    expect(revokeCalls).toHaveLength(1)
+  })
+
+  it("retries server and network errors a bounded number of times", async () => {
+    revokeReplies = [httpError(503), new Error("offline"), httpError(502)]
+    expect(await revokeIssuedKey(issued)).toBe(false)
+    expect(revokeCalls).toHaveLength(3)
+  })
+
+  it("recovers when a retry gets through", async () => {
+    revokeReplies = [httpError(503), null]
+    expect(await revokeIssuedKey(issued)).toBe(true)
+    expect(revokeCalls).toHaveLength(2)
+  })
+
+  it("stops at once on any other rejection", async () => {
+    revokeReplies = [httpError(404)]
+    expect(await revokeIssuedKey(issued)).toBe(false)
+    expect(revokeCalls).toHaveLength(1)
+  })
+})
+
 describe("showLoginFailure", () => {
   function fakeWindow(confirmResult: boolean) {
     return {
@@ -365,6 +590,7 @@ describe("showLoginFailure", () => {
     ["timeout", "login-timeout"],
     ["network", "login-network"],
     ["busy", "login-busy"],
+    ["account_rejected", "login-account-rejected"],
   ] as const)("shows the %s explanation", (reason, key) => {
     const win = fakeWindow(true)
     showLoginFailure(win, new LoginError(reason))
@@ -388,6 +614,7 @@ describe("login failure strings", () => {
     "login-timeout",
     "login-network",
     "login-busy",
+    "login-account-rejected",
   ]
 
   it("exist in both English and Simplified Chinese", () => {
