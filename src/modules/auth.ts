@@ -1,7 +1,9 @@
 import { config } from "../utils/config"
 import { getString } from "../utils/locale"
+import { logDebug } from "../utils/log"
 import { clearPref, getPref, setPref } from "../utils/prefs"
 import { withPluginIdentity } from "../utils/http"
+import { accountConfirmContent, promptAccountConfirm } from "./accountNotice"
 import { emitTelemetry } from "./telemetry"
 
 // 授权流 + 凭证存储(GEYI-328)。凭证 = api_key(Bearer)+ api_base_url(/v1 基址)。
@@ -12,6 +14,9 @@ import { emitTelemetry } from "./telemetry"
 // Each sign-in proves possession of a local code verifier: only its S256
 // challenge reaches the start URL and the consent page, and the verifier
 // itself travels only in the poll request body.
+// A key the poll hands out is kept only after the user confirms its account,
+// unless that account is the one confirmed last time; a rejected key is never
+// stored and is revoked on the server.
 
 // The backend signs the authorization state for 10 minutes and reports
 // `expired` after that; the local cap only covers a backend that never does.
@@ -25,6 +30,18 @@ const NETWORK_GIVE_UP_MS = 60 * 1000
 // Zotero retries 5xx responses internally for up to an hour unless this is 0;
 // the poll loop does its own retrying so its deadline stays in force.
 const AUTH_REQUEST_OPTIONS = { responseType: "text", errorDelayMax: 0 }
+// Revoking a rejected key is retried this many times on network or server
+// errors, this far apart, before the plugin gives up on it.
+const REVOKE_ATTEMPTS = 3
+const REVOKE_RETRY_MS = 1000
+
+/** Pref holding the fingerprint of the account the user last confirmed. */
+export const CONFIRMED_ACCOUNT_PREF = "confirmedAccountFingerprint"
+const FINGERPRINT_RE = /^[0-9a-f]{16,128}$/
+const MAX_EMAIL_LENGTH = 254
+// Control and format characters, which include bidirectional overrides and
+// zero-width characters, are removed from the email before it is shown.
+const INVISIBLE_CHARS_RE = /[\p{Cc}\p{Cf}]/gu
 
 const PLANS_URL = `${config.webBase}/billing?source=zotero_plugin`
 
@@ -36,6 +53,7 @@ export type LoginFailureReason =
   | "timeout"
   | "network"
   | "busy"
+  | "account_rejected"
   | "failed"
 
 const FAILURE_MESSAGE_KEYS: Record<LoginFailureReason, string> = {
@@ -45,7 +63,28 @@ const FAILURE_MESSAGE_KEYS: Record<LoginFailureReason, string> = {
   timeout: "login-timeout",
   network: "login-network",
   busy: "login-busy",
+  account_rejected: "login-account-rejected",
   failed: "auth-failed",
+}
+
+/** A key handed out by the poll, with the account it belongs to when the backend names it. */
+export interface IssuedKey {
+  key: string
+  base: string
+  /** Email of the key's account. */
+  email?: string
+  /** Stable opaque identifier of the key's account. */
+  fingerprint?: string
+}
+
+export interface LoginOptions {
+  /** Window the account confirmation is modal to; the main window when absent. */
+  win?: Window | null
+  /**
+   * Asks whether the issued key's account is the user's and resolves to
+   * `true` to keep the key. Defaults to a modal dialog.
+   */
+  confirmAccount?: (issued: IssuedKey) => boolean | Promise<boolean>
 }
 
 /** Error thrown by `startLogin`; `message` is the localized explanation. */
@@ -83,11 +122,16 @@ export function pollOutcome(
  * request that got no HTTP answer (offline, DNS, TLS, timeout).
  */
 export function requestFailureKind(error: unknown): "network" | "busy" | "rejected" {
-  const e = error as any
-  const status = Number(e?.status ?? e?.xmlhttp?.status ?? e?.xhr?.status ?? 0)
+  const status = responseStatus(error)
   if (status === 429 || (status >= 500 && status < 600)) return "busy"
   if (status >= 400 && status < 500) return "rejected"
   return "network"
+}
+
+/** HTTP status of a rejected `Zotero.HTTP.request`, or 0 when no answer arrived. */
+function responseStatus(error: unknown): number {
+  const e = error as any
+  return Number(e?.status ?? e?.xmlhttp?.status ?? e?.xhr?.status ?? 0)
 }
 
 /** Returns the reason behind a `startLogin` rejection; non-login errors read as `failed`. */
@@ -177,11 +221,110 @@ export async function codeChallengeFor(verifier: string): Promise<string> {
 }
 
 /**
- * Browser authorization (device flow): opens the consent page in the system
- * browser and polls the backend for the key. Resolves once signed in and
- * rejects with a `LoginError` that says why it stopped.
+ * Reads the key and account a `ready` poll answer carries. Control and format
+ * characters are removed from the email; an account field that is missing,
+ * malformed or empty after that is left out.
  */
-export async function startLogin(): Promise<void> {
+export function issuedKeyFrom(data: any): IssuedKey {
+  const issued: IssuedKey = { key: String(data.api_key), base: String(data.api_base_url) }
+  const email = data.account_email
+  if (typeof email === "string") {
+    const visible = email.replace(INVISIBLE_CHARS_RE, "").trim()
+    if (visible) issued.email = visible.slice(0, MAX_EMAIL_LENGTH)
+  }
+  const fingerprint = data.account_fingerprint
+  if (typeof fingerprint === "string" && FINGERPRINT_RE.test(fingerprint)) {
+    issued.fingerprint = fingerprint
+  }
+  return issued
+}
+
+/** Returns `win` while it is still open, or `null` for a closed or dead window. */
+function openWindow(win: Window | null | undefined): Window | null {
+  try {
+    return win && !win.closed ? win : null
+  } catch {
+    return null
+  }
+}
+
+/** Whether `fingerprint` names the account the user confirmed last time. */
+export function isConfirmedAccount(fingerprint: string | undefined): boolean {
+  return fingerprint !== undefined && getPref<string>(CONFIRMED_ACCOUNT_PREF) === fingerprint
+}
+
+/**
+ * Revokes `issued.key` on the server with the key itself as credential.
+ * Resolves to whether the key no longer authenticates; a 401 answer counts as
+ * revoked. Network and server errors are retried a few times; it never rejects.
+ */
+export async function revokeIssuedKey(issued: IssuedKey): Promise<boolean> {
+  const url = `${config.authApiBase}/plugin/key/revoke`
+  for (let attempt = 1; attempt <= REVOKE_ATTEMPTS; attempt++) {
+    try {
+      await Zotero.HTTP.request(
+        "POST",
+        url,
+        withPluginIdentity(url, {
+          ...AUTH_REQUEST_OPTIONS,
+          headers: { Authorization: `Bearer ${issued.key}` },
+        }),
+      )
+      return true
+    } catch (error) {
+      if (responseStatus(error) === 401) return true
+      if (requestFailureKind(error) === "rejected") break
+      if (attempt < REVOKE_ATTEMPTS) await Zotero.Promise.delay(REVOKE_RETRY_MS)
+    }
+  }
+  logDebug("rejected plugin key could not be revoked")
+  return false
+}
+
+/**
+ * Stores `issued` as the plugin's credentials once its account is confirmed.
+ *
+ * The account the user confirmed last time is accepted without asking. Any
+ * other account, including one the backend does not name, is put to the user
+ * in a dialog over `options.win`, or over the main window when that one is
+ * closed. A confirmation records the fingerprint when the backend sent both
+ * the fingerprint and the email. A rejection, or a dialog that fails, revokes
+ * the key and rejects with a `LoginError` without touching stored
+ * credentials, so the plugin stays as it was before the sign-in.
+ */
+async function acceptIssuedKey(issued: IssuedKey, options: LoginOptions): Promise<void> {
+  if (!isConfirmedAccount(issued.fingerprint)) {
+    const ask =
+      options.confirmAccount ??
+      ((key: IssuedKey) =>
+        promptAccountConfirm(
+          openWindow(options.win) ??
+            openWindow(Zotero.getMainWindow() as unknown as Window | null),
+          accountConfirmContent(key.email),
+        ))
+    let confirmed: boolean | null
+    try {
+      confirmed = (await ask(issued)) === true
+    } catch (error) {
+      logDebug(`account confirmation failed: ${error}`)
+      confirmed = null
+    }
+    if (!confirmed) {
+      await revokeIssuedKey(issued)
+      throw new LoginError(confirmed === null ? "failed" : "account_rejected")
+    }
+    if (issued.fingerprint && issued.email) setPref(CONFIRMED_ACCOUNT_PREF, issued.fingerprint)
+  }
+  setCredentials(issued.key, issued.base)
+}
+
+/**
+ * Browser authorization (device flow): opens the consent page in the system
+ * browser, polls the backend for the key and keeps it once its account is
+ * confirmed. Resolves once signed in and rejects with a `LoginError` that
+ * says why it stopped.
+ */
+export async function startLogin(options: LoginOptions = {}): Promise<void> {
   let verifier: string
   let challenge: string
   try {
@@ -269,7 +412,7 @@ export async function startLogin(): Promise<void> {
     const outcome = pollOutcome(data?.status)
     if (outcome === "ready") {
       if (data.api_key && data.api_base_url) {
-        setCredentials(data.api_key, data.api_base_url)
+        await acceptIssuedKey(issuedKeyFrom(data), options)
         void emitTelemetry("login_success")
         return
       }

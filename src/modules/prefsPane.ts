@@ -9,7 +9,6 @@ import {
   showLoginFailure,
   startLogin,
 } from "./auth"
-import { showSignedInAccount } from "./accountNotice"
 import { clearGlossaryCache, getGlossaries } from "./glossary"
 import {
   type AccountSnapshot,
@@ -337,13 +336,11 @@ function feedbackUrl(): string {
 
 async function doLogin(win: Window, doc: Document): Promise<void> {
   try {
-    await startLogin()
+    await startLogin({ win })
   } catch (error) {
     showLoginFailure(win, error)
-    return
   }
   refreshAccount(doc)
-  void showSignedInAccount({ onSignedOut: () => refreshAccount(doc) })
 }
 
 // 手动兜底:用户从网页授权页复制 API 密钥,直接粘贴(不走浏览器 loopback)。

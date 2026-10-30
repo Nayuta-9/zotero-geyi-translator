@@ -1,26 +1,16 @@
-import { config } from "../utils/config"
 import { getString } from "../utils/locale"
-import { logDebug } from "../utils/log"
-import { clearCredentials, getCredentials } from "./auth"
-import { clearGlossaryCache } from "./glossary"
-import { type AccountSnapshot, clearAccountCache, getAccountSnapshot } from "./memberFeatures"
+import type { AccountSnapshot } from "./memberFeatures"
 
-// After a browser sign-in, names the account the plugin is now signed in to
-// and offers to sign out at once. The notice opens in its own non-modal window
-// and the sign-in caller never waits for it.
+// Names the account a key belongs to: in the translation settings summary,
+// and in the blocking confirmation a browser sign-in shows before the plugin
+// keeps a newly issued key.
 
-export interface AccountNoticeContent {
+/** Text and buttons of the account confirmation dialog. */
+export interface AccountConfirmContent {
   title: string
-  lines: string[]
-  signOutLabel: string
-  closeLabel: string
-}
-
-export interface AccountNoticeOptions {
-  /** Renders the notice; `signOut` runs when the user picks the sign-out action. */
-  open?: (content: AccountNoticeContent, signOut: () => void) => void
-  /** Runs after the notice signs the plugin out, for example to refresh a settings pane. */
-  onSignedOut?: () => void
+  message: string
+  confirmLabel: string
+  rejectLabel: string
 }
 
 /**
@@ -36,98 +26,45 @@ export function accountLabel(snapshot: AccountSnapshot): string {
     : getString("account-label-unknown")
 }
 
-/** Notice text for the account snapshot read right after sign-in. */
-export function accountNoticeContent(snapshot: AccountSnapshot): AccountNoticeContent {
-  const email = snapshot.account?.email
+/**
+ * Confirmation text for a newly issued key. `email` is the email of the key's
+ * account; without it the text says the account is unknown.
+ */
+export function accountConfirmContent(email: string | undefined): AccountConfirmContent {
   return {
-    title: getString("account-notice-title"),
-    lines: [
-      email
-        ? getString("account-notice-email", { email })
-        : snapshot.state === "expired"
-          ? getString("account-notice-membership")
-          : getString("account-notice-unknown"),
-      getString("account-notice-hint"),
-    ],
-    signOutLabel: getString("account-notice-signout"),
-    closeLabel: getString("account-notice-close"),
+    title: getString("account-confirm-title"),
+    message: getString("account-confirm-body", {
+      account: email || getString("account-confirm-unknown"),
+    }),
+    confirmLabel: getString("account-confirm-yes"),
+    rejectLabel: getString("account-confirm-no"),
   }
 }
 
 /**
- * Reads the account behind the credentials just stored, from the same
- * `/v1/me` snapshot the settings pane shows, and opens the notice.
- *
- * Nothing opens when the plugin was signed out or signed in again while the
- * account was loading. The sign-out action clears only the credentials this
- * notice was opened for, and it never throws, so the notice always closes.
+ * Asks in a modal dialog over `parent` whether the account is the user's.
+ * Returns `true` only when the confirm button is pressed; the reject button is
+ * the default, and closing the dialog counts as a rejection.
  */
-export async function showSignedInAccount(options: AccountNoticeOptions = {}): Promise<void> {
-  const key = getCredentials()?.key
-  if (!key) return
-  clearAccountCache()
-  const snapshot = await getAccountSnapshot(true)
-  if (getCredentials()?.key !== key) return
-
-  const signOut = () => {
-    try {
-      if (getCredentials()?.key !== key) return
-      clearCredentials()
-      clearGlossaryCache()
-      clearAccountCache()
-    } catch (error) {
-      logDebug(`account notice sign-out failed: ${error}`)
-      return
-    }
-    showSignedOutLine()
-    try {
-      options.onSignedOut?.()
-    } catch (error) {
-      logDebug(`account notice sign-out refresh failed: ${error}`)
-    }
-  }
-  try {
-    ;(options.open ?? openAccountNoticeWindow)(accountNoticeContent(snapshot), signOut)
-  } catch (error) {
-    logDebug(`account notice failed: ${error}`)
-  }
-}
-
-function ztk(): any {
-  return (Zotero as any)[config.addonInstance]?.data?.ztoolkit
-}
-
-function showSignedOutLine(): void {
-  try {
-    new (ztk().ProgressWindow)(config.addonName)
-      .createLine({ text: getString("account-notice-signed-out"), type: "default" })
-      .show()
-  } catch (error) {
-    logDebug(`signed-out notice failed: ${error}`)
-  }
-}
-
-function openAccountNoticeWindow(content: AccountNoticeContent, signOut: () => void): void {
-  const toolkit = ztk()
-  if (!toolkit?.Dialog) return
-  const dialog = new toolkit.Dialog(content.lines.length + 1, 1)
-  dialog.addCell(0, 0, {
-    tag: "h2",
-    namespace: "html",
-    properties: { textContent: content.title },
-    styles: { margin: "0 0 12px 0" },
-  })
-  content.lines.forEach((line, index) => {
-    dialog.addCell(index + 1, 0, {
-      tag: "p",
-      namespace: "html",
-      properties: { textContent: line },
-      styles: { maxWidth: "460px", margin: "0 0 10px 0", lineHeight: "1.5" },
-    })
-  })
-  dialog.addButton(content.signOutLabel, "geyi-account-notice-signout", {
-    callback: signOut,
-  })
-  dialog.addButton(content.closeLabel, "geyi-account-notice-close")
-  dialog.open(content.title)
+export function promptAccountConfirm(
+  parent: Window | null | undefined,
+  content: AccountConfirmContent,
+): boolean {
+  const prompt = (Services as any).prompt
+  const flags =
+    prompt.BUTTON_POS_0 * prompt.BUTTON_TITLE_IS_STRING +
+    prompt.BUTTON_POS_1 * prompt.BUTTON_TITLE_IS_STRING +
+    prompt.BUTTON_POS_1_DEFAULT
+  const pressed = prompt.confirmEx(
+    parent ?? null,
+    content.title,
+    content.message,
+    flags,
+    content.confirmLabel,
+    content.rejectLabel,
+    null,
+    null,
+    { value: false },
+  )
+  return pressed === 0
 }

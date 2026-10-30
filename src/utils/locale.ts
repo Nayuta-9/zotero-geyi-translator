@@ -83,20 +83,15 @@ const EN: Dict = {
   "pick-attachment": "This item has multiple PDFs. Right-click a specific PDF attachment instead.",
   "auth-opened-browser": "Opened your browser to authorize. Complete sign-in there.",
   "auth-failed": "Sign-in failed. Please try again.",
-  "account-notice-title": "Signed in to Geyi",
-  "account-notice-email": "This plugin is now signed in as {email}.",
-  "account-notice-unknown":
-    "Signed in, but the account could not be loaded right now. You can check it in the Geyi settings pane.",
-  "account-notice-membership":
-    "Signed in, but this account has no active membership that includes the Zotero plugin, so its email cannot be shown.",
+  "account-confirm-title": "Confirm your Geyi account",
+  "account-confirm-body":
+    "This sign-in was approved for the Geyi account:\n\n{account}\n\nCheck that this is exactly your email address. Choose “This is my account” only if you clicked Sign in in your own Zotero and approved it in your own browser. Otherwise choose “Not my account”: the plugin discards this sign-in and Geyi revokes its key.",
+  "account-confirm-unknown": "(the account could not be identified)",
+  "account-confirm-yes": "This is my account",
+  "account-confirm-no": "Not my account",
   "account-label-unknown": "could not be loaded",
   "account-label-membership": "no membership that includes the plugin",
   "dialog-account": "Account",
-  "account-notice-hint":
-    "If this is not your account, someone else may have approved this sign-in. Sign out now, then sign in again from the plugin.",
-  "account-notice-signout": "Not my account — sign out",
-  "account-notice-close": "That's me",
-  "account-notice-signed-out": "Signed out of Geyi.",
   "login-not-eligible":
     "Your Geyi account does not include the Zotero plugin, which requires the Research plan or above. After upgrading, sign in again.",
   "login-cancelled": "Authorization was cancelled in the browser. Sign in again whenever you are ready.",
@@ -104,6 +99,8 @@ const EN: Dict = {
   "login-timeout": "Sign-in timed out because no authorization arrived from the browser. Please sign in again.",
   "login-network": "Could not reach Geyi. Check your network connection and try again.",
   "login-busy": "Geyi is busy right now. Please try again later.",
+  "login-account-rejected":
+    "Sign-in discarded. The plugin did not keep the key for that account. Sign in again from the plugin, and approve only a sign-in you started yourself.",
   "onboarding-title": "Welcome to Geyi Translator",
   "onboarding-login":
     "Sign in: click “Sign in” below, or use Settings → Geyi Translator. You authorize in your browser; no password is entered in Zotero.",
@@ -245,23 +242,23 @@ const ZH: Dict = {
   "pick-attachment": "此条目有多个 PDF，请右键某个具体的 PDF 附件。",
   "auth-opened-browser": "已打开浏览器进行授权，请在浏览器里完成登录。",
   "auth-failed": "登录失败，请重试。",
-  "account-notice-title": "已登录格译",
-  "account-notice-email": "插件现在登录的账号是：{email}",
-  "account-notice-unknown": "已登录，但暂时读取不到账号信息，可在格译设置页查看。",
-  "account-notice-membership": "已登录，但该账号当前没有包含 Zotero 插件的有效会员，因此无法显示邮箱。",
+  "account-confirm-title": "确认格译账号",
+  "account-confirm-body":
+    "这次登录授权给了以下格译账号：\n\n{account}\n\n请逐字核对这是不是你的邮箱。只有你在自己的 Zotero 中点了登录、并在自己的浏览器里确认过，才选「是我的账号」；否则请选「不是我的账号」，插件会丢弃这次登录，格译会作废它的密钥。",
+  "account-confirm-unknown": "（暂时无法识别账号）",
+  "account-confirm-yes": "是我的账号",
+  "account-confirm-no": "不是我的账号",
   "account-label-unknown": "暂时读取不到",
   "account-label-membership": "会员不含插件",
   "dialog-account": "账号",
-  "account-notice-hint": "如果这不是你的账号，可能是别人抢先确认了这次登录。请立即登出，再从插件重新登录。",
-  "account-notice-signout": "不是我的账号，登出",
-  "account-notice-close": "是我的账号",
-  "account-notice-signed-out": "已登出格译。",
   "login-not-eligible": "你的格译账号当前不含 Zotero 插件，插件需研究级及以上会员。开通后请重新登录。",
   "login-cancelled": "已在浏览器中取消授权。需要时可重新登录。",
   "login-expired": "授权链接已过期，请重新登录。",
   "login-timeout": "登录超时：没有收到浏览器中的授权，请重新登录。",
   "login-network": "无法连接格译，请检查网络后重试。",
   "login-busy": "格译服务暂时繁忙，请稍后再试。",
+  "login-account-rejected":
+    "已丢弃这次登录：插件没有保留该账号的密钥。请从插件重新登录，并且只确认你自己发起的登录。",
   "onboarding-title": "欢迎使用格译 Zotero 插件",
   "onboarding-login":
     "登录：点下方「登录」，或在「设置 → Geyi Translator」里登录。授权在浏览器中完成，无需在 Zotero 里输入密码。",
@@ -339,7 +336,7 @@ export function getString(key: string, args?: Record<string, string | number>): 
   let s = table[key] ?? EN[key] ?? key
   if (args) {
     for (const [k, v] of Object.entries(args)) {
-      s = s.replace(new RegExp(`\\{${k}\\}`, "g"), String(v))
+      s = s.replace(new RegExp(`\\{${k}\\}`, "g"), () => String(v))
     }
   }
   return s

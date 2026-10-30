@@ -4,7 +4,7 @@ import { getPref } from "../utils/prefs"
 import { withPluginIdentity } from "../utils/http"
 import { logDebug } from "../utils/log"
 import { api, ApiError, type Job, type OutputItem, type TranslateOptions } from "../utils/api"
-import { accountLabel, showSignedInAccount } from "./accountNotice"
+import { accountLabel } from "./accountNotice"
 import { isLoggedIn, showLoginFailure, startLogin } from "./auth"
 import { getGlossaries } from "./glossary"
 import { refreshTaskPane } from "./taskPane"
@@ -175,13 +175,12 @@ async function onTranslateCommand(win: Window): Promise<void> {
     )
     if (!go) return
     try {
-      await startLogin()
+      await startLogin({ win })
     } catch (error) {
       showLoginFailure(win, error)
       return
     }
     signedInHere = true
-    void showSignedInAccount()
   }
 
   const att = await resolvePdfAttachment(win)
