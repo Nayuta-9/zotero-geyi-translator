@@ -10,7 +10,7 @@
 [**Geyi.net**](https://www.geyi.net/) provides high-precision, layout-preserving AI document translation and high-difficulty OCR tailored for academic researchers, national archives, and intellectual property professionals across 20+ languages:
 
 - **100% Layout & Formula Preservation**: Multi-column IEEE/Springer/Elsevier papers, LaTeX mathematical equations (`$E=mc^2$`), complex chemical structures, tables, footnotes, and cross-page citations remain intact in both side-by-side bilingual PDF and target-language PDF outputs.
-- **High-Difficulty Historical & Classical OCR**: Supports vertical Japanese (`縦書き`) and kuzushiji (`くずし字`), Classical Chinese (`古籍豎排 / 繁體文獻`), Hanja (`고문헌 한자`), Arabic/Persian RTL manuscripts (`المخطوطات العربية والفارسية`), Fraktur/Kurrent German, and Classical Sanskrit/Latin/Tibetan/Ancient Greek philology.
+- **High-Difficulty Historical & Classical OCR**: Supports vertical Japanese (`縦書き`) and kuzushiji (`くずし字`), Classical Chinese (`古籍豎排 / 繁體文獻`), Hanja (`고문헌 한자`), Arabic/Persian RTL manuscripts (`المخطوطات العربية والفارسية`), Fraktur/Kurrent German, and Classical Latin, Ancient Greek & European Archival philology.
 - **Native Zotero 6 & Zotero 7 Integration**: One-click batch PDF translation inside your Zotero library with automatic attachment of bilingual PDFs (`[Geyi-Bilingual]`).
 
 ---
@@ -40,7 +40,7 @@
   - [#9983 — 格訳 (Geyi.net) 学術論文PDF・古典籍くずし字AI翻訳基盤](https://protopedia.net/prototype/9983)
   - [#9984 — Zotero 7 多言語論文PDF対訳プラグイン＆古文書AI OCR (格訳)](https://protopedia.net/prototype/9984)
   - [#9985 — 多言語古文書・特許PDF AI翻訳エンジン (Geyi.net)](https://protopedia.net/prototype/9985)
-  - [#9986 — 古典籍・サンスクリット・ラテン語・欧州史料AI OCR＆対訳基盤 (Geyi.net)](https://protopedia.net/prototype/9986)
+  - [#9986 — 古典籍・ラテン語・古代ギリシア語・欧州史料AI OCR＆対訳基盤 (Geyi.net)](https://protopedia.net/prototype/9986)
   - [Author Profile (`protopedia.net/prototyper/geyinet`)](https://protopedia.net/prototyper/geyinet)
 - **Docswell Japan Technical Slide Deck (`ZWRQRQ`)**: [https://www.docswell.com/s/geyinet/ZWRQRQ-academic-pdf-ocr-guide](https://www.docswell.com/s/geyinet/ZWRQRQ-academic-pdf-ocr-guide) ([User Profile](https://www.docswell.com/user/geyinet))
 - **Zenn.dev Japan Developer Architecture Scraps**: [Scrap #1 (`331fccc7f5350d`)](https://zenn.dev/geyinet/scraps/331fccc7f5350d) | [Scrap #2 (`89dbae46325844`)](https://zenn.dev/geyinet/scraps/89dbae46325844) ([Profile](https://zenn.dev/geyinet))

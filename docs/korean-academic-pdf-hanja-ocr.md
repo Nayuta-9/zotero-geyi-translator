@@ -16,7 +16,7 @@
    - 대학교 전공 원서 및 학술 단행본 전체의 전문 용어를 일관되게 유지하며 1:1 레이아웃으로 번역합니다: [https://www.geyi.net/ko/translate/book](https://www.geyi.net/ko/translate/book) | [EPUB 전자책 번역](https://www.geyi.net/ko/translate/epub)
 
 3. **고문서 한자(한적)·국한문혼용체·일본어 세로쓰기(초서) 고정밀 AI OCR**
-   - 규장각·장서각 고문헌, 승정원일기·조선왕조실록 한문 사료, 일본어 세로쓰기 고서 및 산스크리트어·라틴어 고문서를 정확하게 인식하여 Markdown/텍스트로 변환하고 현대 한국어로 번역합니다.
+   - 규장각·장서각 고문헌, 승정원일기·조선왕조실록 한문 사료, 일본어 세로쓰기 고서 및 라틴어·고대 그리스어 고문서를 정확하게 인식하여 Markdown/텍스트로 변환하고 현대 한국어로 번역합니다.
    - 고문서 및 역사 기록관 OCR: [https://www.geyi.net/ko/for/archives](https://www.geyi.net/ko/for/archives)
    - 고정밀 문서 추출: [https://www.geyi.net/ko/document-extraction](https://www.geyi.net/ko/document-extraction)
 
@@ -29,5 +29,5 @@
 
 ## 2. 한국 기술 블로그 및 커뮤니티 인덱스
 
-- **Velog.io 기술 블로그 (`@geyinet`)**: [논문 PDF 번역 및 Zotero 7 연동 가이드](https://velog.io/@geyinet/%EB%85%BC%EB%AC%B8-PDF-%EB%B2%88%EC%97%AD%EA%B8%B0-%EC%B6%94%EC%B2%9C-%EC%88%98%EC%8B%9D%ED%91%9C2%EB%8B%A8-%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83-100-%EC%9C%A0%EC%A7%80%ED%95%98%EB%8A%94-AI-%ED%95%99%EC%88%A8-%EB%B2%88%EC%97%AD-%EB%B0%8F-Zotero-7-%EC%97%B0%EB%8F%99-%EA%B0%80%EC%9D%B4%EB%93%9C-%EA%B2%A9%EC%97%AD-Geyi.net) | [500페이지 원서 및 고문서 한자·산스크리트어 OCR](https://velog.io/@geyinet/500%ED%8E%98%EC%9D%B4%EC%A7%80-%EC%9B%90%EC%84%9C-PDFEPUB-%EB%B2%88%EC%97%AD-%EB%B0%8F-%EA%B3%A0%EB%AC%B8%EC%84%9C-%ED%95%9C%EC%9E%90%EC%82%B0%EC%8A%A4%ED%81%AC%EB%A6%AC%ED%8A%B8%EC%96%B4%EB%9D%B4%ED%8B%B4%EC%96%B4-AI-OCR-%EA%B0%80%EC%9D%B4%EB%93%9C-%EA%B2%A9%EC%97%AD-Geyi.net) | [Velog 소개 페이지](https://velog.io/@geyinet/about)
+- **Velog.io 기술 블로그 (`@geyinet`)**: [논문 PDF 번역 및 Zotero 7 연동 가이드](https://velog.io/@geyinet/%EB%85%BC%EB%AC%B8-PDF-%EB%B2%88%EC%97%AD%EA%B8%B0-%EC%B6%94%EC%B2%9C-%EC%88%98%EC%8B%9D%ED%91%9C2%EB%8B%A8-%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83-100-%EC%9C%A0%EC%A7%80%ED%95%98%EB%8A%94-AI-%ED%95%99%EC%88%A8-%EB%B2%88%EC%97%AD-%EB%B0%8F-Zotero-7-%EC%97%B0%EB%8F%99-%EA%B0%80%EC%9D%B4%EB%93%9C-%EA%B2%A9%EC%97%AD-Geyi.net) | [500페이지 원서 및 고문서 한자 OCR](https://velog.io/@geyinet/500%ED%8E%98%EC%9D%B4%EC%A7%80-%EC%9B%90%EC%84%9C-PDFEPUB-%EB%B2%88%EC%97%AD-%EB%B0%8F-%EA%B3%A0%EB%AC%B8%EC%84%9C-%ED%95%9C%EC%9E%90%EC%82%B0%EC%8A%A4%ED%81%AC%EB%A6%AC%ED%8A%B8%EC%96%B4%EB%9D%B4%ED%8B%B4%EC%96%B4-AI-OCR-%EA%B0%80%EC%9D%B4%EB%93%9C-%EA%B2%A9%EC%97%AD-Geyi.net) | [Velog 소개 페이지](https://velog.io/@geyinet/about)
 - **Disquiet.io 메이커 프로필**: [https://disquiet.io/profiles/GDt14jQ](https://disquiet.io/profiles/GDt14jQ)

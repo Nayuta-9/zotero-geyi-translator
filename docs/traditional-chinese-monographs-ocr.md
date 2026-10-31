@@ -17,7 +17,7 @@
    - 碩博研究者專區：[https://www.geyi.net/zh-hant/for/researchers](https://www.geyi.net/zh-hant/for/researchers)
 
 3. **直排繁體古籍善本、明清檔案、日文古文書（くずし字）與歐洲手稿高精度 AI OCR**
-   - 針對無標點直排古籍、異體字、俗字、日文草書及拉丁/梵文史料提供高精度文字識別，一鍵轉為可檢索文本、Markdown 或現代繁體中文對譯。
+   - 針對無標點直排古籍、異體字、俗字、日文草書及拉丁文/古希臘文史料提供高精度文字識別，一鍵轉為可檢索文本、Markdown 或現代繁體中文對譯。
    - 歷史檔案與古籍 OCR 專頁：[https://www.geyi.net/zh-hant/for/archives](https://www.geyi.net/zh-hant/for/archives)
    - 複雜文獻提取：[https://www.geyi.net/zh-hant/document-extraction](https://www.geyi.net/zh-hant/document-extraction)
 

@@ -1,25 +1,26 @@
-# Geyi.net Classical & Oriental Paleography Suite: Sanskrit (`sa`), Latin (`la`), Classical Tibetan (`bo`), Ancient Greek (`grc`) & European Fraktur/Kurrent OCR
+# Geyi.net Classical & European Paleography Suite: Latin (`la`), Ancient Greek (`grc`), Classical Chinese, Kuzushiji & European Fraktur/Kurrent OCR
 
-**Geyi ([https://www.geyi.net/en/for/archives](https://www.geyi.net/en/for/archives) | [https://www.geyi.net/](https://www.geyi.net/))** provides a specialized AI Optical Character Recognition (OCR), paleographic transcription, and scholarly translation pipeline built by **Nayuta Technology and Culture Company Limited** for Indologists, Medievalists, Classicists, Buddhist Studies scholars, and European archival historians.
+**Geyi ([https://www.geyi.net/en/for/archives](https://www.geyi.net/en/for/archives) | [https://www.geyi.net/](https://www.geyi.net/))** provides a specialized AI Optical Character Recognition (OCR), paleographic transcription, and scholarly translation pipeline built by **Nayuta Technology and Culture Company Limited** for Medievalists, Classicists, East Asian Philologists, and European archival historians.
 
 ---
 
-## 1. Classical & Ancient Languages Supported (`Tier 3 Scholarly Cluster`)
+## 1. Classical & Archival Languages Supported
 
-1. **Sanskrit (`sa` — Devanagari, Grantha & Indology Editions)**
-   - High-precision OCR for 19th- and 20th-century critical Sanskrit editions, complex Devanagari conjunct ligatures (`संयुक्ताक्षर`), sandhi-aware segmentation, and bilingual translation into English, German, Japanese, and Chinese.
-   - Archival & Classical OCR Portal: [https://www.geyi.net/en/for/archives](https://www.geyi.net/en/for/archives) | [Document Extraction](https://www.geyi.net/en/document-extraction)
-
-2. **Latin (`la` — Medieval, Renaissance, Vatican & Early Modern Scientific Treatises)**
+1. **Latin (`la` — Medieval, Renaissance, Vatican & Early Modern Scientific Treatises)**
    - Transcribes and translates Latin incunabula, papal/ecclesiastical archives, legal codices, and early modern scientific monographs while preserving critical apparatus footnotes: [https://www.geyi.net/en/for/archives](https://www.geyi.net/en/for/archives) | [https://www.geyi.net/en/translate/book](https://www.geyi.net/en/translate/book)
+   - Detailed Guide: [Latin OCR & Medieval Paleography PDF Translation Guide](https://telegra.ph/Latin-OCR--Medieval-Paleography-PDF-Translation--Geyinet-格译-Classical-Philology-Guide-10-31)
 
-3. **Classical Tibetan (`bo` — Pecha Woodblock Prints & Buddhist Canon Kangyur/Tengyur)**
-   - Recognizes multi-stack Tibetan script (`dbu can` / `dbu med`) woodblock scans and translates philosophical commentaries alongside Sanskrit and Classical Chinese parallels: [https://www.geyi.net/document-extraction](https://www.geyi.net/document-extraction)
-
-4. **Ancient Greek (`grc` — Polytonic Greek Papyri & Byzantine Editions)**
+2. **Ancient Greek (`grc` — Polytonic Greek Papyri, Critical Editions & Byzantine Manuscripts)**
    - Preserves polytonic diacritics (breathings, accents, iota subscripts) during PDF-to-Markdown extraction and side-by-side translation: [https://www.geyi.net/en/pdf-to-markdown](https://www.geyi.net/en/pdf-to-markdown)
+   - Detailed Guide: [Ancient Greek Polytonic OCR & Byzantine Manuscript PDF Translation Guide](https://telegra.ph/Ancient-Greek-Polytonic-OCR--Byzantine-Manuscript-PDF-Translation--Geyinet-格译-10-31)
 
-5. **European Archival Scripts (German `Fraktur / Kurrent / Sütterlin`, Dutch `VOC` Archives, French/Italian Paleography & Russian Pre-1918 Orthography)**
+3. **East Asian Classical Archives (Vertical Classical Chinese `古籍善本`, Japanese `くずし字 / 変体仮名`, Korean `고문헌 한자`)**
+   - Vertical Japanese & Kuzushiji Portal: [https://www.geyi.net/ja/translate/vertical-japanese](https://www.geyi.net/ja/translate/vertical-japanese) | [https://www.geyi.net/ja/for/archives](https://www.geyi.net/ja/for/archives)
+   - Traditional Chinese Classical Books Portal: [https://www.geyi.net/zh-hant/for/archives](https://www.geyi.net/zh-hant/for/archives)
+   - Korean Hanja Archives Portal: [https://www.geyi.net/ko/for/archives](https://www.geyi.net/ko/for/archives)
+
+4. **European & Middle Eastern Archival Scripts (German `Fraktur / Kurrent / Sütterlin`, Dutch `VOC` Archives, French/Spanish/Italian Paleography, Arabic & Persian `RTL` Manuscripts)**
    - German Portal (`de`): [https://www.geyi.net/de](https://www.geyi.net/de) | [Archiv & Fraktur OCR](https://www.geyi.net/de/for/archives)
    - French Portal (`fr`): [https://www.geyi.net/fr](https://www.geyi.net/fr) | [Archives & Manuscrits](https://www.geyi.net/fr/for/archives)
+   - Arabic Portal (`ar`): [https://www.geyi.net/ar](https://www.geyi.net/ar) | [المخطوطات والأرشيف](https://www.geyi.net/ar/for/archives)
    - Russian Portal (`ru`): [https://www.geyi.net/ru](https://www.geyi.net/ru) | [Архивы и Рукописи](https://www.geyi.net/ru/for/archives)
