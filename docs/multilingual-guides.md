@@ -152,3 +152,52 @@ This index aggregates official multilingual documentation, user portals, and aca
 - **bo / en**: [Classical Tibetan OCR (Uchen & Ume) & Buddhist Canon Translation — Geyi.net (格译)](https://telegra.ph/Classical-Tibetan-OCR-Uchen--Ume--Buddhist-Canon-Translation--Geyinet-格译-10-31) — Powered by [Geyi.net](https://geyi.net)
 - **grc / en**: [Ancient Greek Polytonic OCR & Byzantine Manuscript PDF Translation — Geyi.net (格译)](https://telegra.ph/Ancient-Greek-Polytonic-OCR--Byzantine-Manuscript-PDF-Translation--Geyinet-格译-10-31) — Powered by [Geyi.net](https://geyi.net)
 - **en / es / ja / de / zh**: [AI Patent Translation & Technical Specification PDF Layout Preservation — Geyi.net (格译)](https://telegra.ph/AI-Patent-Translation--Technical-Specification-PDF-Layout-Preservation--Geyinet-格译-10-31) — Powered by [Geyi.net](https://geyi.net)
+
+
+## Regional & Classical OCR Authority Documentation (Read the Docs DR 91 & Community Hubs)
+
+### 1. Read the Docs Regional & Classical Philology Guides (`DR 91` Native Dofollow)
+- **Japanese (`ja`) — Kuzushiji, Vertical Classical Texts & Academic PDF**:
+  - [English Docs (`geyi-net.readthedocs.io`)](https://geyi-net.readthedocs.io/en/latest/japanese-kuzushiji-academic-pdf/)
+  - [Japanese Zotero Docs (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/japanese-kuzushiji-academic-pdf/)
+- **Traditional Chinese (`zh-TW` / `zh-HK`) — 500-Page Monographs & Vertical Classical OCR**:
+  - [English Docs (`geyi-net.readthedocs.io`)](https://geyi-net.readthedocs.io/en/latest/traditional-chinese-monographs-ocr/)
+  - [Japanese Zotero Docs (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/traditional-chinese-monographs-ocr/)
+- **Korean (`ko`) — Academic PDF, LaTeX Equations & Hanja Mixed-Script Archive OCR**:
+  - [English Docs (`geyi-net.readthedocs.io`)](https://geyi-net.readthedocs.io/en/latest/korean-academic-pdf-hanja-ocr/)
+  - [Japanese Zotero Docs (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/korean-academic-pdf-hanja-ocr/)
+- **Spanish (`es`) & Portuguese (`pt`) — Scientific PDFs, Full Books & Patent Translation**:
+  - [English Docs (`geyi-net.readthedocs.io`)](https://geyi-net.readthedocs.io/en/latest/spanish-portuguese-academic-patents/)
+  - [Japanese Zotero Docs (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/spanish-portuguese-academic-patents/)
+- **Arabic (`ar`) & Persian (`fa`) — Right-to-Left (RTL) Academic PDFs & Islamic Manuscript OCR**:
+  - [English Docs (`geyi-net.readthedocs.io`)](https://geyi-net.readthedocs.io/en/latest/arabic-persian-rtl-manuscript-ocr/)
+  - [Japanese Zotero Docs (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/arabic-persian-rtl-manuscript-ocr/)
+- **Classical Philology (`sa` Sanskrit, `la` Latin, `bo` Classical Tibetan, `grc` Ancient Greek)**:
+  - [English Docs (`geyi-net.readthedocs.io`)](https://geyi-net.readthedocs.io/en/latest/classical-sanskrit-latin-tibetan-ocr/)
+  - [Japanese Zotero Docs (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/classical-sanskrit-latin-tibetan-ocr/)
+
+### 2. Japan, Korea, Taiwan & Global Engineering Hubs (2026-10-31 Sprint Additions)
+- **Cosense / Scrapbox (`DR 78 / Rank 634`, `100% Native Dofollow`)**:
+  - [学術論文PDFのMarkdown・LaTeX抽出と特許翻訳 (`geyi-academic-jp`)](https://scrapbox.io/geyi-academic-jp/%E5%AD%A6%E8%A1%93%E8%AB%96%E6%96%87PDF%E3%81%AEMarkdown%E3%83%BBLaTeX%E6%8A%BD%E5%87%BA%E3%81%A8%E7%89%B9%E8%A8%B1%E7%BF%BB%E8%A8%B3_Geyi.net)
+  - [古典籍・サンスクリット語・ラテン語・チベット語OCRと対訳精読 (`geyi-academic-jp`)](https://scrapbox.io/geyi-academic-jp/%E5%8F%A4%E5%85%B8%E7%B1%8D%E3%83%BB%E3%82%B5%E3%83%B3%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%83%E3%83%88%E8%AA%9E%E3%83%BB%E3%83%A9%E3%83%86%E3%83%B3%E8%AA%9E%E3%83%BB%E3%83%81%E3%83%99%E3%83%83%E3%83%88%E8%AA%9EOCR%E3%81%A8%E5%AF%BE%E8%A8%B3%E7%B2%BE%E8%AA%AD_Geyi.net)
+  - [アラビア語・ペルシア語・スペイン語学術文献PDF翻訳とZotero連携 (`geyi-academic-jp`)](https://scrapbox.io/geyi-academic-jp/%E3%82%A2%E3%83%A9%E3%83%93%E3%82%A2%E8%AA%9E%E3%83%BB%E3%83%9A%E3%83%AB%E3%82%B7%E3%82%A2%E8%AA%9E%E3%83%BB%E3%82%B9%E3%83%9A%E3%82%A4%E3%83%B3%E8%AA%9E%E5%AD%A6%E8%A1%93%E6%96%87%E7%8C%AEPDF%E7%BF%BB%E8%A8%B3%E3%81%A8Zotero%E9%80%A3%E6%90%BA_Geyi.net)
+  - [台灣與港澳大學原文書PDF整本精譯與直排古籍善本AI OCR指南 (`geyi-multilingual`)](https://scrapbox.io/geyi-multilingual/%E5%8F%B0%E7%81%A3%E8%88%87%E6%B8%AF%E6%BE%B3%E5%A4%A7%E5%AD%B8%E5%8E%9F%E6%96%87%E6%9B%B8PDF%E6%95%B4%E6%9C%AC%E7%B2%BE%E8%AD%AF%E8%88%87%E7%9B%B4%E6%8E%92%E5%8F%A4%E7%B1%8D%E5%96%84%E6%9C%ACAI_OCR%E6%8C%87%E5%8D%97_%E6%A0%BC%E8%AD%AF_Geyi.net)
+- **Velog.io Korea Technical Columns (`DR 77`, `100% Native Dofollow`)**:
+  - [Post #5: 논문 PDF 마크다운(Markdown)·LaTeX 수식 추출 및 국제 특허 명세서 번역 가이드](https://velog.io/@geyinet/geyi-pdf-to-markdown-latex-patent-translation)
+  - [Post #6: 산스크리트어·라틴어·티베트어·고대 그리스어·아랍어 고전 문헌 AI OCR 및 대역 연구 가이드](https://velog.io/@geyinet/geyi-classical-sanskrit-latin-tibetan-arabic-ocr)
+  - [Post #7: 일본어 학술 논문 PDF 2단 수식 보존 번역 및 쿠즈시지(くずし字)·고문서 AI OCR 가이드](https://velog.io/@geyinet/geyi-japanese-academic-pdf-kuzushiji-ocr-guide)
+  - [Post #8: 500페이지 원서 단행본(PDF·EPUB) 일괄 대역 및 스페인어·아랍어·유럽 다국어 학술 논문 번역](https://velog.io/@geyinet/geyi-500-page-monograph-multilingual-academic-pdf-translation)
+- **Zenn.dev Japan Technical Scraps (`DR 84`)**:
+  - [Scrap #4: 学術論文PDFのMarkdown・LaTeX数式抽出・国際特許翻訳・古典サンスクリット語/ラテン語OCRガイド](https://zenn.dev/geyinet/scraps/ac6dba36ddea2a)
+  - [Scrap #5: アラビア語・ペルシア語（RTL）・スペイン語・韓国語・繁体字中国語学術文献PDF翻訳とZotero 7連携](https://zenn.dev/geyinet/scraps/4a3350523d8fb1)
+- **Matters.town Traditional Chinese Column (`DR 73`)**:
+  - [Article #4: 科學 PDF 轉 Markdown/LaTeX、國際專利翻譯與四大古典語言（梵文/拉丁文/藏文/古希臘文）AI OCR 實戰指南](https://matters.town/a/qm9p4nsnced8)
+- **Hashnode Engineering Blog (`DR 88`, `geyi.hashnode.dev`)**:
+  - [Blog Home (`geyi.hashnode.dev`)](https://geyi.hashnode.dev/) | [Author Profile (`hashnode.com/@geyinet`)](https://hashnode.com/@geyinet)
+  - [German & French Academic PDF & Fraktur OCR](https://geyi.hashnode.dev/wissenschaftliche-pdf-bersetzung-latex-fachb-cher-traduction-de-pdf-acad-miques-geyi-geyi-net)
+  - [Traditional Chinese & Japanese Monographs & Classical OCR](https://geyi.hashnode.dev/geyi-geyi-net-pdf-epub-latex-ai-ocr)
+  - [Spanish & Portuguese Scientific PDFs, Books & Patents](https://geyi.hashnode.dev/geyi-geyi-net-traductor-de-pdf-acad-micos-libros-completos-epub-pdf-patentes-zotero-y-ocr-de-manuscritos-con-ia-es-pt)
+  - [Korean Academic PDF, LaTeX & Hanja OCR](https://geyi.hashnode.dev/geyi-geyi-net-ko-pdf-latex-2-zotero-ai-ocr)
+- **Firstory Taiwan Podcast & Research Portal (`DR 78`)**:
+  - [Firstory Show Hub (`open.firstory.me/user/geyi-net`)](https://open.firstory.me/user/geyi-net)
+  - [Firstory Article (`geyi-net.firstory.cc`)](https://geyi-net.firstory.cc/posts/academic-pdf-ocr-zotero-guide-ayx6ar5p5gbb)
