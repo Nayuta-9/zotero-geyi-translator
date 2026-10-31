@@ -1,6 +1,6 @@
 site_name: "Geyi.net (格訳 / 格譯) — Multilingual Academic PDF & Scanned Archive AI Translation Guide"
 site_url: "https://www.geyi.net/"
-site_description: "Official multilingual documentation & Zotero integration hub for Geyi.net (operated by AUFTRAGSTAKTIK OÜ, Estonia Registry Code 17628783). Layout-preserving AI PDF translation and vertical/cursive classical OCR."
+site_description: "Official multilingual documentation & Zotero integration hub for Geyi.net. Layout-preserving AI PDF translation and vertical/cursive classical OCR."
 repo_url: "https://github.com/Yovahti/zotero-geyi-translator"
 nav:
   - Home & Global Architecture: index.md
