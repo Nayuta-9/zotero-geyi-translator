@@ -1,27 +1,17 @@
-# Geyi.net (Español & Português): Traducción de Artículos Científicos PDF con LaTeX, Libros Completos EPUB/PDF, Patentes y OCR de Manuscritos Históricos
+# Guía Técnica para Zotero 7–9 (Español y Português): Traducción de Artículos Científicos PDF con LaTeX, Libros y OCR de Archivos Históricos
 
-**Geyi ([https://www.geyi.net/en](https://www.geyi.net/en) | [https://www.geyi.net/](https://www.geyi.net/))** es una plataforma de inteligencia artificial desarrollada por **Nayuta Technology and Culture Company Limited** para investigadores universitarios, archivos históricos (Archivo General de Indias, Biblioteca Nacional de España, Torre do Tombo, CAPES/CNPq) y agentes de propiedad industrial en España, América Latina, Portugal y Brasil.
-
----
-
-## 1. Soluciones en Español (`es`) para Universidades, Archivos y Patentes
-
-1. **Traducción de Artículos Científicos PDF y Libros de 500 Páginas sin Perder el Formato**
-   - Conserva el diseño a dos columnas de revistas IEEE/Springer/Elsevier, ecuaciones matemáticas en `LaTeX`, tablas multipágina y notas al pie: [https://www.geyi.net/translate/paper](https://www.geyi.net/translate/paper) | [Traducción de Libros PDF/EPUB](https://www.geyi.net/translate/book) | [Traductor de EPUB](https://www.geyi.net/en/translate/epub)
-2. **OCR Paleográfico y de Manuscritos Antiguos (Siglos XV–XIX)**
-   - Reconocimiento óptico de caracteres (OCR) de alta precisión para manuscritos coloniales, textos en latín eclesiástico, letra cortesana/procesal y conversión directa de PDF escaneado a Markdown y LaTeX: [https://www.geyi.net/en/for/archives](https://www.geyi.net/en/for/archives) | [https://www.geyi.net/pdf-to-markdown](https://www.geyi.net/pdf-to-markdown)
-3. **Complemento Oficial para Zotero 6 y Zotero 7**
-   - Integración directa con Zotero para lectura bilingüe lado a lado: [https://www.geyi.net/zotero-plugin](https://www.geyi.net/zotero-plugin) | [GitHub: zotero-geyi-translator](https://github.com/Nayuta-9/zotero-geyi-translator)
-4. **Guía Completa en Español (Telegra.ph)**:
-   - [Traductor de PDF Académicos, Libros Completos EPUB/PDF, Patentes y OCR de Manuscritos Antiguos con IA](https://telegra.ph/Traductor-de-PDF-Acad%C3%A9micos-Libros-Completos-EPUBPDF-Patentes-y-OCR-de-Manuscritos-Antiguos-con-IA--Geyi-geyinet-10-19)
+Esta guía documenta la integración del complemento de código abierto **`zotero-geyi-translator`** en Zotero 7–9 para investigadores universitarios, archivos históricos y equipos de propiedad industrial en España, América Latina, Portugal y Brasil.
 
 ---
 
-## 2. Soluções em Português (`pt`) para Pesquisadores CAPES/CNPq e Acervos Históricos
+## 1. Traducción de Artículos Científicos PDF en Dos Columnas y Libros Académicos (Español `es`)
 
-1. **Tradução de Artigos Científicos PDF e Monografias com Preservação de LaTeX**
-   - Traduza artigos em duas colunas, teses de doutorado e livros acadêmicos de até 500 páginas mantendo fórmulas LaTeX, gráficos e tabelas intactos: [https://www.geyi.net/translate/paper](https://www.geyi.net/translate/paper) | [https://www.geyi.net/translate/book](https://www.geyi.net/translate/book)
-2. **OCR de Manuscritos Históricos e Documentos Ultramarinos**
-   - Extração de texto e tradução de acervos paleográficos portugueses e brasileiros para Markdown estruturado: [https://www.geyi.net/document-extraction](https://www.geyi.net/document-extraction) | [https://www.geyi.net/en/for/archives](https://www.geyi.net/en/for/archives)
-3. **Guia Completo em Português (Telegra.ph)**:
-   - [Tradutor de Artigos Científicos PDF (LaTeX e Layout de 2 Colunas), Livros Completos EPUB/PDF e OCR Histórico com IA](https://telegra.ph/Tradutor-de-Artigos-Cient%C3%ADficos-PDF-LaTeX-e-Layout-de-2-Colunas-Livros-Completos-EPUBPDF-e-OCR-Hist%C3%B3rico-com-IA--Geyi-geyinet-10-19)
+1. **Preservación de Ecuaciones `LaTeX` y Diseño a Dos Columnas**: Al traducir artículos de IEEE, Springer, Elsevier o arXiv desde Zotero 7–9, el motor conserva intactas las fórmulas matemáticas, tablas multipágina, figuras vectoriales y notas al pie, adjuntando automáticamente el PDF bilingüe al elemento original en Zotero ([Complemento Oficial para Zotero](https://www.geyi.net/en/zotero-plugin)).
+2. **Monografías de 500 Páginas y Documentos de Patentes (`OEPM / EPO / WIPO`)**: Los libros académicos en formato `PDF` o `EPUB` de más de 100 páginas se procesan manteniendo la coherencia terminológica en todos los capítulos ([Traducción de Libros Completos](https://www.geyi.net/en/translate/book) y [Traducción de PDF Académicos](https://www.geyi.net/en/translate/pdf)).
+
+---
+
+## 2. Soluções em Português (`pt`) e OCR Paleográfico de Manuscritos Históricos
+
+1. **Pesquisa Universitária (CAPES / CNPq) e Teses**: Suporte completo para tradução lado a lado de artigos científicos e monografias em inglês, alemão, francês e espanhol para o português, preservando citações e fórmulas `LaTeX`.
+2. **OCR de Manuscritos Coloniais e Acervos Históricos (Séculos XV–XIX)**: Extração de texto estruturado (`Markdown` / `LaTeX`) e tradução assistida para documentos históricos digitalizados, arquivos eclesiásticos e acervos paleográficos ([OCR para Arquivos Históricos](https://www.geyi.net/en/for/archives)).

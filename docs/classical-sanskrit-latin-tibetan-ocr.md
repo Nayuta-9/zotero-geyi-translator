@@ -1,26 +1,19 @@
-# Geyi.net Classical & European Paleography Suite: Latin (`la`), Ancient Greek (`grc`), Classical Chinese, Kuzushiji & European Fraktur/Kurrent OCR
+# Classical Latin (`la`), Ancient Greek (`grc`) & European Archival Paleography OCR Guide
 
-**Geyi ([https://www.geyi.net/en/for/archives](https://www.geyi.net/en/for/archives) | [https://www.geyi.net/](https://www.geyi.net/))** provides a specialized AI Optical Character Recognition (OCR), paleographic transcription, and scholarly translation pipeline built by **Nayuta Technology and Culture Company Limited** for Medievalists, Classicists, East Asian Philologists, and European archival historians.
+This technical reference covers the optical character recognition (OCR), paleographic transcription, and scholarly translation workflow for classical philology and early modern archival PDFs using `zotero-geyi-translator`.
 
 ---
 
-## 1. Classical & Archival Languages Supported
+## 1. Classical Philology: Latin (`la`) & Polytonic Ancient Greek (`grc`)
 
-1. **Latin (`la` — Medieval, Renaissance, Vatican & Early Modern Scientific Treatises)**
-   - Transcribes and translates Latin incunabula, papal/ecclesiastical archives, legal codices, and early modern scientific monographs while preserving critical apparatus footnotes: [https://www.geyi.net/en/for/archives](https://www.geyi.net/en/for/archives) | [https://www.geyi.net/en/translate/book](https://www.geyi.net/en/translate/book)
-   - Detailed Guide: [Latin OCR & Medieval Paleography PDF Translation Guide](https://telegra.ph/Latin-OCR--Medieval-Paleography-PDF-Translation--Geyinet-格译-Classical-Philology-Guide-10-31)
+1. **Latin Incunabula, Ecclesiastical Archives & Early Modern Treatises (`la`)**
+   - Recognizes historical serif typography, ligatures (`æ`, `œ`), and multi-column critical apparatus footnotes in scanned Latin editions, exporting either side-by-side bilingual PDFs or structured text ([Historical Archives & Paleography OCR](https://www.geyi.net/en/for/archives)).
+2. **Polytonic Ancient Greek Papyri & Byzantine Editions (`grc`)**
+   - Preserves polytonic Greek diacritics—rough and smooth breathings, acute/grave/circumflex accents, and iota subscripts—during high-precision OCR and conversion to clean Markdown or LaTeX ([Scientific & Classical PDF to Markdown](https://www.geyi.net/en/pdf-to-markdown)).
 
-2. **Ancient Greek (`grc` — Polytonic Greek Papyri, Critical Editions & Byzantine Manuscripts)**
-   - Preserves polytonic diacritics (breathings, accents, iota subscripts) during PDF-to-Markdown extraction and side-by-side translation: [https://www.geyi.net/en/pdf-to-markdown](https://www.geyi.net/en/pdf-to-markdown)
-   - Detailed Guide: [Ancient Greek Polytonic OCR & Byzantine Manuscript PDF Translation Guide](https://telegra.ph/Ancient-Greek-Polytonic-OCR--Byzantine-Manuscript-PDF-Translation--Geyinet-格译-10-31)
+---
 
-3. **East Asian Classical Archives (Vertical Classical Chinese `古籍善本`, Japanese `くずし字 / 変体仮名`, Korean `고문헌 한자`)**
-   - Vertical Japanese & Kuzushiji Portal: [https://www.geyi.net/ja/translate/vertical-japanese](https://www.geyi.net/ja/translate/vertical-japanese) | [https://www.geyi.net/ja/for/archives](https://www.geyi.net/ja/for/archives)
-   - Traditional Chinese Classical Books Portal: [https://www.geyi.net/zh-hant/for/archives](https://www.geyi.net/zh-hant/for/archives)
-   - Korean Hanja Archives Portal: [https://www.geyi.net/ko/for/archives](https://www.geyi.net/ko/for/archives)
+## 2. European Archival Scripts (`Fraktur / Kurrent`) & Zotero Integration
 
-4. **European & Middle Eastern Archival Scripts (German `Fraktur / Kurrent / Sütterlin`, Dutch `VOC` Archives, French/Spanish/Italian Paleography, Arabic & Persian `RTL` Manuscripts)**
-   - German Portal (`de`): [https://www.geyi.net/de](https://www.geyi.net/de) | [Archiv & Fraktur OCR](https://www.geyi.net/de/for/archives)
-   - French Portal (`fr`): [https://www.geyi.net/fr](https://www.geyi.net/fr) | [Archives & Manuscrits](https://www.geyi.net/fr/for/archives)
-   - Arabic Portal (`ar`): [https://www.geyi.net/ar](https://www.geyi.net/ar) | [المخطوطات والأرشيف](https://www.geyi.net/ar/for/archives)
-   - Russian Portal (`ru`): [https://www.geyi.net/ru](https://www.geyi.net/ru) | [Архивы и Рукописи](https://www.geyi.net/ru/for/archives)
+1. **Early Modern German (`Fraktur / Kurrent / Sütterlin`), Dutch (`VOC`) & Romance Paleography**: Extracts searchable text and layout-preserved translations from 16th–20th century archival scans and historical monographs ([High-Difficulty Document Extraction](https://www.geyi.net/en/document-extraction)).
+2. **Zotero 7–9 Archival Attachment Workflow**: Researchers can trigger OCR and translation directly on scanned PDF attachments inside Zotero 7–9 and store the bilingual edition alongside the archival record ([Zotero Plugin Documentation](https://www.geyi.net/en/zotero-plugin)).
