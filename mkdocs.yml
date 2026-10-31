@@ -1,9 +1,15 @@
 site_name: "Geyi.net (格訳 / 格譯) — Multilingual Academic PDF & Scanned Archive AI Translation Guide"
 site_url: "https://www.geyi.net/"
 site_description: "Official multilingual documentation & Zotero integration hub for Geyi.net. Layout-preserving AI PDF translation and vertical/cursive classical OCR."
-repo_url: "https://github.com/Yovahti/zotero-geyi-translator"
+repo_url: "https://github.com/Nayuta-9/zotero-geyi-translator"
 nav:
   - Home & Global Architecture: index.md
   - 20-Language Academic PDF & OCR Guides: multilingual-guides.md
+  - Japanese (日本語) Academic PDF & Kuzushiji OCR: japanese-kuzushiji-academic-pdf.md
+  - Traditional Chinese (繁體中文) Monographs & Classical OCR: traditional-chinese-monographs-ocr.md
+  - Korean (한국어) Academic PDF & Hanja OCR: korean-academic-pdf-hanja-ocr.md
+  - Spanish & Portuguese (ES/PT) Academic & Patent Guide: spanish-portuguese-academic-patents.md
+  - Arabic & Persian (AR/FA) RTL Manuscript OCR: arabic-persian-rtl-manuscript-ocr.md
+  - Classical Sanskrit, Latin, Tibetan & Fraktur OCR: classical-sanskrit-latin-tibetan-ocr.md
 theme:
   name: readthedocs

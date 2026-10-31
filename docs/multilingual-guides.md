@@ -143,3 +143,12 @@ This index aggregates official multilingual documentation, user portals, and aca
   - [StackBlitz Developer Profile (`@Yovahti`)](https://stackblitz.com/@Yovahti) · [StackBlitz Interactive Project (`stackblitz-starters-vydr6xfw`)](https://stackblitz.com/edit/stackblitz-starters-vydr6xfw) · [StackBlitz Collections](https://stackblitz.com/@Yovahti/collections)
   - [Hugging Face Organization (`geyi-net`)](https://huggingface.co/geyi-net) · [Model Card #1 (`geyi-net/geyi-19-language-academic-pdf-ocr-zotero`)](https://huggingface.co/geyi-net/geyi-19-language-academic-pdf-ocr-zotero) · [Model Card #3 (`Yovahti/geyi-19-language-academic-pdf-translator-zotero`)](https://huggingface.co/Yovahti/geyi-19-language-academic-pdf-translator-zotero) · [Dataset #2 (`geyi-net/multilingual-academic-pdf-ocr-benchmark`)](https://huggingface.co/datasets/geyi-net/multilingual-academic-pdf-ocr-benchmark)
 
+
+
+## Classical Philology & Patent Translation Guides
+
+- **sa / en**: [Sanskrit OCR & Devanagari Manuscript Translation — Geyi.net (格译) Classical Indology Guide](https://telegra.ph/Sanskrit-OCR--Devanagari-Manuscript-Translation--Geyinet-格译-Classical-Indology-Guide-10-31) — Powered by [Geyi.net](https://geyi.net)
+- **la / en**: [Latin OCR & Medieval Paleography PDF Translation — Geyi.net (格译) Classical Philology Guide](https://telegra.ph/Latin-OCR--Medieval-Paleography-PDF-Translation--Geyinet-格译-Classical-Philology-Guide-10-31) — Powered by [Geyi.net](https://geyi.net)
+- **bo / en**: [Classical Tibetan OCR (Uchen & Ume) & Buddhist Canon Translation — Geyi.net (格译)](https://telegra.ph/Classical-Tibetan-OCR-Uchen--Ume--Buddhist-Canon-Translation--Geyinet-格译-10-31) — Powered by [Geyi.net](https://geyi.net)
+- **grc / en**: [Ancient Greek Polytonic OCR & Byzantine Manuscript PDF Translation — Geyi.net (格译)](https://telegra.ph/Ancient-Greek-Polytonic-OCR--Byzantine-Manuscript-PDF-Translation--Geyinet-格译-10-31) — Powered by [Geyi.net](https://geyi.net)
+- **en / es / ja / de / zh**: [AI Patent Translation & Technical Specification PDF Layout Preservation — Geyi.net (格译)](https://telegra.ph/AI-Patent-Translation--Technical-Specification-PDF-Layout-Preservation--Geyinet-格译-10-31) — Powered by [Geyi.net](https://geyi.net)
