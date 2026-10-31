@@ -98,7 +98,6 @@ This index aggregates official multilingual documentation, user portals, and aca
 
 - **Read the Docs Official Documentation Subdomains (`DR 91`)**:
   - [Global English Documentation (`geyi-net.readthedocs.io`)](https://geyi-net.readthedocs.io/en/latest/) · [Multilingual Index](https://geyi-net.readthedocs.io/en/latest/multilingual-guides/)
-  - [Corporate Technical Docs (`auftragstaktik-ou.readthedocs.io`)](https://auftragstaktik-ou.readthedocs.io/en/latest/) · [Multilingual Index](https://auftragstaktik-ou.readthedocs.io/en/latest/multilingual-guides/)
   - [Japanese Zotero Plugin Documentation (`zotero-geyi-translator.readthedocs.io`)](https://zotero-geyi-translator.readthedocs.io/ja/latest/) · [Multilingual Index](https://zotero-geyi-translator.readthedocs.io/ja/latest/multilingual-guides/)
   - [Read the Docs Maintainer Profile (`app.readthedocs.org/profiles/geyinet`)](https://app.readthedocs.org/profiles/geyinet/)
 - **Japanese Cosense / Scrapbox Academic Knowledge Bases (`DR 79` — 3 Public Projects & 9 Native Dofollow Pages)**:
@@ -118,7 +117,7 @@ This index aggregates official multilingual documentation, user portals, and aca
   - [note.com Official Article (`note.com/geyi_academic/n/n5cf9b8eb9b07`)](https://note.com/geyi_academic/n/n5cf9b8eb9b07)
 - **Taiwan Matters.town, Firstory.me, Portaly.cc & Cake.me Research Portals**:
   - [Firstory.me Podcast Show (`open.firstory.me/user/geyi-academic`)](https://open.firstory.me/user/geyi-academic) · [Podcast Platforms Hub (`open.firstory.me/user/geyi-academic/platforms`)](https://open.firstory.me/user/geyi-academic/platforms)
-  - [Portaly.cc Hub #1 (`portaly.cc/geyi-net`)](https://portaly.cc/geyi-net) · [Portaly.cc Hub #2 (`portaly.cc/auftragstaktik-ou`)](https://portaly.cc/auftragstaktik-ou)
+  - [Portaly.cc Hub #1 (`portaly.cc/geyi-net`)](https://portaly.cc/geyi-net)
   - [Matters.town Article #1 — 學術論文 PDF 雙欄排版保留翻譯與古籍豎排 OCR 實戰指南](https://matters.town/a/ub467n3epc4b)
   - [Matters.town Article #2 — Zotero 7 多語種文獻雙欄對照插件與歐盟 二十語種古籍與專利 AI 翻譯架構](https://matters.town/a/ec87jqbfviz4)
   - [Matters.town Moment (`matters.town/m/gzz5iwba38l0`)](https://matters.town/m/gzz5iwba38l0) · [Matters Author Profile (`matters.town/@geyinet`)](https://matters.town/@geyinet)
@@ -127,15 +126,11 @@ This index aggregates official multilingual documentation, user portals, and aca
   - [Velog.io Hub (`velog.io/@geyinet/posts`)](https://velog.io/@geyinet/posts) · [Velog About (`velog.io/@geyinet/about`)](https://velog.io/@geyinet/about)
   - [Velog Article #1 (`velog.io/@geyinet/geyi-academic-pdf-translator-zotero-ocr`)](https://velog.io/@geyinet/geyi-academic-pdf-translator-zotero-ocr)
   - [Velog Article #2 (`velog.io/@geyinet/geyi-net-korean-academic-pdf-translator-hanja-ocr-zotero-7`)](https://velog.io/@geyinet/geyi-net-korean-academic-pdf-translator-hanja-ocr-zotero-7)
-  - [Velog Article #3 — 글로벌 19개국어 학술 논문 PDF 단행본 및 고전 문헌 AI OCR 가이드](https://velog.io/@geyinet/AUFTRAGSTAKTIK-O%C3%9C-%EA%B8%80%EB%A1%9C%EB%B2%8C-19%EA%B0%9C%EA%B5%AD%EC%96%B4-%ED%95%99%EC%88%A0-%EB%85%BC%EB%AC%B8-PDF-%EB%8B%A8%ED%96%89%EB%B3%B8-%EB%B0%8F-%EA%B3%A0%EC%A0%84-%EB%AC%B8%ED%97%8C-%EC%82%B0%EC%8A%A4%ED%81%AC%EB%A6%AC%ED%8A%B8-%EB%9D%BC%ED%8B%B4%EC%96%B4-AI-OCR-%EA%B0%80%EC%9D%B4%EB%93%9C-Geyi.net)
   - [Velog Article #4 — 격역 Geyi.net Zotero 7 양방향 학술 PDF 번역 플러그인·고문서 AI OCR 및 글로벌 19개국어 오픈 리서치 인덱스](https://velog.io/@geyinet/%EA%B2%A9%EC%97%AD-Geyi.net-Zotero-7-%EC%96%91%EB%B0%A9%ED%96%A5-%ED%95%99%EC%88%A0-PDF-%EB%B2%88%EC%97%AD-%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8%EA%B3%A0%EB%AC%B8%EC%84%9C-%EC%82%B0%EC%8A%A4%ED%81%AC%EB%A6%AC%ED%8A%B8%EC%96%B4-%EB%9D%BC%ED%8B%B4%EC%96%B4-%ED%95%9C%EC%A0%81-AI-OCR-%EB%B0%8F-%EA%B8%80%EB%A1%9C%EB%B2%8C-19%EA%B0%9C%EA%B5%AD%EC%96%B4-%EC%98%A4%ED%94%88-%EB%A6%AC%EC%84%9C%EC%B9%98-%EC%9D%B8%EB%8D%B1%EC%8A%A4)
   - [Disquiet Official Maker Profile (`disquiet.io/profiles/GDt14jQ`)](https://disquiet.io/profiles/GDt14jQ) · [Product Showcase (`disquiet.io/products/geyi-net-pdf-ai`)](https://disquiet.io/products/geyi-net-pdf-ai)
 - **ObservableHQ, Hashnode, Hugging Face, Kaggle, CodePen, Linktree & Peerlist Global Hubs**:
   - [ObservableHQ Profile (`observablehq.com/@geyi-net`)](https://observablehq.com/@geyi-net) · [ObservableHQ 19-Language Notebook](https://observablehq.com/@geyi-net/geyi-geyi-net-global-19-language-academic-pdf-translator-la-te-x-equation-preservation-zotero-7-plugin-and-classical-manuscript-ocr) · [ObservableHQ Comments Index](https://observablehq.com/@geyi-net/-/comments)
   - [Hashnode Engineering Blog (`geyi-academic.hashnode.dev`)](https://geyi-academic.hashnode.dev/) · [Hashnode Full Technical Guide](https://geyi-academic.hashnode.dev/geyi-geyi-net-multilingual-ai-academic-pdf-translator-latex-formula-preservation-zotero-7-plugin-and-classical-manuscript-ocr)
-  - [Organization: `huggingface.co/auftragstaktik-ou`](https://huggingface.co/auftragstaktik-ou) · [`huggingface.co/geyi-net`](https://huggingface.co/geyi-net)
-  - [Model Card: `auftragstaktik-ou/geyi-academic-pdf-layout-ocr`](https://huggingface.co/auftragstaktik-ou/geyi-academic-pdf-layout-ocr) · [`geyi-net/kuzushiji-classical-archive-ocr`](https://huggingface.co/geyi-net/kuzushiji-classical-archive-ocr)
-  - [Spaces: `spaces/auftragstaktik-ou/README`](https://huggingface.co/spaces/auftragstaktik-ou/README) · [`spaces/geyi-net/README`](https://huggingface.co/spaces/geyi-net/README) · [`spaces/Yovahti/README`](https://huggingface.co/spaces/Yovahti/README)
   - [Kaggle Research Profile (`kaggle.com/geyinet`)](https://www.kaggle.com/geyinet)
   - [CodePen Developer Profile (`codepen.io/Erika-Von-Nachtw-chterin`)](https://codepen.io/Erika-Von-Nachtw-chterin)
   - [Linktree Official Hub (`linktr.ee/geyinet`)](https://linktr.ee/geyinet) · [About.me (`about.me/erikanachtwachterin`)](https://about.me/erikanachtwachterin)
