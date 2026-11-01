@@ -77,5 +77,4 @@ AGPL-3.0-or-later
 
 ## 相关链接
 
-- **格译官网**：[https://www.geyi.net](https://www.geyi.net)
 - **Zotero 插件安装与使用说明**：[https://www.geyi.net/zotero-plugin](https://www.geyi.net/zotero-plugin)
