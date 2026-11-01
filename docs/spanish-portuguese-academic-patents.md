@@ -14,7 +14,7 @@ Al traducir literatura científica o especificaciones técnicas en formato `PDF`
 3. **Flujo de Trabajo Bilingüe en Zotero 6/7**: El complemento oficial genera un PDF bilingüe (página original + página traducida o vista lado a lado) y lo vincula automáticamente al elemento bibliográfico en tu biblioteca de Zotero (**[Complemento Oficial para Zotero](https://www.geyi.net/es/zotero-plugin)**).
 
 ### 1.2 Traducción de Monografías de 500 Páginas (`PDF / EPUB`) y Documentos de Patentes (`OEPM / EPO / WIPO / IMPI`)
-- **Coherencia Terminológica en Libros Completos**: Procesamiento de manuales universitarios, tesis doctorales y monografías de hasta 500 páginas en formato `PDF` o `EPUB` manteniendo un glosario unificado en todos los capítulos (**[Traductor de Libros Completos y Monografías](https://www.geyi.net/es/translate/book)**).
+- **Coherencia Terminológica en Libros Completos**: Procesamiento de manuales universitarios, tesis doctorales y monografías de hasta 500 páginas en formato `PDF` o `EPUB` manteniendo un glosario unificado en todos los capítulos.
 - **Fidelidad Estructural en Patentes Internacionales**: Conservación estricta de la numeración de reivindicaciones (*Claims / Reivindicaciones*), referencias numéricas de figuras técnicas y tablas químicas o farmacéuticas en patentes de la `OEPM`, `EPO`, `WIPO (PCT)`, `USPTO` e `IMPI`.
 
 ---
