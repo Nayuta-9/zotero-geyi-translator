@@ -8,7 +8,8 @@ nav:
   - Japanese (日本語) Academic PDF & Kuzushiji OCR: japanese-kuzushiji-academic-pdf.md
   - Traditional Chinese (繁體中文) Monographs & Classical OCR: traditional-chinese-monographs-ocr.md
   - Korean (한국어) Academic PDF & Hanja OCR: korean-academic-pdf-hanja-ocr.md
-  - Spanish & Portuguese (ES/PT) Academic & Patent Guide: spanish-portuguese-academic-patents.md
+  - Spanish (Español) Academic PDF, Patent & Archival OCR: spanish-portuguese-academic-patents.md
+  - Portuguese (Português) Academic PDF, EPUB & Archival OCR: portuguese-academic-pdf-epub-archives.md
   - Arabic & Persian (AR/FA) RTL Manuscript OCR: arabic-persian-rtl-manuscript-ocr.md
   - Classical Latin, Ancient Greek & Archival OCR: classical-sanskrit-latin-tibetan-ocr.md
 theme:
