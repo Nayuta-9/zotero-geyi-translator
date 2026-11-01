@@ -11,13 +11,13 @@
 - **术语表联动（F6）**：账户个人术语全量自动应用。插件读取并展示当前术语条目数，缓存不超过 5 分钟；不提供术语表选择、“不使用”或条目级置顶，网页端提供管理入口。
 - **设置面板（F7）**：账户余额/会员/术语数、默认目标语言/管线/精度/产物、自动 note、通知、并发上限、日志级别、反馈与隐私入口，修改即时生效。
 - **埋点与反馈（F8）**：插件请求以 `GeyiZoteroPlugin/x.y.z` 标识，并以自定义头兜底；安装、登录、提交、完成/失败、工单、充值事件通过现有健康端点 best-effort 上报；反馈链接预填插件/Zotero/系统版本与最近任务 id。
-- **安装与自升级（F1）**：`.xpi` 分发；`update.json` 指向 `https://www.geyi.net/plugin/`。中英双语跟随 Zotero 语言。
+- **安装与自升级（F1）**：`.xpi` 分发；`update.json` 指向 `/plugin/`。中英双语跟随 Zotero 语言。
 - **首次引导**：新安装或升级后的第一次启动弹出一个不阻塞的小窗口，说明如何登录、如何右键翻译、需研究级及以上会员（新注册账号含 1 天体验）；同一版本只出现一次。
 
 ## 与后端/网页端的对接
 
 - 后端开放 API：`/v1/*`（GEYI-321/326，Bearer Key 鉴权）。授权流：`start` → 网页 `confirm` → 插件 `poll`（GEYI-326）；0.11.1 起 `start` 传 `code_challenge`、`poll` 改为 POST 并在请求体出示 `code_verifier`（GEYI-1099），**须先上线支持该方式的后端再发布插件**。0.11.0 及以前的插件仍用 nonce 方式，由后端开关 `PLUGIN_AUTH_LEGACY_NONCE_ENABLED` 决定是否继续接受。0.11.2 起插件依赖 `poll` 返回的账号字段（`account_email` / `account_fingerprint`）和作废接口 `POST /plugin/key/revoke`（GEYI-1101），同样**须先上线后端再发布插件**。
-- 网页端同意页 `https://www.geyi.net/plugin/authorize`、设备管理「Open API」页、下载页 `/download`（GEYI-327）。
+- 网页端同意页 `/plugin/authorize`、设备管理「Open API」页、下载页 `/download`（GEYI-327）。
 - `/v1/translations` 列表按用户聚合，可能含网页端任务；插件只显示本地持久化过的 job id，避免混入非插件任务。
 
 ## 开发
@@ -38,10 +38,10 @@ npm run build  # tsc 类型检查 + 打包 build/*.xpi + 生成 update.json
 如果同版本号的包已经流出：**不要覆盖 stable 试图修复**——Zotero 同号一律不升级。唯一出路是 bump 一个新 patch 重发；被覆盖的 `v{version}/` 归档路径带一年 immutable 缓存，靠桶的 object versioning 恢复旧 generation，该版本号作废不再复用。
 
 1. `npm run publish:web -- --dry-run`：运行测试与构建，校验版本、稳定下载地址及 XPI SHA-512，不上传文件。
-2. `npm run publish:web`：重复上述校验，把版本化 XPI、稳定 XPI 和 `update.json` 依次上传到 GCS 桶，并回读验证版本与哈希（回读走 `https://www.geyi.net/plugin/*` 真实入口，路由与缓存头一起验）。更新清单最后上传，避免客户端读到悬空版本。
+2. `npm run publish:web`：重复上述校验，把版本化 XPI、稳定 XPI 和 `update.json` 依次上传到 GCS 桶，并回读验证版本与哈希（回读走 `/plugin/*` 真实入口，路由与缓存头一起验）。更新清单最后上传，避免客户端读到悬空版本。
 3. 以后发布插件不需要改动或部署官网/后端，只需插件仓 `main` 已同步后执行本命令。可用 `GEYI_PLUGIN_BUCKET=<bucket>` 覆盖默认发布桶。
 
-**发布桶从 GEYI-894 起是前端静态桶 `gs://geyi-frontend-static`**（此前是专用桶 `gs://geyi-translator-plugin-releases`）。桶是**私有桶**，由 geyi-trans 的全局负载均衡代读，`/plugin/*` 交给 backend bucket `geyi-frontend-bucket` 服务——**对外 URL 一字未变**，仍是 `https://www.geyi.net/plugin/…`。
+**发布桶从 GEYI-894 起是前端静态桶 `gs://geyi-frontend-static`**（此前是专用桶 `gs://geyi-translator-plugin-releases`）。桶是**私有桶**，由 geyi-trans 的全局负载均衡代读，`/plugin/*` 交给 backend bucket `geyi-frontend-bucket` 服务——**对外 URL 一字未变**，仍是 `/plugin/…`。
 
 换桶的理由与插件无关：项目的 backend bucket 配额是 3 个且已满、提额被自动拒，而前端要给 `/assets/*` 单开一个 `FORCE_CACHE_ALL` 的 backend bucket 才能让 Cloud CDN 真正命中，槽位只能从插件这边腾。两个连带后果要知道：
 
