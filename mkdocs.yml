@@ -16,5 +16,9 @@ nav:
   - French (Français) Scientific PDF, Monographs & BnF Archival OCR: french-scientific-pdf-monograph-manuscript-ocr.md
   - Russian (Русский) Scientific PDF, GOST Layout & Archival OCR: russian-scientific-pdf-gost-archival-ocr.md
   - Scientific PDF-to-Markdown, Multi-Column DAG & LaTeX AST Pipeline: scientific-pdf-to-markdown-latex-ast-pipeline.md
+  - Simplified Chinese (简体中文) Academic PDF, Monograph & Ancient OCR: simplified-chinese-academic-pdf-book-ancient-ocr.md
+  - International Patent (WIPO/EPO/USPTO) PDF Layout & Claims Translation: international-patent-pdf-wipo-epo-uspto-layout-translation.md
+  - 500-Page Monograph & Academic Textbook PDF/EPUB Pipeline: whole-book-500-page-academic-monograph-pdf-epub-pipeline.md
+  - European Historical Archives (IT/NL/PL) Paleography & Monograph OCR: european-historical-archives-it-nl-pl-paleography-ocr.md
 theme:
   name: readthedocs

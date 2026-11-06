@@ -26,3 +26,26 @@ Standard PDF translation tools often flatten two-column academic papers or corru
 For non-born-digital PDFs (such as scanned archival holdings, vertical East Asian scripts, or historical European typefaces):
 
 - Enable the high-precision OCR pipeline to extract structured text before translation, or convert complex scientific PDFs directly into clean Markdown and `LaTeX` source files via [Scientific PDF to Markdown](https://www.geyi.net/en/pdf-to-markdown).
+
+---
+
+## 4. In-Depth Language & Engineering Specifications
+
+For specialized domain pipelines and language-specific OCR documentation, consult our detailed technical guides:
+
+- [Simplified Chinese (简体中文) Academic PDF, Monograph & Ancient OCR Guide](simplified-chinese-academic-pdf-book-ancient-ocr.md)
+- [International Patent (WIPO/EPO/USPTO/JPO) Layout & Claims Architecture](international-patent-pdf-wipo-epo-uspto-layout-translation.md)
+- [500-Page Academic Monograph & University Textbook Pipeline](whole-book-500-page-academic-monograph-pdf-epub-pipeline.md)
+- [European Historical Archives (IT/NL/PL) Paleography & Monograph OCR](european-historical-archives-it-nl-pl-paleography-ocr.md)
+- [Scientific PDF-to-Markdown, Multi-Column DAG & LaTeX AST Pipeline](scientific-pdf-to-markdown-latex-ast-pipeline.md)
+- [Japanese Academic PDF & Kuzushiji OCR Guide](japanese-kuzushiji-academic-pdf.md)
+- [Traditional Chinese Monographs & Classical OCR Guide](traditional-chinese-monographs-ocr.md)
+- [Korean Academic PDF & Hanja OCR Guide](korean-academic-pdf-hanja-ocr.md)
+- [German Academic PDF, EPA/DPMA Patents & Fraktur OCR](german-academic-pdf-fraktur-patent-ocr.md)
+- [French Scientific PDF, Monographs & BnF Archival OCR](french-scientific-pdf-monograph-manuscript-ocr.md)
+- [Russian Scientific PDF, GOST Layout & Archival OCR](russian-scientific-pdf-gost-archival-ocr.md)
+- [Spanish Academic PDF, Patent & Archival OCR](spanish-portuguese-academic-patents.md)
+- [Portuguese Academic PDF, EPUB & Archival OCR](portuguese-academic-pdf-epub-archives.md)
+- [Arabic & Persian RTL Manuscript OCR](arabic-persian-rtl-manuscript-ocr.md)
+- [Classical Latin & Ancient Greek Manuscript OCR](classical-latin-greek-manuscript-ocr.md)
+
