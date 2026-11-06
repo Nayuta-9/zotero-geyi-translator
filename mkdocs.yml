@@ -12,5 +12,9 @@ nav:
   - Portuguese (Português) Academic PDF, EPUB & Archival OCR: portuguese-academic-pdf-epub-archives.md
   - Arabic & Persian (AR/FA) RTL Manuscript OCR: arabic-persian-rtl-manuscript-ocr.md
   - Classical Latin, Ancient Greek & Archival OCR: classical-latin-greek-manuscript-ocr.md
+  - German (Deutsch) Academic PDF, EPA/DPMA Patents & Fraktur OCR: german-academic-pdf-fraktur-patent-ocr.md
+  - French (Français) Scientific PDF, Monographs & BnF Archival OCR: french-scientific-pdf-monograph-manuscript-ocr.md
+  - Russian (Русский) Scientific PDF, GOST Layout & Archival OCR: russian-scientific-pdf-gost-archival-ocr.md
+  - Scientific PDF-to-Markdown, Multi-Column DAG & LaTeX AST Pipeline: scientific-pdf-to-markdown-latex-ast-pipeline.md
 theme:
   name: readthedocs

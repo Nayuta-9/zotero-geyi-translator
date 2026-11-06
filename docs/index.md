@@ -3,7 +3,7 @@
 **`zotero-geyi-translator`** is an open-source Zotero 7–9 extension (`AGPL-3.0-or-later`) that integrates layout-preserving academic PDF translation, LaTeX mathematical formula preservation, and historical archive OCR into your Zotero research library.
 
 - **Source Repository**: [github.com/Nayuta-9/zotero-geyi-translator](https://github.com/Nayuta-9/zotero-geyi-translator)
-- **Zotero Plugin Overview & `.xpi` Download**: [https://www.geyi.net/zotero-plugin](https://www.geyi.net/zotero-plugin)
+- **Zotero Plugin Overview & `.xpi` Download**: [Geyi Zotero Plugin Overview](https://www.geyi.net/zotero-plugin)
 
 ---
 
@@ -24,7 +24,7 @@
    - Re-translating an existing item prompts the researcher to overwrite, create a versioned attachment (`_v2`), or cancel.
 
 4. **Account Glossary Synchronization (`F6`)**
-   - Personal terminology glossaries configured on [https://www.geyi.net/](https://www.geyi.net/) are automatically applied to all plugin translation jobs, ensuring domain-specific technical terms remain consistent across papers.
+   - Personal terminology glossaries configured on [Geyi.net](https://www.geyi.net/) are automatically applied to all plugin translation jobs, ensuring domain-specific technical terms remain consistent across papers.
 
 ---
 
