@@ -33,6 +33,10 @@ For non-born-digital PDFs (such as scanned archival holdings, vertical East Asia
 
 For specialized domain pipelines and language-specific OCR documentation, consult our detailed technical guides:
 
+- [Biomedical & Clinical PDF (IMRaD & Tables) Translation](biomedical-clinical-pdf-imrad-table-translation.md)
+- [Pharmaceutical & Chemical Patent (Markush) Translation](pharmaceutical-chemical-patent-markush-pdf-translation.md)
+- [Traditional Chinese Medical/Legal Monographs & Paleography OCR](traditional-chinese-medical-legal-textbooks-paleography-ocr.md)
+- [Academic Arabic RTL Scientific PDF & Manuscript OCR](arabic-rtl-scientific-medical-pdf-manuscript-ocr.md)
 - [Simplified Chinese (简体中文) Academic PDF, Monograph & Ancient OCR Guide](simplified-chinese-academic-pdf-book-ancient-ocr.md)
 - [International Patent (WIPO/EPO/USPTO/JPO) Layout & Claims Architecture](international-patent-pdf-wipo-epo-uspto-layout-translation.md)
 - [500-Page Academic Monograph & University Textbook Pipeline](whole-book-500-page-academic-monograph-pdf-epub-pipeline.md)

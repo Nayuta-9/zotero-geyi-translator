@@ -5,6 +5,10 @@ repo_url: "https://github.com/Nayuta-9/zotero-geyi-translator"
 nav:
   - Home & Global Architecture: index.md
   - Multilingual Academic PDF & OCR Guides: multilingual-guides.md
+  - Biomedical & Clinical PDF (IMRaD & Tables) Translation: biomedical-clinical-pdf-imrad-table-translation.md
+  - Pharmaceutical & Chemical Patent (Markush) Translation: pharmaceutical-chemical-patent-markush-pdf-translation.md
+  - Traditional Chinese Medical/Legal Monographs & Paleography OCR: traditional-chinese-medical-legal-textbooks-paleography-ocr.md
+  - Academic Arabic RTL Scientific PDF & Manuscript OCR: arabic-rtl-scientific-medical-pdf-manuscript-ocr.md
   - Japanese (日本語) Academic PDF & Kuzushiji OCR: japanese-kuzushiji-academic-pdf.md
   - Traditional Chinese (繁體中文) Monographs & Classical OCR: traditional-chinese-monographs-ocr.md
   - Korean (한국어) Academic PDF & Hanja OCR: korean-academic-pdf-hanja-ocr.md
