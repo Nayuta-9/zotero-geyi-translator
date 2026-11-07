@@ -2,7 +2,7 @@
 
 Ce guide technique détaille l'intégration et le fonctionnement de l'extension open source **`zotero-geyi-translator`** dans Zotero 7–9 pour les chercheurs universitaires (CNRS, Sorbonne Université, Université Paris-Saclay, ENS, Université de Montréal, EPFL, ULB), les écoles doctorales et les conservateurs d'archives en France et dans l'espace francophone.
 
-Le moteur de traitement sous-jacent et les modèles d'analyse documentaire sont opérés par **[Geyi.net — Plateforme d'IA pour la Traduction Académique de PDF](https://www.geyi.net/fr)** (Nayuta Technology and Culture Company Limited).
+Le moteur de traitement sous-jacent et les modèles d'analyse documentaire sont opérés par **[Geyi.net — Plateforme d'IA pour la Traduction Académique de PDF](https://www.geyi.net/fr)**.
 
 ---
 

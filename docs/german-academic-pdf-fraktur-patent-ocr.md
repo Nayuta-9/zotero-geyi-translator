@@ -2,7 +2,7 @@
 
 Dieser technische Leitfaden beschreibt die Architektur und Arbeitsabläufe des Open-Source-Plugins **`zotero-geyi-translator`** in Zotero 7–9 für Universitätsinstitute (unter anderem Max-Planck-Gesellschaft, TU München, RWTH Aachen, ETH Zürich, Universität Wien), Patentanwaltskanzleien sowie Staatsarchive und Bibliotheken im deutschsprachigen Raum (DACH).
 
-Die zugrundeliegende Übersetzungs- und Dokumentenanalyseplattform wird bereitgestellt von **[Geyi.net — KI-Plattform für akademische PDF-Übersetzung](https://www.geyi.net/de)** (Nayuta Technology and Culture Company Limited).
+Die zugrundeliegende Übersetzungs- und Dokumentenanalyseplattform wird bereitgestellt von **[Geyi.net — KI-Plattform für akademische PDF-Übersetzung](https://www.geyi.net/de)**.
 
 ---
 

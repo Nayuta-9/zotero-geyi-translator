@@ -1,6 +1,6 @@
 # European Historical Archives & Scientific Monograph Pipeline: Renaissance Italian Codices, 17th-Century Dutch VOC Cursive OCR, and Polish LaTeX PDF Translation
 
-This technical specification details the neural paleography algorithms, historical document degradation modeling, and layout-preserving translation architecture developed by **[Geyi.net Document Engineering & Historical OCR Platform](https://www.geyi.net/)** (Nayuta Technology and Culture Company Limited). 
+This technical specification details the neural paleography algorithms, historical document degradation modeling, and layout-preserving translation architecture developed by **[Geyi.net Document Engineering & Historical OCR Platform](https://www.geyi.net/)**. 
 
 The platform provides dedicated engineering pipelines for digital humanists, European history faculties, archival scholars, and scientific researchers working with Renaissance Italian manuscripts, 17th-century Early Modern Dutch colonial records, and Central European mathematical and scientific monographs.
 

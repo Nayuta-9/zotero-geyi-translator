@@ -1,6 +1,6 @@
 # International Patent PDF Translation Architecture (WIPO, EPO, USPTO, JPO): Multi-Column Claims, Chemical Markush Structures, and Drawing Callout Preservation
 
-This technical specification details the patent parsing, visual document object reconstruction, and layout-preserving translation architecture developed by **[Geyi.net — AI Academic Translation & Document Engineering Platform](https://www.geyi.net/)** (Nayuta Technology and Culture Company Limited). 
+This technical specification details the patent parsing, visual document object reconstruction, and layout-preserving translation architecture developed by **[Geyi.net — AI Academic Translation & Document Engineering Platform](https://www.geyi.net/)**. 
 
 The platform provides dedicated engineering pipelines for patent attorneys, patent examiners, and industrial R&D intelligence teams handling high-stakes intellectual property filings from the World Intellectual Property Organization (WIPO / PCT), the European Patent Office (EPO), the United States Patent and Trademark Office (USPTO), the Japan Patent Office (JPO), and the German Patent and Trade Mark Office (DPMA).
 

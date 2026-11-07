@@ -1,6 +1,6 @@
 # Engineering Specification: Scientific PDF-to-Markdown, Multi-Column DAG Reading-Order & LaTeX AST Pipeline
 
-This document specifies the technical architecture and algorithmic pipeline utilized by **[Geyi.net — AI Academic Translation & Document Engineering Platform](https://www.geyi.net/en)** (Nayuta Technology and Culture Company Limited) to convert dense academic PDFs into structured CommonMark / GitHub Flavored Markdown with fully preserved mathematical formulas, multi-column topologies, and vector tables.
+This document specifies the technical architecture and algorithmic pipeline utilized by **[Geyi.net — AI Academic Translation & Document Engineering Platform](https://www.geyi.net/en)** to convert dense academic PDFs into structured CommonMark / GitHub Flavored Markdown with fully preserved mathematical formulas, multi-column topologies, and vector tables.
 
 The specification also details how these capabilities integrate directly with the open-source **`zotero-geyi-translator`** extension for Zotero 7–9.
 

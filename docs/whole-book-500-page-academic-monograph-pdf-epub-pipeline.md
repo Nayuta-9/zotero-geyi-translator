@@ -1,6 +1,6 @@
 # 500-Page Academic Monograph & University Textbook PDF/EPUB Translation Pipeline: Cross-Chapter Terminology Memory, Footnote Anchoring, and Bilingual Typesetting
 
-This technical specification details the architectural framework, distributed translation orchestration, and typographic reflow algorithms engineered by **[Geyi.net — AI Academic Translation Platform](https://www.geyi.net/)** (Nayuta Technology and Culture Company Limited) to handle full-length academic monographs, university textbooks, and doctoral dissertations ranging from 100 to 500+ pages.
+This technical specification details the architectural framework, distributed translation orchestration, and typographic reflow algorithms engineered by **[Geyi.net — AI Academic Translation Platform](https://www.geyi.net/)** to handle full-length academic monographs, university textbooks, and doctoral dissertations ranging from 100 to 500+ pages.
 
 The monograph pipeline addresses the critical failure modes of conventional document translation systems: **context window exhaustion, cross-chapter terminology drift, orphan footnote detachment, and typography destruction caused by language expansion rates**.
 
