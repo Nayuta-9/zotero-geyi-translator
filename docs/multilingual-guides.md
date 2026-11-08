@@ -33,6 +33,10 @@ For non-born-digital PDFs (such as scanned archival holdings, vertical East Asia
 
 For specialized domain pipelines and language-specific OCR documentation, consult our detailed technical guides:
 
+- [International Law & Cross-Border Arbitration Contract PDF Bilingual Translation](international-law-arbitration-contract-pdf-bilingual-translation.md)
+- [Semiconductor & IEEE Engineering Datasheet PDF LaTeX AST Translation](semiconductor-ieee-engineering-datasheet-pdf-latex-translation.md)
+- [Japanese Legal/Patent Specification & Kuzushiji Archive OCR (日本語法務・特許明細書・くずし字OCR)](japanese-legal-patent-specification-kuzushiji-archive-ocr.md)
+- [Korean Semiconductor/Patent/Medical PDF & Hanja OCR Pipeline (한국어 반도체·특허·의학 PDF 및 한자 OCR)](korean-semiconductor-patent-medical-pdf-hanja-ocr-pipeline.md)
 - [Biomedical & Clinical PDF (IMRaD & Tables) Translation](biomedical-clinical-pdf-imrad-table-translation.md)
 - [Pharmaceutical & Chemical Patent (Markush) Translation](pharmaceutical-chemical-patent-markush-pdf-translation.md)
 - [Traditional Chinese Medical/Legal Monographs & Paleography OCR](traditional-chinese-medical-legal-textbooks-paleography-ocr.md)
