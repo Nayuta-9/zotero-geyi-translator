@@ -33,6 +33,10 @@ For non-born-digital PDFs (such as scanned archival holdings, vertical East Asia
 
 For specialized domain pipelines and language-specific OCR documentation, consult our detailed technical guides:
 
+- [DIN/ISO Engineering Standards & DPMA/EPA Patent Fraktur OCR Specification (DIN/ISO-Normen, DPMA/EPA-Patente & Fraktur-OCR)](de-din-iso-patent-fraktur-ocr.md)
+- [AFNOR Aerospace Standards, Arbitration Legal Contracts & BnF Manuscript OCR (Normes Aérospatiales AFNOR, Droit & BnF OCR)](fr-afnor-aerospace-legal-bnf-ocr.md)
+- [OEPM Pharma Patents, Civil Engineering Tenders & PARES Paleography OCR (Patentes OEPM, Licitaciones & PARES OCR)](es-oepm-pharma-patent-pares-ocr.md)
+- [Traditional Chinese Monograph Translation, LaTeX AST & Classical Vertical OCR (臺灣與港澳原文書雙語精譯、LaTeX AST 與善本豎排 OCR)](zh-hant-monograph-medical-law-ocr.md)
 - [International Law & Cross-Border Arbitration Contract PDF Bilingual Translation](international-law-arbitration-contract-pdf-bilingual-translation.md)
 - [Semiconductor & IEEE Engineering Datasheet PDF LaTeX AST Translation](semiconductor-ieee-engineering-datasheet-pdf-latex-translation.md)
 - [Japanese Legal/Patent Specification & Kuzushiji Archive OCR (日本語法務・特許明細書・くずし字OCR)](japanese-legal-patent-specification-kuzushiji-archive-ocr.md)
