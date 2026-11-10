@@ -4,6 +4,10 @@ repo_url: "https://github.com/Nayuta-9/zotero-geyi-translator"
 nav:
   - Home & Global Architecture: index.md
   - Multilingual Academic PDF & OCR Guides: multilingual-guides.md
+  - INPI/EPO Patents, ANVISA Dossiers & Luso-Brazilian Paleography OCR: pt-inpi-patent-scielo-monograph-paleography-ocr.md
+  - Arabic BiDi RTL/LTR Math AST, Regulatory Dossiers & Manuscript OCR: ar-bidi-math-ast-engineering-manuscript-ocr.md
+  - PMDA CTD Pharmaceutical Dossiers, JPO Patent Claims & Kuzushiji OCR: ja-pmda-ctd-jis-patent-kuzushiji-ocr.md
+  - FDA/EMA Regulatory CTD Submissions, ICC Arbitration & Paleography OCR: en-fda-ema-ctd-icc-arbitration-paleography-ocr.md
   - DIN/ISO Engineering Standards & DPMA/EPA Patent Fraktur OCR: de-din-iso-patent-fraktur-ocr.md
   - AFNOR Aerospace Standards, Arbitration Legal Contracts & BnF Manuscript OCR: fr-afnor-aerospace-legal-bnf-ocr.md
   - OEPM Pharma Patents, Civil Engineering Tenders & PARES Paleography OCR: es-oepm-pharma-patent-pares-ocr.md

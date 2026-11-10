@@ -33,6 +33,10 @@ For non-born-digital PDFs (such as scanned archival holdings, vertical East Asia
 
 For specialized domain pipelines and language-specific OCR documentation, consult our detailed technical guides:
 
+- [INPI/EPO Patents, ANVISA Dossiers, SciELO Monographs & Luso-Brazilian Paleography OCR (Patentes INPI, ANVISA & OCR Paleográfico)](pt-inpi-patent-scielo-monograph-paleography-ocr.md)
+- [Arabic BiDi RTL/LTR Mathematical AST, Regulatory Dossiers & Kufic/Naskh/Maghribi Manuscript OCR (معالجة الوثائق العلمية BiDi وعزل AST والمخطوطات العربية)](ar-bidi-math-ast-engineering-manuscript-ocr.md)
+- [PMDA CTD Pharmaceutical Dossiers, JPO Chemical Patent Claims & Kuzushiji Vertical OCR (PMDA医薬品CTD・JPO化学特許・くずし字OCR)](ja-pmda-ctd-jis-patent-kuzushiji-ocr.md)
+- [FDA/EMA Regulatory CTD Submissions, ICC Arbitration Bundles, LaTeX AST & Classical Paleography OCR](en-fda-ema-ctd-icc-arbitration-paleography-ocr.md)
 - [DIN/ISO Engineering Standards & DPMA/EPA Patent Fraktur OCR Specification (DIN/ISO-Normen, DPMA/EPA-Patente & Fraktur-OCR)](de-din-iso-patent-fraktur-ocr.md)
 - [AFNOR Aerospace Standards, Arbitration Legal Contracts & BnF Manuscript OCR (Normes Aérospatiales AFNOR, Droit & BnF OCR)](fr-afnor-aerospace-legal-bnf-ocr.md)
 - [OEPM Pharma Patents, Civil Engineering Tenders & PARES Paleography OCR (Patentes OEPM, Licitaciones & PARES OCR)](es-oepm-pharma-patent-pares-ocr.md)
