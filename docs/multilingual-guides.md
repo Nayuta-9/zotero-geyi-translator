@@ -33,6 +33,10 @@ For non-born-digital PDFs (such as scanned archival holdings, vertical East Asia
 
 For specialized domain pipelines and language-specific OCR documentation, consult our detailed technical guides:
 
+- [MFDS CTD Dossiers, KIPO Battery Patent AST & Gyujanggak Paleography OCR (식약처 CTD 규제 문서·특허청 배터리 특허 AST·규장각 고문서 OCR)](ko-mfds-ctd-kipo-battery-patent-gyujanggak-ocr.md)
+- [AEMPS CTD Tables, OEPM Biotech Patent AST & Archivo General de Indias OCR (Tablas CTD AEMPS, Patentes OEPM & Paleografía AGI OCR)](es-aemps-ctd-oepm-biotech-patent-agi-paleography-ocr.md)
+- [BfArM CTD Tables, DPMA Machinery Patent AST & Kurrentschrift Archival OCR (BfArM CTD-Tabellen, DPMA-Patente & Kurrentschrift-OCR)](de-bfarm-ctd-dpma-machinery-patent-kurrent-ocr.md)
+- [TFDA CTD Dossiers, TIPO Semiconductor Patent AST & Qing Archival Vertical OCR (TFDA藥政CTD·TIPO專利AST·清代淡新檔案直排OCR)](zh-hant-tfda-ctd-tipo-patent-qing-archival-ocr.md)
 - [INPI/EPO Patents, ANVISA Dossiers, SciELO Monographs & Luso-Brazilian Paleography OCR (Patentes INPI, ANVISA & OCR Paleográfico)](pt-inpi-patent-scielo-monograph-paleography-ocr.md)
 - [Arabic BiDi RTL/LTR Mathematical AST, Regulatory Dossiers & Kufic/Naskh/Maghribi Manuscript OCR (معالجة الوثائق العلمية BiDi وعزل AST والمخطوطات العربية)](ar-bidi-math-ast-engineering-manuscript-ocr.md)
 - [PMDA CTD Pharmaceutical Dossiers, JPO Chemical Patent Claims & Kuzushiji Vertical OCR (PMDA医薬品CTD・JPO化学特許・くずし字OCR)](ja-pmda-ctd-jis-patent-kuzushiji-ocr.md)

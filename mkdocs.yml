@@ -4,6 +4,10 @@ repo_url: "https://github.com/Nayuta-9/zotero-geyi-translator"
 nav:
   - Home & Global Architecture: index.md
   - Multilingual Academic PDF & OCR Guides: multilingual-guides.md
+  - MFDS CTD Dossiers, KIPO Battery Patent AST & Gyujanggak Paleography OCR: ko-mfds-ctd-kipo-battery-patent-gyujanggak-ocr.md
+  - AEMPS CTD Tables, OEPM Biotech Patent AST & Archivo General de Indias OCR: es-aemps-ctd-oepm-biotech-patent-agi-paleography-ocr.md
+  - BfArM CTD Tables, DPMA Machinery Patent AST & Kurrentschrift Archival OCR: de-bfarm-ctd-dpma-machinery-patent-kurrent-ocr.md
+  - TFDA CTD Dossiers, TIPO Semiconductor Patent AST & Qing Archival Vertical OCR: zh-hant-tfda-ctd-tipo-patent-qing-archival-ocr.md
   - INPI/EPO Patents, ANVISA Dossiers & Luso-Brazilian Paleography OCR: pt-inpi-patent-scielo-monograph-paleography-ocr.md
   - Arabic BiDi RTL/LTR Math AST, Regulatory Dossiers & Manuscript OCR: ar-bidi-math-ast-engineering-manuscript-ocr.md
   - PMDA CTD Pharmaceutical Dossiers, JPO Patent Claims & Kuzushiji OCR: ja-pmda-ctd-jis-patent-kuzushiji-ocr.md
