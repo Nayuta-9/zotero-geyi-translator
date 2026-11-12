@@ -39,5 +39,9 @@ nav:
   - International Patent (WIPO/EPO/USPTO) PDF Layout & Claims Translation: international-patent-pdf-wipo-epo-uspto-layout-translation.md
   - 500-Page Monograph & Academic Textbook PDF/EPUB Pipeline: whole-book-500-page-academic-monograph-pdf-epub-pipeline.md
   - European Historical Archives (IT/NL/PL) Paleography & Monograph OCR: european-historical-archives-it-nl-pl-paleography-ocr.md
+  - METI/NEDO Semiconductor Reports, JPO Patent Claims AST & Edo Kusazoshi OCR: ja-meti-nedo-semiconductor-jpo-patent-edo-kusazoshi-ocr.md
+  - ANSM/EMA CTD Dossiers, INPI Patent Claims AST & Medieval Charters Paleography OCR: fr-ansm-ema-ctd-inpi-aerospace-patent-chartes-paleography-ocr.md
+  - SFDA/EDA CTD Dossiers, BiDi LaTeX AST Isolation & Arabic Historical Manuscript OCR: ar-sfda-eda-ctd-bidi-latex-ast-islamic-manuscript-ocr.md
+  - ANVISA CTD Dossiers, INPI Patent AST & Luso-Colonial Paleography OCR: pt-anvisa-ctd-inpi-offshore-patent-ultramarino-paleography-ocr.md
 theme:
   name: readthedocs
