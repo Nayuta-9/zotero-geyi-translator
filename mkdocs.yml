@@ -43,5 +43,9 @@ nav:
   - ANSM/EMA CTD Dossiers, INPI Patent Claims AST & Medieval Charters Paleography OCR: fr-ansm-ema-ctd-inpi-aerospace-patent-chartes-paleography-ocr.md
   - SFDA/EDA CTD Dossiers, BiDi LaTeX AST Isolation & Arabic Historical Manuscript OCR: ar-sfda-eda-ctd-bidi-latex-ast-islamic-manuscript-ocr.md
   - ANVISA CTD Dossiers, INPI Patent AST & Luso-Colonial Paleography OCR: pt-anvisa-ctd-inpi-offshore-patent-ultramarino-paleography-ocr.md
+  - DIN/VDE-Automobilnormen, AWMF-S3-Leitlinien & Kurrent-Archiv-OCR: de-vde-automotive-awmf-guideline-epub-pdf-fsm.md
+  - IEEE/ASME Multiphysics PDFs, Cross-Page IFRS/SEC Tables & Zotero 7 AST: en-ieee-asme-multiphysics-sec-ifrs-table-ast.md
+  - SERNAGEOMIN/ANLA EIA, FSM Multipágina & OCR Paleográfico BNE/AGI: es-sernageomin-anla-mining-eia-rae-epub-bne-ocr.md
+  - 土木学会(JSCE)耐震設計基準PDF解析・明治期割注縦組OCR仕様: ja-jsce-gis-seismic-standards-meiji-warichu-ocr.md
 theme:
   name: readthedocs
