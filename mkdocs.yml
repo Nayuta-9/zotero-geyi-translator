@@ -47,5 +47,9 @@ nav:
   - IEEE/ASME Multiphysics PDFs, Cross-Page IFRS/SEC Tables & Zotero 7 AST: en-ieee-asme-multiphysics-sec-ifrs-table-ast.md
   - SERNAGEOMIN/ANLA EIA, FSM Multipágina & OCR Paleográfico BNE/AGI: es-sernageomin-anla-mining-eia-rae-epub-bne-ocr.md
   - 土木学会(JSCE)耐震設計基準PDF解析・明治期割注縦組OCR仕様: ja-jsce-gis-seismic-standards-meiji-warichu-ocr.md
+  - ASN/IRSN Sûreté, Tableaux HAS et OCR Paléographique ENC/BnF: fr-asn-irsn-nuclear-safety-has-clinical-fsm-chartes-ocr.md
+  - KS C IEC 전력·HIRA 임상표 FSM·영남 종가 고문서 OCR 명세: ko-ks-iec-power-grid-hira-clinical-table-ast-jongga-ocr.md
+  - ABNT NBR 6118/8800, Relatórios ONS e OCR Torre do Tombo: pt-abnt-nbr-structural-ons-grid-fsm-epub3-paleography-ocr.md
+  - 臺灣 CNS 耐震・健保署 NHIA 跨頁 FSM 與清代古契字 OCR 規格: zh-hant-cns-seismic-nhia-clinical-fsm-epub3-archival-ocr.md
 theme:
   name: readthedocs
