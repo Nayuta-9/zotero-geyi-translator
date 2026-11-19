@@ -17,6 +17,7 @@ After approval, create or update the Confluence requirement: a record in databas
 ## When a skill says "publish tickets"
 
 - **Main issue**: one per coherent improvement, assigned to the product owner, with a remote link to the requirement. If a Sprint is open (`project = GEYI AND sprint in openSprints()`), add the issue to it.
+- **Product owner account ID** (for `--assignee`): copy the assignee ID of a recent main issue (`twg jira workitem query --jql 'project = GEYI AND parent is EMPTY ORDER BY created DESC' --fields assignee --limit 1`), or look it up by name with `twg user search "<name>"`.
 - **Child tickets**: one `Subtask` per ticket, `--parent <main key>`, created in `待办` and left unclaimed.
 - **Blocking**: `twg jira workitem link workitem --id <blocker> --target-id <blocked> --link-type-id Blocks`. A blocker is open while its status is not `完成` or `取消`; a ticket is unblocked when it has no open blocker.
 
@@ -30,8 +31,8 @@ After approval, create or update the Confluence requirement: a record in databas
 - **Comment**: `twg jira workitem comment create --issue-id <KEY> --body "..." --body-format markdown`
 - **Labels**: `twg jira workitem update --id <KEY> --add-labels a,b` / `--remove-labels a,b`
 - **Claim**: `twg jira workitem update --id <KEY> --assignee <accountId> --status 进行中`, using a free `Agent Worker 01`–`Agent Worker 05` account (find IDs with `twg user search "Agent Worker"`). The main issue stays with the product owner.
-- **Close as done**: `twg jira workitem transition --id <KEY> --transition-id 完成 --transition-comment "<delivery evidence>"`
-- **Won't do**: `twg jira workitem transition --id <KEY> --transition-id 取消 --transition-comment "<reason>"`, then add the `wontfix` label; set the linked Confluence requirement to `已取消` with the same reason. Never use `完成` for dropped work. Do not create `.out-of-scope/`.
+- **Close as done**: `twg jira workitem transition --id <KEY> --transition-id 完成 --transition-comment "<delivery evidence>" --transition-comment-format markdown`
+- **Won't do**: `twg jira workitem transition --id <KEY> --transition-id 取消 --transition-comment "<reason>" --transition-comment-format markdown`, then add the `wontfix` label; set the linked Confluence requirement to `已取消` with the same reason. Never use `完成` for dropped work. Do not create `.out-of-scope/`.
 - **Prior rejections** (replaces `.out-of-scope/`): query `project = GEYI AND (status = 取消 OR labels = wontfix)` and Confluence requirement records marked `已取消`.
 
 ## Pull requests as a triage surface
