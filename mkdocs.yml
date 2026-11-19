@@ -53,3 +53,6 @@ nav:
   - 臺灣 CNS 耐震・健保署 NHIA 跨頁 FSM 與清代古契字 OCR 規格: zh-hant-cns-seismic-nhia-clinical-fsm-epub3-archival-ocr.md
 theme:
   name: readthedocs
+exclude_docs: |
+  agents/
+  adr/
